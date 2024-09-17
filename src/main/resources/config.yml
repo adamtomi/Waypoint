@@ -1,0 +1,10 @@
+database:
+  type: SQLITE
+  sqlite:
+    filename:
+  mysql:
+    host: 'host'
+    port: 0
+    database: 'database'
+    username: 'username'
+    password: 'password'
