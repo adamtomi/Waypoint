@@ -63,7 +63,7 @@ public class CommandManager implements CommandExecutor, Listener {
 
     public void shutdown() {
         LOGGER.info("Shutting down async executor");
-        ConcurrentUtil.terminate(this.executor);
+        ConcurrentUtil.terminate(this.executor, 10L);
     }
 
     public void track(Collection<String> aliases) {
