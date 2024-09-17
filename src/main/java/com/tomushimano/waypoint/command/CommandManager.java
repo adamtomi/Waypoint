@@ -2,8 +2,10 @@ package com.tomushimano.waypoint.command;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandHolder;
 import com.tomushimano.waypoint.command.scaffold.CustomConfigurer;
+import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandException;
 import grapefruit.command.dispatcher.CommandContext;
@@ -25,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.UnaryOperator;
 
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.PLAYER_KEY;
@@ -35,6 +39,9 @@ public class CommandManager implements CommandExecutor, Listener {
     private static final Logger LOGGER = NamespacedLoggerFactory.create("CommandManager");
     private static final UnaryOperator<String> STRIP_LEADING_SLASH = in -> in.startsWith("/") ? in.substring(1) : in;
     private final Set<String> trackedAliases = new HashSet<>();
+    private final ExecutorService executor = Executors.newCachedThreadPool(
+            new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
+    );
     private final JavaPlugin plugin;
     private final Set<CommandHolder> commandHolders;
     private final CommandDispatcher dispatcher;
@@ -54,6 +61,11 @@ public class CommandManager implements CommandExecutor, Listener {
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     }
 
+    public void shutdown() {
+        LOGGER.info("Shutting down async executor");
+        ConcurrentUtil.terminate(this.executor);
+    }
+
     public void track(Collection<String> aliases) {
         this.trackedAliases.addAll(aliases);
     }
@@ -65,14 +77,19 @@ public class CommandManager implements CommandExecutor, Listener {
         lineBuilder.add(label);
         for (String arg : args) lineBuilder.add(arg);
 
-        // Execute command
-        try {
-            this.dispatcher.dispatch(createContext(sender), lineBuilder.toString());
-        } catch (CommandException ex) {
-            capture(ex, "Failed to execute command: '/%s'.".formatted(lineBuilder), LOGGER);
-        }
+        // Execute command asynchronously
+        this.executor.execute(() -> runCommand(createContext(sender), lineBuilder.toString()));
 
+        // Always return true. Not like it really matters
         return true;
+    }
+
+    private void runCommand(CommandContext context, String commandLine) {
+        try {
+            this.dispatcher.dispatch(context, commandLine);
+        } catch (CommandException ex) {
+            capture(ex, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
+        }
     }
 
     @EventHandler

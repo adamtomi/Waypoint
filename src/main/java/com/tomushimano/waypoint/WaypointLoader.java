@@ -34,7 +34,9 @@ public final class WaypointLoader {
         this.commandManager.register();
     }
 
-    public void unload() {}
+    public void unload() {
+        this.commandManager.shutdown();
+    }
 
     private void copyResources() throws IOException {
         Path datafolder = this.plugin.getDataPath();
