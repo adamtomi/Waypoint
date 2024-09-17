@@ -12,4 +12,8 @@ public class Waypoint {
     private @Nullable String displayName;
     private boolean global;
     private final Position position;*/
+
+    public String getName() {
+        return "";
+    }
 }

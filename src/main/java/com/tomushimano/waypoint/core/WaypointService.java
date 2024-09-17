@@ -18,6 +18,10 @@ public class WaypointService {
         return Set.of();
     }
 
+    public Set<Waypoint> getOwnedWaypoints(Player player) {
+        return Set.of();
+    }
+
     public CompletableFuture<Waypoint> createWaypoint(String name, String displayName, boolean global) {
         return new CompletableFuture<>();
     }

@@ -47,10 +47,10 @@ public class CommandManager implements CommandExecutor, Listener {
     private final CommandDispatcher dispatcher;
 
     @Inject
-    public CommandManager(JavaPlugin plugin, Set<CommandHolder> commandHolders) {
+    public CommandManager(JavaPlugin plugin, Set<CommandHolder> commandHolders, CustomConfigurer.Factory configurerFactory) {
         this.plugin = plugin;
         this.commandHolders = commandHolders;
-        this.dispatcher = CommandDispatcher.using(DefaultConfigurer.getInstance(), new CustomConfigurer(plugin, this));
+        this.dispatcher = CommandDispatcher.using(DefaultConfigurer.getInstance(), configurerFactory.create(this));
     }
 
     public void register() {
