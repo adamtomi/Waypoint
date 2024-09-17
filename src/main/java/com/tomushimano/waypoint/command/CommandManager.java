@@ -60,7 +60,7 @@ public class CommandManager implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        // Builder command line
+        // Build command line
         StringJoiner lineBuilder = new StringJoiner(" ");
         lineBuilder.add(label);
         for (String arg : args) lineBuilder.add(arg);
