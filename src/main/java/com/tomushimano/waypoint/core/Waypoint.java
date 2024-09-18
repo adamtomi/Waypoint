@@ -16,4 +16,8 @@ public class Waypoint {
     public String getName() {
         return "";
     }
+
+    public Position getPosition() {
+        throw new UnsupportedOperationException();
+    }
 }

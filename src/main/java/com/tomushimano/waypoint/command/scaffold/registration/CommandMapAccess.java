@@ -3,6 +3,7 @@ package com.tomushimano.waypoint.command.scaffold.registration;
 import com.google.common.collect.ImmutableSet;
 import com.tomushimano.waypoint.command.CommandManager;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
+import grapefruit.command.Command;
 import grapefruit.command.dispatcher.CommandRegistrationHandler;
 import grapefruit.command.dispatcher.tree.RouteNode;
 import org.bukkit.Bukkit;
@@ -52,7 +53,7 @@ public final class CommandMapAccess extends CommandRegistrationHandler {
     }
 
     @Override
-    public void onRegister(grapefruit.command.Command command) {
+    public void onRegister(Command command) {
         RouteNode root = command.spec().route().getFirst();
 
         String primaryAlias = root.primaryAlias();
@@ -80,7 +81,7 @@ public final class CommandMapAccess extends CommandRegistrationHandler {
     }
 
     @Override
-    public void onUnregister(grapefruit.command.Command command) {
+    public void onUnregister(Command command) {
         // Do nothing, we don't support the unregistering of commands right now.
     }
 

@@ -2,6 +2,7 @@ package com.tomushimano.waypoint.di;
 
 import com.tomushimano.waypoint.WaypointLoader;
 import com.tomushimano.waypoint.di.module.CommandBinder;
+import com.tomushimano.waypoint.di.module.ListenerBinder;
 import dagger.BindsInstance;
 import dagger.Component;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,7 +10,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.inject.Singleton;
 
 @Singleton
-@Component(modules = CommandBinder.class)
+@Component(modules = {
+        CommandBinder.class,
+        ListenerBinder.class
+})
 public interface WaypointComponent {
 
     WaypointLoader instance();
