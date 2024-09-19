@@ -5,12 +5,20 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandHolder;
 import com.tomushimano.waypoint.command.scaffold.CustomConfigurer;
+import com.tomushimano.waypoint.command.scaffold.condition.VerboseCondition;
+import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandException;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.CommandDispatcher;
+import grapefruit.command.dispatcher.CommandInvocationException;
+import grapefruit.command.dispatcher.condition.UnfulfilledConditionException;
 import grapefruit.command.dispatcher.config.DefaultConfigurer;
+import grapefruit.command.dispatcher.tree.CommandGraph;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -44,12 +52,19 @@ public class CommandManager implements CommandExecutor, Listener {
     );
     private final JavaPlugin plugin;
     private final Set<CommandHolder> commandHolders;
+    private final MessageConfig messageConfig;
     private final CommandDispatcher dispatcher;
 
     @Inject
-    public CommandManager(JavaPlugin plugin, Set<CommandHolder> commandHolders, CustomConfigurer.Factory configurerFactory) {
+    public CommandManager(
+            JavaPlugin plugin,
+            Set<CommandHolder> commandHolders,
+            CustomConfigurer.Factory configurerFactory,
+            MessageConfig messageConfig
+    ) {
         this.plugin = plugin;
         this.commandHolders = commandHolders;
+        this.messageConfig = messageConfig;
         this.dispatcher = CommandDispatcher.using(DefaultConfigurer.getInstance(), configurerFactory.create(this));
     }
 
@@ -78,17 +93,36 @@ public class CommandManager implements CommandExecutor, Listener {
         for (String arg : args) lineBuilder.add(arg);
 
         // Execute command asynchronously
-        this.executor.execute(() -> runCommand(createContext(sender), lineBuilder.toString()));
+        this.executor.execute(() -> runCommand(sender, createContext(sender), lineBuilder.toString()));
 
         // Always return true. Not like it really matters
         return true;
     }
 
-    private void runCommand(CommandContext context, String commandLine) {
+    // Actually run the command
+    private void runCommand(CommandSender sender, CommandContext context, String commandLine) {
         try {
             this.dispatcher.dispatch(context, commandLine);
+        } catch (UnfulfilledConditionException ex) {
+            /*
+             * This cast is safe, because there are no built-in conditions
+             * in grapefruit currently, and our custom ones will all implement
+             * VerboseCondition.
+             */
+            Component message = ((VerboseCondition) ex.condition()).describeFailure();
+            sender.sendMessage(message);
+        } catch (CommandGraph.NoSuchCommandException ex) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND)
+                    .with(Placeholder.of("command", ex.name()))
+                    .make());
         } catch (CommandException ex) {
-            capture(ex, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
+            // Extract cause. CommandInvocationException wraps other exceptions, so
+            // just call getCause(), if we're dealing with that
+            Throwable cause = ex instanceof CommandInvocationException
+                    ? ex.getCause()
+                    : ex;
+            capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
         }
     }
 

@@ -1,12 +1,10 @@
 package com.tomushimano.waypoint.util;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.slf4j.Logger;
 
 import java.util.function.Function;
-
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public final class ExceptionUtil {
     private ExceptionUtil() {
@@ -27,8 +25,8 @@ public final class ExceptionUtil {
         };
     }
 
-    public static <T> Function<Throwable, T> capture(CommandSender sender, String detail, Logger logger) {
-        sender.sendMessage(text("Database operation failed.", RED));
+    public static <T> Function<Throwable, T> capture(CommandSender sender, Component message, String detail, Logger logger) {
+        sender.sendMessage(message);
         return capture(detail, logger);
     }
 }

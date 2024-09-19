@@ -1,0 +1,12 @@
+command:
+  need-to-be-a-player: "&cEzt a parancsot csak játékos használhatja."
+  unexpected-error: "&cHiba történt a parancs végrehajtása közben :("
+  unknown-subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
+
+waypoint:
+  creation:
+    success: "&aWaypoint sikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
+    failure: "&cHiba történ a waypoint létrehozása közben."
+  deletion:
+    success: "&aAz alábbi waypoint el lett távolítva: &7&l\"{name}\"&a."
+    failure: "&cHiba történt a waypoint eltávolítása közben."

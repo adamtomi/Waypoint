@@ -4,6 +4,9 @@ import com.tomushimano.waypoint.command.scaffold.CommandHolder;
 import com.tomushimano.waypoint.command.scaffold.Owning;
 import com.tomushimano.waypoint.command.scaffold.Sender;
 import com.tomushimano.waypoint.command.scaffold.condition.IsPlayer;
+import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
@@ -28,10 +31,12 @@ public class WaypointCommands implements CommandHolder {
     private static final Logger LOGGER = NamespacedLoggerFactory.create("Commands");
     private final CommandContainer container = new WaypointCommands_Container(this);
     private final WaypointService waypointService;
+    private final MessageConfig messageConfig;
 
     @Inject
-    public WaypointCommands(WaypointService waypointService) {
+    public WaypointCommands(WaypointService waypointService, MessageConfig messageConfig) {
         this.waypointService = waypointService;
+        this.messageConfig = messageConfig;
     }
 
     @Override
@@ -43,17 +48,21 @@ public class WaypointCommands implements CommandHolder {
     public void set(@Sender Player sender, @Arg String name, @Flag boolean global) {
         this.waypointService.createWaypoint(name, null, global)
                 .thenApply(Waypoint::getPosition)
-                .thenApply(x -> text("Your waypoint has been created in %s at %s".formatted(x.getWorldName(), formatPosition(x)), GREEN))
+                .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)
+                        .with(Placeholder.of("world", x.getWorldName()), Placeholder.of("coordinates", formatPosition(x)))
+                        .make())
                 .thenAccept(sender::sendMessage)
-                .exceptionally(capture(sender, "Failed to create waypoint", LOGGER));
+                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.CREATION_FAILURE).make(), "Failed to create waypoint", LOGGER));
     }
 
     @CommandDefinition(route = "waypoint|wp remove|rm", permission = "waypoint.remove", conditions = { IsPlayer.class })
     public void remove(@Sender Player sender, @Arg @Owning Waypoint waypoint) {
         this.waypointService.removeWaypoint(waypoint)
-                .thenApply(x -> text("Waypoint '%s' has been deleted.".formatted(waypoint.getName()), GREEN))
+                .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.DELETION_SUCCESS)
+                        .with(Placeholder.of("name", waypoint.getName()))
+                        .make())
                 .thenAccept(sender::sendMessage)
-                .exceptionally(capture(sender, "Failed to remove waypoint", LOGGER));
+                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.DELETION_FAILURE).make(), "Failed to remove waypoint", LOGGER));
     }
 
     @CommandDefinition(route = "waypoint|wp list|ls", permission = "waypoint.list", conditions = { IsPlayer.class })

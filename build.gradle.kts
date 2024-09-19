@@ -27,7 +27,12 @@ dependencies {
     // Libs
     implementation(files("libs/grapefruit-core.jar"))
     annotationProcessor(files("libs/grapefruit-gen-2.0.0-ALPHA-all.jar"))
-    implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("com.zaxxer:HikariCP:5.1.0") {
+        exclude("org.slf4j")
+    }
+
+    // Don't include this in the jar as it will be provided at runtime
+    compileOnly("com.mysql:mysql-connector-j:9.0.0")
 }
 
 java {

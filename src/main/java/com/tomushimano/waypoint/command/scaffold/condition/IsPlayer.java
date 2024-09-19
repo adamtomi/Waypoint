@@ -1,18 +1,26 @@
 package com.tomushimano.waypoint.command.scaffold.condition;
 
+import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
 import grapefruit.command.dispatcher.CommandContext;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
+
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SENDER_KEY;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class IsPlayer implements VerboseCondition {
+    private final MessageConfig messageConfig;
+
+    @Inject
+    public IsPlayer(MessageConfig messageConfig) {
+        this.messageConfig = messageConfig;
+    }
 
     @Override
     public Component describeFailure() {
-        return text("You need to be a player to execute this command.", RED);
+        return this.messageConfig.get(MessageKeys.Command.NEED_TO_BE_A_PLAYER).make();
     }
 
     @Override

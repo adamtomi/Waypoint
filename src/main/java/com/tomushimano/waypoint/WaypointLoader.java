@@ -59,7 +59,9 @@ public final class WaypointLoader {
             }
         }
 
-        this.storageHolder.get().connect().exceptionally(capture("Failed to connect to database", LOGGER));
+        /*this.storageHolder.get().connect()
+                .exceptionally(capture("Failed to connect to database", LOGGER))
+                .join();*/
         this.commandManager.register();
 
         registerListeners();

@@ -10,8 +10,25 @@ database:
     filename: "waypoint.db"
   # MySQL-related settings
   mysql:
-    host: 'host'
-    port: 0
+    # The host
+    host: 'localhost'
+    # The port
+    port: 3306
+    # The name of the database
     database: 'database'
     username: 'username'
     password: 'password'
+    # Extra query parameters so that certain optimizations can be made.
+    query_params: "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&autoReconnect=true"
+    # Connection pool-related settings
+    pool:
+      # Maximum size of the pool (including active and inactive connections).
+      size: 15
+      # This many connections will be kept alive on the pool ready to go.
+      minimum_idle: 10
+      # Number of seconds, before a connection is marked for closing. This prevents
+      # inactive connections from lingering indefinitely in the pool taking up resources.
+      max_lifetime: 30
+      # Number of seconds to wait for a connection to become available, before throwing
+      # an error.
+      connection_timeout: 5

@@ -8,7 +8,9 @@ import java.util.concurrent.CompletableFuture;
 
 public interface Storage {
 
-    CompletableFuture<?> connect();
+    void connect();
+
+    void disconnect();
 
     CompletableFuture<?> save(Waypoint waypoint);
 
