@@ -1,7 +1,14 @@
+# Database configuration
 database:
-  type: SQLITE
+  # Available database types at the moment:
+  # - sqlite
+  type: "sqlite"
+  # SQLite-related settings
   sqlite:
-    filename:
+    # The name of the SQLite database. The file will be created under
+    # plugins/Waypoint/{filename}
+    filename: "waypoint.db"
+  # MySQL-related settings
   mysql:
     host: 'host'
     port: 0

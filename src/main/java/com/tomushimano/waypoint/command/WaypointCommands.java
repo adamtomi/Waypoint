@@ -40,8 +40,8 @@ public class WaypointCommands implements CommandHolder {
     }
 
     @CommandDefinition(route = "waypoint|wp set", permission = "waypoint.set", conditions = { IsPlayer.class })
-    public void set(@Sender Player sender, @Arg String name, @Flag String displayName, @Flag boolean global) {
-        this.waypointService.createWaypoint(name, displayName, global)
+    public void set(@Sender Player sender, @Arg String name, @Flag boolean global) {
+        this.waypointService.createWaypoint(name, null, global)
                 .thenApply(Waypoint::getPosition)
                 .thenApply(x -> text("Your waypoint has been created in %s at %s".formatted(x.getWorldName(), formatPosition(x)), GREEN))
                 .thenAccept(sender::sendMessage)
@@ -57,8 +57,8 @@ public class WaypointCommands implements CommandHolder {
     }
 
     @CommandDefinition(route = "waypoint|wp list|ls", permission = "waypoint.list", conditions = { IsPlayer.class })
-    public void list(@Sender Player sender, @Flag boolean hideGlobals) {
-        Set<Waypoint> waypoints = hideGlobals
+    public void list(@Sender Player sender, @Flag boolean hideGlobal) {
+        Set<Waypoint> waypoints = hideGlobal
                 ? this.waypointService.getOwnedWaypoints(sender)
                 : this.waypointService.getAccessibleWaypoints(sender);
     }
@@ -69,7 +69,7 @@ public class WaypointCommands implements CommandHolder {
     }
 
     @CommandDefinition(route = "waypoint|wp edit", permission = "waypoint.edit", conditions = { IsPlayer.class })
-    public void edit(@Sender Player sender, @Owning @Arg Waypoint waypoint, @Flag String name, @Flag String displayName, @Flag boolean toggleGlobal) {
+    public void edit(@Sender Player sender, @Arg @Owning  Waypoint waypoint, @Flag String name, @Flag boolean toggleGlobal) {
 
     }
 

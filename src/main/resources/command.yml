@@ -1,0 +1,17 @@
+edit:
+  description: "Waypoint szerkesztése"
+  args:
+    waypoint: "Waypoint, amit szerkeszteni kéne"
+    name: "Az új név"
+    toggle: "Ha eddit globális volt, akkor mostantól nem lesz az, ha eddig nem volt az, mostantól az lesz"
+list:
+  description: "Számodra látható waypointok listázása"
+  args:
+    hide-global: "Globális waypointok elrejtése"
+reloc:
+  description: "A megadott waypoint áthelyezése a jelenlegi pozíciódra"
+  args:
+    waypoint: "A waypoint neve, amit át kéne helyezni"
+remove:
+set:
+toggle:

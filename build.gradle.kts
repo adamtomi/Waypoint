@@ -27,6 +27,7 @@ dependencies {
     // Libs
     implementation(files("libs/grapefruit-core.jar"))
     annotationProcessor(files("libs/grapefruit-gen-2.0.0-ALPHA-all.jar"))
+    implementation("com.zaxxer:HikariCP:5.1.0")
 }
 
 java {
@@ -45,6 +46,7 @@ tasks.named<ShadowJar>("shadowJar") {
         "grapefruit.command" to "com.tomushimano.waypoint.reloc.command",
         "dagger" to "com.tomushimano.waypoint.reloc.dagger",
         "jakarta" to "com.tomushimano.waypoint.reloc.jakarta",
+        "com.zaxxer.hikari" to "com.tomushimano.waypoint.reloc.hikari"
     )
 
     relocations.forEach {
