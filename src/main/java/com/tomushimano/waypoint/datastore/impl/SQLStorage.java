@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.datastore.impl;
 
+import com.sun.jna.platform.unix.solaris.LibKstat;
 import com.tomushimano.waypoint.WaypointPlugin;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;
@@ -17,7 +18,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -34,7 +37,8 @@ public class SQLStorage implements Storage {
         this.connectionFactory = connectionFactory;
     }
 
-    private String readDeployFile() throws IOException {
+    private List<String> readDeployFile() throws IOException {
+        List<String> result = new ArrayList<>();
         StringBuilder commandBuilder = new StringBuilder();
         try (InputStream in = WaypointPlugin.class.getResourceAsStream("/deploy.sql")) {
             if (in == null) throw new IOException("Deploy file does not exist");
@@ -46,18 +50,29 @@ public class SQLStorage implements Storage {
                     // Handle cases, where a comment appears after the line itself.
                     String sanitized = line.trim().split("--")[0];
                     commandBuilder.append(sanitized);
+
+                    // Hit the end of the command
+                    if (line.endsWith(";")) {
+                        // Add the command to the list
+                        result.add(commandBuilder.toString());
+                        // Reset builder
+                        commandBuilder.setLength(0);
+                    }
                 }
             }
         }
 
-        return commandBuilder.toString();
+        return result;
     }
 
     @Override
     public boolean connect() {
         try (Connection conn = this.connectionFactory.openConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(readDeployFile());
+            List<String> commands = readDeployFile();
+            for (String command : commands) stmt.addBatch(command);
+            stmt.executeBatch();
+
             LOGGER.info("Connection established successfully!");
             return true;
         } catch (IOException | SQLException ex) {
@@ -114,7 +129,7 @@ public class SQLStorage implements Storage {
     public CompletableFuture<?> remove(Waypoint waypoint) {
         return this.futureFactory.futureOf(() -> {
             try (Connection conn = this.connectionFactory.openConnection();
-                PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM `waypoints` WHERE `id` = ?")) {
+                 PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM `waypoints` WHERE `id` = ?")) {
                 prepStmt.setString(1, waypoint.getUniqueId().toString());
 
                 prepStmt.execute();

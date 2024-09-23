@@ -11,3 +11,6 @@ CREATE TABLE IF NOT EXISTS `waypoints` (
     `yaw` FLOAT NOT NULL,
     `pitch` FLOAT NOT NULL
 );
+
+-- Create unique index that one name can be used once by every user.
+CREATE UNIQUE INDEX IF NOT EXISTS `waypoints_ownerId_name` ON `waypoints`(`ownerId`, `name`);
