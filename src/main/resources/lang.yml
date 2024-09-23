@@ -6,10 +6,10 @@ command:
 waypoint:
   creation:
     success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
-    already_exists: "&cMár létrehoztál &7&l\"{name}\" &cnévvel waypointot."
+    already_exists: "&cMár létrehoztál &7&o\"{name}\" &cnévvel waypointot."
     failure: "&cHiba történt a waypoint létrehozása közben."
   deletion:
-    success: "&aAz alábbi waypoint el lett távolítva: &7&l\"{name}\"&a."
+    success: "&aAz alábbi waypoint el lett távolítva: &7&o\"{name}\"&a."
     failure: "&cHiba történt a waypoint eltávolítása közben."
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra (&7&l{page}&8/&7{totalpages})"
