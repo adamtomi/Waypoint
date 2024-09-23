@@ -57,19 +57,16 @@ public class WaypointCommands implements CommandHolder {
             return;
         }
 
-        Waypoint waypoint = this.waypointService.createWaypoint(sender, name, global)
-                //
-                .join();
-
-        Position pos = waypoint.getPosition();
-
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)
-                .with(
-                        Placeholder.of("name", waypoint.getName()),
-                        Placeholder.of("world", pos.getWorldName()),
-                        Placeholder.of("coordinates", formatPosition(pos))
-                )
-                .make());
+        this.waypointService.createWaypoint(sender, name, global)
+                .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)
+                        .with(
+                                Placeholder.of("name", x.getName()),
+                                Placeholder.of("world", x.getPosition().getWorldName()),
+                                Placeholder.of("coordinates", formatPosition(x.getPosition()))
+                        )
+                        .make())
+                .thenAccept(sender::sendMessage)
+                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.CREATION_FAILURE).make(), "Failed to create waypoint", LOGGER));
     }
 
     @CommandDefinition(route = "waypoint|wp remove|rm", permission = "waypoint.remove", conditions = { IsPlayer.class })
