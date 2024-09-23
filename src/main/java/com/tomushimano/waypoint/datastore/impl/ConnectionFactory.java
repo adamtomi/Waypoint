@@ -36,7 +36,7 @@ public class ConnectionFactory implements AutoCloseable {
 
         if (this.filebased) {
             config.setDriverClassName("org.sqlite.JDBC");
-            config.setJdbcUrl("jdbc:sqlite:/%s".formatted(this.plugin.getDataPath().resolve(this.config.get(StandardKeys.Database.FILE_NAME))));
+            config.setJdbcUrl("jdbc:sqlite:%s".formatted(this.plugin.getDataPath().resolve(this.config.get(StandardKeys.Database.FILE_NAME))));
         } else {
             config.setDriverClassName("com.mysql.jdbc.Driver");
             config.setJdbcUrl(createJdbcUrl(

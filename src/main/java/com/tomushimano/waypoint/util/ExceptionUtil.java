@@ -12,10 +12,8 @@ public final class ExceptionUtil {
     }
 
     public static void capture(Throwable ex, String detail, Logger logger) {
-        logger.error("");
         logger.error(">> An unexpected error has occurred, see below for details!");
         logger.error(detail, ex);
-        logger.error("");
     }
 
     public static <T> Function<Throwable, T> capture(String detail, Logger logger) {
@@ -27,6 +25,13 @@ public final class ExceptionUtil {
 
     public static <T> Function<Throwable, T> capture(CommandSender sender, Component message, String detail, Logger logger) {
         sender.sendMessage(message);
-        return capture(detail, logger);
+        System.out.println("a");
+        // return capture(detail, logger);
+        return ex -> {
+            System.out.println("b");
+            ex.printStackTrace();
+            capture(ex, detail, logger);
+            return null;
+        };
     }
 }

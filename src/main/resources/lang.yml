@@ -1,12 +1,20 @@
 command:
-  need-to-be-a-player: "&cEzt a parancsot csak játékos használhatja."
-  unexpected-error: "&cHiba történt a parancs végrehajtása közben :("
-  unknown-subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
+  need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
+  unexpected_error: "&cHiba történt a parancs végrehajtása közben :("
+  unknown_subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
 
 waypoint:
   creation:
-    success: "&aWaypoint sikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
-    failure: "&cHiba történ a waypoint létrehozása közben."
+    success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
+    already_exists: "&cMár létrehoztál &7&l\"{name}\" &cnévvel waypointot."
+    failure: "&cHiba történt a waypoint létrehozása közben."
   deletion:
     success: "&aAz alábbi waypoint el lett távolítva: &7&l\"{name}\"&a."
     failure: "&cHiba történt a waypoint eltávolítása közben."
+  list:
+    header: "&aÖsszesen &l{count} &awaypoint érhető el számodra (&7&l{page}&8/&7{totalpages})"
+    item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
+    footer_previous: "&8&l<&7Previous                  "
+    footer_separator: "&8&l|"
+    footer_next: "                   &7Next&8&l>"
+    empty: "&aNincs megjeleníthető waypoint."

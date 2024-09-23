@@ -2,7 +2,6 @@ package com.tomushimano.waypoint;
 
 import com.tomushimano.waypoint.command.CommandManager;
 import com.tomushimano.waypoint.config.ConfigHolder;
-import com.tomushimano.waypoint.datastore.Storage;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import org.bukkit.event.Listener;
@@ -50,6 +49,7 @@ public final class WaypointLoader {
             fail();
         }
 
+        // Load configuration into every config holder
         for (ConfigHolder config : this.configurations) {
             try {
                 config.reload();
@@ -59,16 +59,16 @@ public final class WaypointLoader {
             }
         }
 
-        /*this.storageHolder.get().connect()
-                .exceptionally(capture("Failed to connect to database", LOGGER))
-                .join();*/
-        this.commandManager.register();
+        // Could not establish a connection to database, return here
+        if (!this.storageHolder.get().connect()) return;
 
+        this.commandManager.register();
         registerListeners();
     }
 
     public void unload() {
         this.commandManager.shutdown();
+        this.storageHolder.get().disconnect();
     }
 
     private void copyResources() throws IOException {

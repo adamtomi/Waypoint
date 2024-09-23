@@ -8,11 +8,13 @@ import java.util.concurrent.CompletableFuture;
 
 public interface Storage {
 
-    void connect();
+    boolean connect();
 
     void disconnect();
 
     CompletableFuture<?> save(Waypoint waypoint);
+
+    CompletableFuture<?> remove(Waypoint waypoint);
 
     CompletableFuture<Set<Waypoint>> loadAccessible(UUID playerId);
 }

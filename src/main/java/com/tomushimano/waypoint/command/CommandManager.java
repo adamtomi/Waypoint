@@ -11,7 +11,6 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import grapefruit.command.CommandException;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
@@ -115,7 +114,7 @@ public class CommandManager implements CommandExecutor, Listener {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND)
                     .with(Placeholder.of("command", ex.name()))
                     .make());
-        } catch (CommandException ex) {
+        } catch (Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
             // Extract cause. CommandInvocationException wraps other exceptions, so
             // just call getCause(), if we're dealing with that
