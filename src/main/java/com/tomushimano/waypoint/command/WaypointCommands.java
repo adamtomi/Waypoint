@@ -123,7 +123,7 @@ public class WaypointCommands implements CommandModule {
     }
 
     @CommandDefinition(route = "waypoint|wp edit", permission = "waypoint.edit", conditions = { IsPlayer.class })
-    public void edit(@Sender Player sender, @Arg @Owning  Waypoint waypoint, @Flag @Max(255) String name, @Flag boolean toggleGlobal) {
+    public void edit(@Sender Player sender, @Arg @Owning Waypoint waypoint, @Flag @Max(255) String name, @Flag boolean toggleGlobal) {
         if (name != null) waypoint.setName(name);
         if (toggleGlobal) waypoint.setGlobal(!waypoint.isGlobal());
         updateAndReport(sender, waypoint);
