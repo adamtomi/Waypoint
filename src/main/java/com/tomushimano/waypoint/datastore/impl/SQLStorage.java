@@ -7,6 +7,7 @@ import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Position;
 import org.slf4j.Logger;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ public class SQLStorage implements Storage {
     private final FutureFactory futureFactory = new FutureFactory();
     private final ConnectionFactory connectionFactory;
 
+    @Inject
     public SQLStorage(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }

@@ -2,11 +2,14 @@ package com.tomushimano.waypoint.datastore.impl;
 
 import com.tomushimano.waypoint.config.ConfigHolder;
 import com.tomushimano.waypoint.config.StandardKeys;
+import com.tomushimano.waypoint.datastore.StorageKind;
+import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.util.Memoized;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -18,12 +21,11 @@ public class ConnectionFactory implements AutoCloseable {
     private final Memoized<HikariDataSource> dataSource = Memoized.of(this::createDataSource);
     private final JavaPlugin plugin;
     private final ConfigHolder config;
-    private final boolean filebased;
 
-    public ConnectionFactory(JavaPlugin plugin, ConfigHolder config, boolean filebased) {
+    @Inject
+    public ConnectionFactory(JavaPlugin plugin, @Cfg ConfigHolder config) {
         this.plugin = requireNonNull(plugin, "plugin cannot be null");
         this.config = requireNonNull(config, "config cannot be null");
-        this.filebased = filebased;
     }
 
     private HikariDataSource createDataSource() {
@@ -34,7 +36,7 @@ public class ConnectionFactory implements AutoCloseable {
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         config.setPoolName("WaypointPool");
 
-        if (this.filebased) {
+        if (this.config.get(StandardKeys.Database.TYPE).equals(StorageKind.SQLITE)) {
             config.setDriverClassName("org.sqlite.JDBC");
             config.setJdbcUrl("jdbc:sqlite:%s".formatted(this.plugin.getDataPath().resolve(this.config.get(StandardKeys.Database.FILE_NAME))));
         } else {

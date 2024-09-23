@@ -2,6 +2,7 @@ package com.tomushimano.waypoint.datastore.impl;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import javax.inject.Inject;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -11,6 +12,9 @@ public class FutureFactory {
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-storage #%1$d").build()
     );
+
+    @Inject
+    public FutureFactory() {}
 
     public <T> CompletableFuture<T> futureOf(Callable<T> callable) {
         CompletableFuture<T> future = new CompletableFuture<>();
