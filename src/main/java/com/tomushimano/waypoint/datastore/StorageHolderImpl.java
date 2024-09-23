@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.datastore;
 
-import com.tomushimano.waypoint.config.ConfigHolder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.util.Memoized;
@@ -14,11 +14,11 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public class StorageHolderImpl implements StorageHolder {
     private final Memoized<Storage> implHolder = Memoized.of(this::compute);
-    private final ConfigHolder config;
+    private final Configurable config;
     private final Map<StorageKind, Storage> storageImpls;
 
     @Inject
-    public StorageHolderImpl(@Cfg ConfigHolder config, Map<StorageKind, Storage> storageImpls) {
+    public StorageHolderImpl(@Cfg Configurable config, Map<StorageKind, Storage> storageImpls) {
         this.config = config;
         this.storageImpls = storageImpls;
     }

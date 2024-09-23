@@ -13,15 +13,15 @@ import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 @Singleton
 public class ConfigHelper {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(ConfigHelper.class);
-    private final Set<ConfigHolder> configurations;
+    private final Set<Configurable> configurations;
 
     @Inject
-    public ConfigHelper(Set<ConfigHolder> configurations) {
+    public ConfigHelper(Set<Configurable> configurations) {
         this.configurations = configurations;
     }
 
     public boolean reloadAll() {
-        for (ConfigHolder config : this.configurations) {
+        for (Configurable config : this.configurations) {
             try {
                 config.reload();
             } catch (IOException ex) {

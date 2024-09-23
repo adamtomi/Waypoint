@@ -8,12 +8,12 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-final class ConfigHolderImpl implements ConfigHolder {
+final class ConfigurableImpl implements Configurable {
     private final Map<ConfigKey<?>, Object> cache = new HashMap<>();
     private final Path file;
     private final YamlConfiguration internalConfig;
 
-    ConfigHolderImpl(Path file) {
+    ConfigurableImpl(Path file) {
         this.file = file;
         this.internalConfig = new YamlConfiguration();
     }

@@ -3,7 +3,7 @@ package com.tomushimano.waypoint.config;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public interface ConfigHolder {
+public interface Configurable {
     String COMMAND_YML = "command.yml";
     String CONFIG_YML = "config.yml";
     String LANG_YML = "lang.yml";
@@ -14,7 +14,7 @@ public interface ConfigHolder {
 
     Path getBackingFile();
 
-    static ConfigHolder fileBacked(Path file) {
-        return new ConfigHolderImpl(file);
+    static Configurable fileBacked(Path file) {
+        return new ConfigurableImpl(file);
     }
 }

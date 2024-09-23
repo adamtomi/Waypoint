@@ -2,7 +2,7 @@ package com.tomushimano.waypoint;
 
 import com.tomushimano.waypoint.command.CommandManager;
 import com.tomushimano.waypoint.config.ConfigHelper;
-import com.tomushimano.waypoint.config.ConfigHolder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import org.bukkit.event.Listener;
@@ -70,9 +70,9 @@ public final class WaypointLoader {
     private void copyResources() throws IOException {
         Path datafolder = this.plugin.getDataPath();
         Set<String> files = Set.of(
-                ConfigHolder.COMMAND_YML,
-                ConfigHolder.CONFIG_YML,
-                ConfigHolder.LANG_YML
+                Configurable.COMMAND_YML,
+                Configurable.CONFIG_YML,
+                Configurable.LANG_YML
         );
 
         for (String file : files) copyResourceIfNotExists(datafolder, file);

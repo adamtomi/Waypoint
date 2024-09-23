@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.datastore.impl;
 
-import com.tomushimano.waypoint.config.ConfigHolder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.datastore.StorageKind;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
@@ -15,17 +15,16 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Objects.requireNonNull;
 
 public class ConnectionFactory implements AutoCloseable {
     private final Memoized<HikariDataSource> dataSource = Memoized.of(this::createDataSource);
     private final JavaPlugin plugin;
-    private final ConfigHolder config;
+    private final Configurable config;
 
     @Inject
-    public ConnectionFactory(JavaPlugin plugin, @Cfg ConfigHolder config) {
-        this.plugin = requireNonNull(plugin, "plugin cannot be null");
-        this.config = requireNonNull(config, "config cannot be null");
+    public ConnectionFactory(JavaPlugin plugin, @Cfg Configurable config) {
+        this.plugin = plugin;
+        this.config = config;
     }
 
     private HikariDataSource createDataSource() {

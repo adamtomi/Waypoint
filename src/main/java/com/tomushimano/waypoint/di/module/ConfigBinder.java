@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.di.module;
 
-import com.tomushimano.waypoint.config.ConfigHolder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
 import com.tomushimano.waypoint.di.qualifier.Lang;
@@ -13,13 +13,13 @@ public interface ConfigBinder {
 
     @Binds
     @IntoSet
-    ConfigHolder bindCommandYml(@Cmd ConfigHolder configHolder);
+    Configurable bindCommandYml(@Cmd Configurable configurable);
 
     @Binds
     @IntoSet
-    ConfigHolder bindConfigYml(@Cfg ConfigHolder configHolder);
+    Configurable bindConfigYml(@Cfg Configurable configurable);
 
     @Binds
     @IntoSet
-    ConfigHolder bindLangYml(@Lang ConfigHolder configHolder);
+    Configurable bindLangYml(@Lang Configurable configurable);
 }

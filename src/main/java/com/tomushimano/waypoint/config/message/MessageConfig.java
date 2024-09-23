@@ -1,16 +1,16 @@
 package com.tomushimano.waypoint.config.message;
 
-import com.tomushimano.waypoint.config.ConfigHolder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.ConfigKey;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 
 import javax.inject.Inject;
 
 public class MessageConfig {
-    private final ConfigHolder config;
+    private final Configurable config;
 
     @Inject
-    public MessageConfig(@Lang ConfigHolder config) {
+    public MessageConfig(@Lang Configurable config) {
         this.config = config;
     }
 
