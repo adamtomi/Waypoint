@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class WaypointService {
+    /* Map a set of waypoints to the ownerId */
     private final Multimap<UUID, Waypoint> waypoints = HashMultimap.create();
     private final StorageHolder storageHolder;
 
@@ -66,7 +67,15 @@ public class WaypointService {
     }
 
     public CompletableFuture<?> loadWaypoints(Player player) {
-        return new CompletableFuture<>();
+        return this.storageHolder.get().loadAccessible(player.getUniqueId())
+                .thenAccept(x -> {
+                    for (Waypoint each : x) {
+                        // If the waypoint wasn't in the map, render it.
+                        if (this.waypoints.put(each.getOwnerId(), each)) {
+                            each.render();
+                        }
+                    }
+                });
     }
 
     public void unloadWaypoints(Player player) {

@@ -54,6 +54,8 @@ public class Waypoint {
         this.position = requireNonNull(position, "position cannot be null");
     }
 
+    public void render() {}
+
     @Override
     public String toString() {
         return "Waypoint{uuid=%s, ownerId=%s, name=%s, global=%s, position=%s}".formatted(
