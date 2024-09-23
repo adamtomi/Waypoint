@@ -10,7 +10,6 @@ import grapefruit.command.dispatcher.config.DispatcherConfigurer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
-
 import java.util.Set;
 
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SENDER_KEY;

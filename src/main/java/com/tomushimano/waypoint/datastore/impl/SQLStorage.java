@@ -1,6 +1,5 @@
 package com.tomushimano.waypoint.datastore.impl;
 
-import com.sun.jna.platform.unix.solaris.LibKstat;
 import com.tomushimano.waypoint.WaypointPlugin;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;

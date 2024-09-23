@@ -1,7 +1,7 @@
 package com.tomushimano.waypoint.config.message;
 
-import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.ConfigKey;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 
 import javax.inject.Inject;

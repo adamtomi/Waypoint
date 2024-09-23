@@ -22,7 +22,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-
 import java.util.Set;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
