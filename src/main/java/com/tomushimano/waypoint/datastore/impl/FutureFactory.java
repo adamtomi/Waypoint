@@ -1,6 +1,7 @@
 package com.tomushimano.waypoint.datastore.impl;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.tomushimano.waypoint.util.ConcurrentUtil;
 
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
@@ -8,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FutureFactory {
+public class FutureFactory implements AutoCloseable {
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-storage #%1$d").build()
     );
@@ -41,6 +42,11 @@ public class FutureFactory {
         });
 
         return future;
+    }
+
+    @Override
+    public void close() {
+        ConcurrentUtil.terminate(this.executor, 1L);
     }
 
     @FunctionalInterface

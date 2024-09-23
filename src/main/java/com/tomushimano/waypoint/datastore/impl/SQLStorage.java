@@ -86,6 +86,7 @@ public class SQLStorage implements Storage {
     public void disconnect() {
         LOGGER.info("Closing connection...");
         this.connectionFactory.close();
+        this.futureFactory.close();
     }
 
     private String insertionSQL() {
