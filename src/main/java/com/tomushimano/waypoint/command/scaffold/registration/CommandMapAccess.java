@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("unchecked")
 public final class CommandMapAccess extends CommandRegistrationHandler {
-    private static final Logger LOGGER = NamespacedLoggerFactory.create("CommandMapAccess");
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandMapAccess.class);
     private static final CommandMap COMMAND_MAP = Bukkit.getCommandMap();
     private static final Constructor<PluginCommand> PLUGIN_COMMAND_CONSTRUCTOR;
     private static final Map<String, org.bukkit.command.Command> KNOWN_COMMANDS;

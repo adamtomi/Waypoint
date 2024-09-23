@@ -45,7 +45,7 @@ import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SEND
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
 public class CommandManager implements CommandExecutor, Listener {
-    private static final Logger LOGGER = NamespacedLoggerFactory.create("CommandManager");
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
     private static final UnaryOperator<String> STRIP_LEADING_SLASH = in -> in.startsWith("/") ? in.substring(1) : in;
     private final Set<String> trackedAliases = new HashSet<>();
     private final SyntaxFormatter syntaxFormatter = new SyntaxFormatter();

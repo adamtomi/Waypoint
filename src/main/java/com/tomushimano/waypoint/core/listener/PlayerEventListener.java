@@ -15,7 +15,7 @@ import static com.tomushimano.waypoint.util.BukkitUtil.formatPlayer;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
 public class PlayerEventListener implements Listener {
-    private static final Logger LOGGER = NamespacedLoggerFactory.create("PlayerListener");
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(PlayerEventListener.class);
     private final WaypointService waypointService;
 
     @Inject
