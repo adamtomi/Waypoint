@@ -7,6 +7,8 @@ public final class MessageKeys {
 
     public static final class Command {
         public static final ConfigKey<String> NEED_TO_BE_A_PLAYER = ConfigKey.stringKey("command.need_to_be_a_player");
+        public static final ConfigKey<String> SYNTAX_HINT = ConfigKey.stringKey("command.syntax_hint");
+        public static final ConfigKey<String> SYNTAX_ERROR = ConfigKey.stringKey("command.syntax_error");
         public static final ConfigKey<String> UNEXPECTED_ERROR = ConfigKey.stringKey("command.unexpected_error");
         public static final ConfigKey<String> UNKNOWN_SUBCOMMAND = ConfigKey.stringKey("command.unknown_subcommand");
 

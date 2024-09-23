@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandHolder;
 import com.tomushimano.waypoint.command.scaffold.CustomConfigurer;
+import com.tomushimano.waypoint.command.scaffold.SyntaxFormatter;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseCondition;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
@@ -16,6 +17,7 @@ import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.condition.UnfulfilledConditionException;
 import grapefruit.command.dispatcher.config.DefaultConfigurer;
+import grapefruit.command.dispatcher.syntax.CommandSyntaxException;
 import grapefruit.command.dispatcher.tree.CommandGraph;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
@@ -46,6 +48,7 @@ public class CommandManager implements CommandExecutor, Listener {
     private static final Logger LOGGER = NamespacedLoggerFactory.create("CommandManager");
     private static final UnaryOperator<String> STRIP_LEADING_SLASH = in -> in.startsWith("/") ? in.substring(1) : in;
     private final Set<String> trackedAliases = new HashSet<>();
+    private final SyntaxFormatter syntaxFormatter = new SyntaxFormatter();
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
     );
@@ -114,6 +117,12 @@ public class CommandManager implements CommandExecutor, Listener {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND)
                     .with(Placeholder.of("command", ex.name()))
                     .make());
+        } catch (CommandSyntaxException ex) {
+          sender.sendMessage(this.messageConfig.get(MessageKeys.Command.SYNTAX_ERROR).make());
+          ex.correctSyntax().map(this.syntaxFormatter)
+                  .map(x -> this.messageConfig.get(MessageKeys.Command.SYNTAX_HINT)
+                          .with(Placeholder.of("syntax", x)).make())
+                  .ifPresent(sender::sendMessage);
         } catch (Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
             // Extract cause. CommandInvocationException wraps other exceptions, so

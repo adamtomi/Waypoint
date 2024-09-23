@@ -1,5 +1,7 @@
 command:
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
+  syntax_hint: "&7/{syntax}"
+  syntax_error: "&cHelytelen parancs használat!"
   unexpected_error: "&cHiba történt a parancs végrehajtása közben :("
   unknown_subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
 
