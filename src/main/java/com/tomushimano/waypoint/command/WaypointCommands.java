@@ -128,11 +128,23 @@ public class WaypointCommands implements CommandHolder {
 
     @CommandDefinition(route = "waypoint|wp edit", permission = "waypoint.edit", conditions = { IsPlayer.class })
     public void edit(@Sender Player sender, @Arg @Owning  Waypoint waypoint, @Flag @Max(255) String name, @Flag boolean toggleGlobal) {
-
+        if (name != null) waypoint.setName(name);
+        if (toggleGlobal) waypoint.setGlobal(!waypoint.isGlobal());
+        updateAndReport(sender, waypoint);
     }
 
     @CommandDefinition(route = "waypoint|wp reloc|movehere", permission = "waypoint.reloc", conditions = { IsPlayer.class })
     public void reloc(@Sender Player sender, @Arg @Owning Waypoint waypoint) {
+        waypoint.setPosition(Position.from(sender.getLocation()));
+        updateAndReport(sender, waypoint);
+    }
 
+    private void updateAndReport(Player sender, Waypoint waypoint) {
+        this.waypointService.updateWaypoint(waypoint)
+                .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.UPDATE_SUCCESS)
+                        .with(Placeholder.of("name", waypoint.getName()))
+                        .make())
+                .thenAccept(sender::sendMessage)
+                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.UPDATE_FAILURE).make(), "Failed to update waypoint", LOGGER));
     }
 }

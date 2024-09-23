@@ -32,6 +32,9 @@ public final class MessageKeys {
         public static final ConfigKey<String> LIST_FOOTER_SEPARATOR = ConfigKey.stringKey("waypoint.list.footer_separator");
         public static final ConfigKey<String> LIST_EMPTY = ConfigKey.stringKey("waypoint.list.empty");
 
+        public static final ConfigKey<String> UPDATE_SUCCESS = ConfigKey.stringKey("waypoint.update.success");
+        public static final ConfigKey<String> UPDATE_FAILURE = ConfigKey.stringKey("waypoint.update.failure");
+
         private Waypoint() {
             throw new DontInvokeMe();
         }

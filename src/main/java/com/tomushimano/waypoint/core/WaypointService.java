@@ -63,7 +63,7 @@ public class WaypointService {
     }
 
     public CompletableFuture<?> updateWaypoint(Waypoint waypoint) {
-        return new CompletableFuture<>();
+        return this.storageHolder.get().save(waypoint);
     }
 
     public CompletableFuture<?> loadWaypoints(Player player) {

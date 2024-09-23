@@ -20,3 +20,6 @@ waypoint:
     footer_separator: "&8&l|"
     footer_next: "                   &7Next&8&l>"
     empty: "&aNincs megjeleníthető waypoint."
+  update:
+    success: "&aWaypoint \"&l{name}&a\" sikeresen frissítve."
+    failure: "&cHiba történt a waypoint frissítése közben."
