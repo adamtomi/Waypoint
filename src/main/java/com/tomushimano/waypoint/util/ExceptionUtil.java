@@ -24,12 +24,8 @@ public final class ExceptionUtil {
     }
 
     public static <T> Function<Throwable, T> capture(CommandSender sender, Component message, String detail, Logger logger) {
-        sender.sendMessage(message);
-        System.out.println("a");
-        // return capture(detail, logger);
         return ex -> {
-            System.out.println("b");
-            ex.printStackTrace();
+            sender.sendMessage(message);
             capture(ex, detail, logger);
             return null;
         };
