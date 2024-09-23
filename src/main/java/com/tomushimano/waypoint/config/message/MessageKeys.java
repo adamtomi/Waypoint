@@ -4,6 +4,15 @@ import com.tomushimano.waypoint.config.ConfigKey;
 import com.tomushimano.waypoint.util.DontInvokeMe;
 
 public final class MessageKeys {
+    public static final class Admin {
+        public static final ConfigKey<String> RELOAD_INITIATED = ConfigKey.stringKey("admin.reload.initiated");
+        public static final ConfigKey<String> RELOAD_SUCCESS = ConfigKey.stringKey("admin.reload.success");
+        public static final ConfigKey<String> RELOAD_FAILURE = ConfigKey.stringKey("admin.reload.failure");
+
+        private Admin() {
+            throw new DontInvokeMe();
+        }
+    }
 
     public static final class Command {
         public static final ConfigKey<String> NEED_TO_BE_A_PLAYER = ConfigKey.stringKey("command.need_to_be_a_player");

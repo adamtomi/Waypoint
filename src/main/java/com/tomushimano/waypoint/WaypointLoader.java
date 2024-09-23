@@ -1,6 +1,7 @@
 package com.tomushimano.waypoint;
 
 import com.tomushimano.waypoint.command.CommandManager;
+import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.ConfigHolder;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
@@ -22,7 +23,7 @@ public final class WaypointLoader {
     private final JavaPlugin plugin;
     private final CommandManager commandManager;
     private final Set<Listener> listeners;
-    private final Set<ConfigHolder> configurations;
+    private final ConfigHelper configHelper;
     private final StorageHolder storageHolder;
 
     @Inject
@@ -30,13 +31,13 @@ public final class WaypointLoader {
             JavaPlugin plugin,
             CommandManager commandManager,
             Set<Listener> listeners,
-            Set<ConfigHolder> configurations,
+            ConfigHelper configHelper,
             StorageHolder storageHolder
     ) {
         this.plugin = plugin;
         this.commandManager = commandManager;
         this.listeners = listeners;
-        this.configurations = configurations;
+        this.configHelper = configHelper;
         this.storageHolder = storageHolder;
     }
 
@@ -50,13 +51,8 @@ public final class WaypointLoader {
         }
 
         // Load configuration into every config holder
-        for (ConfigHolder config : this.configurations) {
-            try {
-                config.reload();
-            } catch (IOException ex) {
-                capture(ex, "Failed to load configuration from file: '%s'".formatted(config.getBackingFile()), LOGGER);
-                fail();
-            }
+        if (!this.configHelper.reloadAll()) {
+            fail();
         }
 
         // Could not establish a connection to database, return here

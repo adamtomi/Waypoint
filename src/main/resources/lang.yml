@@ -1,3 +1,9 @@
+admin:
+  reload:
+    initiated: "&aKonfiguráció újratöltése..."
+    success: "&aKonfiguráció sikeresen újratöltve &o{duration}ms &aalatt."
+    failure: "&cHiba történt a konfiguráció újratöltése közben."
+
 command:
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
   syntax_hint: "&7/{syntax}"
