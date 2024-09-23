@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command;
 
-import com.tomushimano.waypoint.command.scaffold.CommandHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandModule;
 import com.tomushimano.waypoint.command.scaffold.Owning;
 import com.tomushimano.waypoint.command.scaffold.Sender;
 import com.tomushimano.waypoint.command.scaffold.condition.IsPlayer;
@@ -10,7 +10,6 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
-import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Paginated;
 import com.tomushimano.waypoint.util.Position;
 import grapefruit.command.CommandContainer;
@@ -21,7 +20,6 @@ import grapefruit.command.dispatcher.CommandDispatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Player;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 
@@ -30,8 +28,7 @@ import java.util.Set;
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
-public class WaypointCommands implements CommandHolder {
-    private static final Logger LOGGER = NamespacedLoggerFactory.create("Commands");
+public class WaypointCommands implements CommandModule {
     private final CommandContainer container = new WaypointCommands_Container(this);
     private final WaypointService waypointService;
     private final MessageConfig messageConfig;

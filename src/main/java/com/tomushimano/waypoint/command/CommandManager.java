@@ -3,7 +3,7 @@ package com.tomushimano.waypoint.command;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.tomushimano.waypoint.command.scaffold.CommandHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandModule;
 import com.tomushimano.waypoint.command.scaffold.CustomConfigurer;
 import com.tomushimano.waypoint.command.scaffold.SyntaxFormatter;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseCondition;
@@ -53,19 +53,19 @@ public class CommandManager implements CommandExecutor, Listener {
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
     );
     private final JavaPlugin plugin;
-    private final Set<CommandHolder> commandHolders;
+    private final Set<CommandModule> commandModules;
     private final MessageConfig messageConfig;
     private final CommandDispatcher dispatcher;
 
     @Inject
     public CommandManager(
             JavaPlugin plugin,
-            Set<CommandHolder> commandHolders,
+            Set<CommandModule> commandModules,
             CustomConfigurer.Factory configurerFactory,
             MessageConfig messageConfig
     ) {
         this.plugin = plugin;
-        this.commandHolders = commandHolders;
+        this.commandModules = commandModules;
         this.messageConfig = messageConfig;
         this.dispatcher = CommandDispatcher.using(DefaultConfigurer.getInstance(), configurerFactory.create(this));
     }
@@ -73,7 +73,7 @@ public class CommandManager implements CommandExecutor, Listener {
     public void register() {
         LOGGER.info("Registering commands...");
         // Register command handlers
-        this.commandHolders.forEach(x -> x.registerCommands(this.dispatcher));
+        this.commandModules.forEach(x -> x.registerCommands(this.dispatcher));
         // Register tab-completion listener
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     }

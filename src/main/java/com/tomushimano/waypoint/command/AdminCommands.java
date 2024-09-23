@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command;
 
-import com.tomushimano.waypoint.command.scaffold.CommandHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandModule;
 import com.tomushimano.waypoint.command.scaffold.Sender;
 import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
 
-public class AdminCommands implements CommandHolder {
+public class AdminCommands implements CommandModule {
     private final CommandContainer container = new AdminCommands_Container(this);
     private final ConfigHelper configHelper;
     private final MessageConfig messageConfig;

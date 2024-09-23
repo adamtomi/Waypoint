@@ -2,7 +2,7 @@ package com.tomushimano.waypoint.di.module;
 
 import com.tomushimano.waypoint.command.AdminCommands;
 import com.tomushimano.waypoint.command.WaypointCommands;
-import com.tomushimano.waypoint.command.scaffold.CommandHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandModule;
 import com.tomushimano.waypoint.command.scaffold.condition.IsPlayer;
 import com.tomushimano.waypoint.command.scaffold.modifier.MaxModifier;
 import dagger.Binds;
@@ -16,11 +16,11 @@ public interface CommandBinder {
 
     @Binds
     @IntoSet
-    CommandHolder bindAdminCommands(AdminCommands instance);
+    CommandModule bindAdminCommands(AdminCommands instance);
 
     @Binds
     @IntoSet
-    CommandHolder bindWaypointCommands(WaypointCommands instance);
+    CommandModule bindWaypointCommands(WaypointCommands instance);
 
     @Binds
     @IntoSet
