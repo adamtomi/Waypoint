@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.core;
 
+import com.tomushimano.waypoint.core.hologram.Hologram;
 import com.tomushimano.waypoint.util.Position;
 
 import java.util.Objects;
@@ -8,6 +9,7 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 
 public class Waypoint {
+    private final Hologram internalHologram = Hologram.create(this);
     private final UUID uuid;
     private final UUID ownerId;
     private String name;
@@ -54,7 +56,17 @@ public class Waypoint {
         this.position = requireNonNull(position, "position cannot be null");
     }
 
-    public void render() {}
+    public Hologram getHandle() {
+        return this.internalHologram;
+    }
+
+    public void render() {
+        this.internalHologram.spawn();
+    }
+
+    public void hide() {
+        this.internalHologram.despawn();
+    }
 
     @Override
     public String toString() {

@@ -1,5 +1,14 @@
 package com.tomushimano.waypoint.core.hologram;
 
-public class Hologram {
+import com.tomushimano.waypoint.core.Waypoint;
 
+public interface Hologram {
+
+    void spawn();
+
+    void despawn();
+
+    static Hologram create(Waypoint waypoint) {
+        return new HologramImpl(waypoint);
+    }
 }

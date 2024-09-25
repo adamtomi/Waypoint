@@ -53,11 +53,13 @@ public class WaypointService {
         UUID ownerId = player.getUniqueId();
         Waypoint waypoint = new Waypoint(uniqueId, ownerId, name, global, Position.from(player.getLocation()));
         this.waypoints.put(ownerId, waypoint);
+        waypoint.render();
+
         return this.storageHolder.get().save(waypoint).thenApply(x -> waypoint);
     }
 
     public CompletableFuture<?> removeWaypoint(Waypoint waypoint) {
-        // TODO send entity destroy packet
+        waypoint.hide();
         this.waypoints.remove(waypoint.getOwnerId(), waypoint);
         return this.storageHolder.get().remove(waypoint);
     }
