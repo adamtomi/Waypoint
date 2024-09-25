@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandModule;
 import com.tomushimano.waypoint.command.scaffold.CustomConfigurer;
+import com.tomushimano.waypoint.command.scaffold.RichCommandException;
 import com.tomushimano.waypoint.command.scaffold.SyntaxFormatter;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseCondition;
 import com.tomushimano.waypoint.config.message.MessageConfig;
@@ -12,6 +13,7 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
+import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
@@ -123,6 +125,12 @@ public class CommandManager implements CommandExecutor, Listener {
                   .map(x -> this.messageConfig.get(MessageKeys.Command.SYNTAX_HINT)
                           .with(Placeholder.of("syntax", x)).make())
                   .ifPresent(sender::sendMessage);
+        } catch (RichCommandException ex) {
+            sender.sendMessage(ex.message());
+        } catch (CommandArgumentException ex) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
+                    .with(Placeholder.of("argument", ex.input()))
+                    .make());
         } catch (Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
             // Extract cause. CommandInvocationException wraps other exceptions, so

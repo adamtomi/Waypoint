@@ -4,7 +4,7 @@ import com.tomushimano.waypoint.command.CommandManager;
 import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.registration.CommandMapAccess;
 import com.tomushimano.waypoint.core.Waypoint;
-import grapefruit.command.argument.modifier.ContextualModifier;
+import grapefruit.command.argument.modifier.ArgumentModifier;
 import grapefruit.command.dispatcher.condition.CommandCondition;
 import grapefruit.command.dispatcher.config.DispatcherConfigurer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,13 +21,13 @@ public class CustomConfigurer extends DispatcherConfigurer {
     private final CommandManager commandManager;
     private final WaypointArgumentMapper.Provider provider;
     private final Set<CommandCondition> conditions;
-    private final Set<ContextualModifier.Factory<?>> factories;
+    private final Set<ArgumentModifier.Factory<?>> factories;
 
     public CustomConfigurer(
             JavaPlugin plugin,
             WaypointArgumentMapper.Provider provider,
             Set<CommandCondition> conditions,
-            Set<ContextualModifier.Factory<?>> factories,
+            Set<ArgumentModifier.Factory<?>> factories,
             CommandManager commandManager
     ) {
         this.plugin = requireNonNull(plugin, "plugin cannot be null");
@@ -60,14 +60,14 @@ public class CustomConfigurer extends DispatcherConfigurer {
         private final JavaPlugin plugin;
         private final WaypointArgumentMapper.Provider provider;
         private final Set<CommandCondition> conditions;
-        private final Set<ContextualModifier.Factory<?>> factories;
+        private final Set<ArgumentModifier.Factory<?>> factories;
 
         @Inject
         public Factory(
                 JavaPlugin plugin,
                 WaypointArgumentMapper.Provider provider,
                 Set<CommandCondition> conditions,
-                Set<ContextualModifier.Factory<?>> factories
+                Set<ArgumentModifier.Factory<?>> factories
         ) {
             this.plugin = plugin;
             this.provider = provider;

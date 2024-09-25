@@ -5,6 +5,8 @@ admin:
     failure: "&cHiba történt a konfiguráció újratöltése közben."
 
 command:
+  invalid_argument: "&cAz alábbi argumentum érvénytelen: &l{argument}"
+  max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
   syntax_hint: "&7/{syntax}"
   syntax_error: "&cHelytelen parancs használat!"
@@ -12,6 +14,7 @@ command:
   unknown_subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
 
 waypoint:
+  no_such_waypoint: "&cNem található \"&l{name}&c\" nevű waypoint."
   creation:
     success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
     already_exists: "&cMár létrehoztál &7&o\"{name}\" &cnévvel waypointot."

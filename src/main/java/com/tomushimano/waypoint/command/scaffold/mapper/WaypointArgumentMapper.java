@@ -1,9 +1,12 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
+import com.tomushimano.waypoint.command.scaffold.RichCommandException;
+import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import grapefruit.command.CommandException;
-import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.mapper.ArgumentMapper;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.StringReader;
@@ -19,9 +22,11 @@ import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.PLAY
 public class WaypointArgumentMapper implements ArgumentMapper<Waypoint> {
     public static final String OWNING_NAME = "__WAYPOINT_OWNING__";
     private final Function<Player, Set<Waypoint>> valueProvider;
+    private final MessageConfig messageConfig;
 
-    private WaypointArgumentMapper(Function<Player, Set<Waypoint>> valueProvider) {
+    private WaypointArgumentMapper(Function<Player, Set<Waypoint>> valueProvider, MessageConfig messageConfig) {
         this.valueProvider = valueProvider;
+        this.messageConfig = messageConfig;
     }
 
     @Override
@@ -36,7 +41,9 @@ public class WaypointArgumentMapper implements ArgumentMapper<Waypoint> {
         return candidates.stream()
                 .filter(x -> x.getName().equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(CommandArgumentException::new); // TODO error message?
+                .orElseThrow(() -> new RichCommandException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
+                        .with(Placeholder.of("name", value))
+                        .make()));
     }
 
     @Override
@@ -50,18 +57,20 @@ public class WaypointArgumentMapper implements ArgumentMapper<Waypoint> {
 
     public static final class Provider {
         private final WaypointService waypointService;
+        private final MessageConfig messageConfig;
 
         @Inject
-        public Provider(final WaypointService waypointService) {
+        public Provider(WaypointService waypointService, MessageConfig messageConfig) {
             this.waypointService = waypointService;
+            this.messageConfig = messageConfig;
         }
 
         public WaypointArgumentMapper standard() {
-            return new WaypointArgumentMapper(this.waypointService::getAccessibleWaypoints);
+            return new WaypointArgumentMapper(this.waypointService::getAccessibleWaypoints, this.messageConfig);
         }
 
         public WaypointArgumentMapper owning() {
-            return new WaypointArgumentMapper(this.waypointService::getOwnedWaypoints);
+            return new WaypointArgumentMapper(this.waypointService::getOwnedWaypoints, this.messageConfig);
         }
     }
 }

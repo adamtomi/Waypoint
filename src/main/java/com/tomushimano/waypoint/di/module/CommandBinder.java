@@ -8,7 +8,7 @@ import com.tomushimano.waypoint.command.scaffold.modifier.MaxModifier;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
-import grapefruit.command.argument.modifier.ContextualModifier;
+import grapefruit.command.argument.modifier.ArgumentModifier;
 import grapefruit.command.dispatcher.condition.CommandCondition;
 
 @Module
@@ -28,5 +28,5 @@ public interface CommandBinder {
 
     @Binds
     @IntoSet
-    ContextualModifier.Factory<?> bindMaxModifierFactory(MaxModifier.Factory factory);
+    ArgumentModifier.Factory<?> bindMaxModifierFactory(MaxModifier.Factory factory);
 }
