@@ -7,9 +7,7 @@ CREATE TABLE IF NOT EXISTS `waypoints` (
     `world` VARCHAR(255) NOT NULL,
     `x` DOUBLE NOT NULL,
     `y` DOUBLE NOT NULL,
-    `z` DOUBLE NOT NULL,
-    `yaw` FLOAT NOT NULL,
-    `pitch` FLOAT NOT NULL
+    `z` DOUBLE NOT NULL
 );
 
 -- Create unique index so that one name can be used once by every user.

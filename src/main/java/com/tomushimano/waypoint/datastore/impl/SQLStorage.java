@@ -89,7 +89,7 @@ public class SQLStorage implements Storage {
     }
 
     private String insertionSQL() {
-        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`id`) DO UPDATE SET `name` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?, `yaw` = ?, `pitch` = ?";
+        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`id`) DO UPDATE SET `name` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?";
     }
 
     private void fillInPrepStmt(PreparedStatement prepStmt, Waypoint waypoint, int startIdx, boolean includeIds) throws SQLException {
@@ -108,8 +108,6 @@ public class SQLStorage implements Storage {
         prepStmt.setDouble(startIdx++, pos.getX());
         prepStmt.setDouble(startIdx++, pos.getY());
         prepStmt.setDouble(startIdx++, pos.getZ());
-        prepStmt.setDouble(startIdx++, pos.getYaw());
-        prepStmt.setDouble(startIdx, pos.getPitch());
     }
 
     @Override
@@ -118,7 +116,7 @@ public class SQLStorage implements Storage {
             try (Connection conn = this.connectionFactory.openConnection();
                  PreparedStatement prepStmt = conn.prepareStatement(insertionSQL())) {
                 fillInPrepStmt(prepStmt, waypoint, 1, true);
-                fillInPrepStmt(prepStmt, waypoint, 11, false);
+                fillInPrepStmt(prepStmt, waypoint, 9, false);
 
                 prepStmt.execute();
             }
@@ -155,15 +153,13 @@ public class SQLStorage implements Storage {
                     double x = results.getDouble("x");
                     double y = results.getDouble("y");
                     double z = results.getDouble("z");
-                    float yaw = results.getFloat("yaw");
-                    float pitch = results.getFloat("pitch");
 
                     waypoints.add(new Waypoint(
                             uniqueId,
                             ownerId,
                             name,
                             global,
-                            new Position(world, x, y, z, yaw, pitch)
+                            new Position(world, x, y, z)
                     ));
                 }
 

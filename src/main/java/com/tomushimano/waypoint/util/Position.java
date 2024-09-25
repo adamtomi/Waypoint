@@ -10,27 +10,21 @@ public class Position {
     private final double x;
     private final double y;
     private final double z;
-    private final float yaw;
-    private final float pitch;
 
-    public Position(String worldName, double x, double y, double z, float yaw, float pitch) {
+    public Position(String worldName, double x, double y, double z) {
         this.worldName = requireNonNull(worldName, "worldName cannot be null");
         this.x = x;
         this.y = y;
         this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
     }
 
     public static Position from(Location location) {
         requireNonNull(location, "location cannot be null");
         return new Position(
                 location.getWorld().getName(),
-                location.getX(),
-                location.getY(),
-                location.getZ(),
-                location.getYaw(),
-                location.getPitch()
+                location.getBlockX(),
+                location.getBlockY(),
+                location.getBlockZ()
         );
     }
 
@@ -50,22 +44,13 @@ public class Position {
         return this.z;
     }
 
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
 
     public Location toBukkitLocation() {
         return new Location(
                 Bukkit.getWorld(this.worldName),
                 this.x,
                 this.y,
-                this.z,
-                this.yaw,
-                this.pitch
+                this.z
         );
     }
 }
