@@ -18,7 +18,6 @@ import grapefruit.command.annotation.argument.Arg;
 import grapefruit.command.annotation.argument.Flag;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
@@ -26,6 +25,7 @@ import java.util.Set;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 
 public class WaypointCommands implements CommandModule {
     private final CommandContainer container = new WaypointCommands_Container(this);
@@ -98,12 +98,15 @@ public class WaypointCommands implements CommandModule {
                 .page(page)
                 .build();
 
+        Component prevButton = this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_PREVIOUS).make()
+                        .clickEvent(runCommand("wp list %d".formatted(Math.max(0, page - 1))));
+        Component nextButton = this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_NEXT).make()
+                        .clickEvent(runCommand("wp liust %d".formatted(Math.min(paginated.totalPages(), page + 1))));
+
         Component footer = Component.text()
-                .append(this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_PREVIOUS).make())
-                .clickEvent(ClickEvent.runCommand("wp list %d".formatted(Math.max(0, page - 1))))
+                .append(prevButton)
                 .append(this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_SEPARATOR).make())
-                .append(this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_NEXT).make())
-                .clickEvent(ClickEvent.runCommand("wp list %d".formatted(Math.min(paginated.totalPages(), page + 1))))
+                .append(nextButton)
                 .build();
 
         sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.LIST_HEADER)
@@ -115,11 +118,6 @@ public class WaypointCommands implements CommandModule {
                 .make());
         paginated.viewPage().forEach(sender::sendMessage);
         sender.sendMessage(footer);
-    }
-
-    @CommandDefinition(route = "waypoint|wp toggle", permission = "waypoint.toggle", conditions = { IsPlayer.class })
-    public void toggle(@Sender Player sender, @Flag Waypoint waypoint) {
-
     }
 
     @CommandDefinition(route = "waypoint|wp edit", permission = "waypoint.edit", conditions = { IsPlayer.class })
