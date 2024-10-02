@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.slf4j.Logger;
 
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
 public final class ExceptionUtil {
@@ -16,9 +17,14 @@ public final class ExceptionUtil {
         logger.error(detail, ex);
     }
 
+    private static Throwable unwrap(Throwable ex) {
+        if (ex instanceof CompletionException) return ex.getCause();
+        return ex;
+    }
+
     public static <T> Function<Throwable, T> capture(String detail, Logger logger) {
         return ex -> {
-            capture(ex, detail, logger);
+            capture(unwrap(ex), detail, logger);
             return null;
         };
     }
@@ -26,7 +32,7 @@ public final class ExceptionUtil {
     public static <T> Function<Throwable, T> capture(CommandSender sender, Component message, String detail, Logger logger) {
         return ex -> {
             sender.sendMessage(message);
-            capture(ex, detail, logger);
+            capture(unwrap(ex), detail, logger);
             return null;
         };
     }
