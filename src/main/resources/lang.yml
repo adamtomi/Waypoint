@@ -8,13 +8,13 @@ command:
   invalid_argument: "&cAz alábbi argumentum érvénytelen: &l{argument}"
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
+  no_such_color: "&cNem található \"&o{name}\" nevű szín."
   syntax_hint: "&7/{syntax}"
   syntax_error: "&cHelytelen parancs használat!"
   unexpected_error: "&cHiba történt a parancs végrehajtása közben :("
   unknown_subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
 
 waypoint:
-  no_such_waypoint: "&cNem található \"&l{name}&c\" nevű waypoint."
   creation:
     success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
     already_exists: "&cMár létrehoztál &7&o\"{name}\" &cnévvel waypointot."
@@ -23,12 +23,16 @@ waypoint:
     success: "&aAz alábbi waypoint el lett távolítva: &7&o\"{name}\"&a."
     failure: "&cHiba történt a waypoint eltávolítása közben."
   list:
-    header: "&aÖsszesen &l{count} &awaypoint érhető el számodra (&7&l{page}&8/&7{totalpages})"
+    header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
     item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
     footer_previous: "&8&l<&7Previous                  "
     footer_separator: "&8&l|"
     footer_next: "                   &7Next&8&l>"
     empty: "&aNincs megjeleníthető waypoint."
+  hologram:
+    coordinates: "&f{coordinates}"
+    owner: "&f&lTulajdonos: &7&o{owner}"
+  no_such_waypoint: "&cNem található \"&l{name}&c\" nevű waypoint."
   update:
     success: "&aWaypoint \"&l{name}&a\" sikeresen frissítve."
     failure: "&cHiba történt a waypoint frissítése közben."

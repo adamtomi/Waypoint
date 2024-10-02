@@ -18,6 +18,7 @@ import grapefruit.command.annotation.argument.Arg;
 import grapefruit.command.annotation.argument.Flag;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
@@ -44,7 +45,7 @@ public class WaypointCommands implements CommandModule {
     }
 
     @CommandDefinition(route = "waypoint|wp set", permission = "waypoint.set", conditions = { IsPlayer.class })
-    public void set(@Sender Player sender, @Arg @Max(255) String name, @Flag boolean global) {
+    public void set(@Sender Player sender, @Arg @Max(255) String name, @Flag NamedTextColor color, @Flag boolean global) {
         // Check if a waypoint with this name exists already
         if (this.waypointService.getByName(sender, name).isPresent()) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.CREATION_ALREADY_EXISTS)
@@ -53,7 +54,7 @@ public class WaypointCommands implements CommandModule {
             return;
         }
 
-        this.waypointService.createWaypoint(sender, name, global)
+        this.waypointService.createWaypoint(sender, name, color, global)
                 .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)
                         .with(
                                 Placeholder.of("name", x.getName()),

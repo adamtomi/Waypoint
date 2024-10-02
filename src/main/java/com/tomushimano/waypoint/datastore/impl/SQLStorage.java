@@ -5,6 +5,7 @@ import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Position;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -30,10 +31,12 @@ public class SQLStorage implements Storage {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SQLStorage.class);
     private final FutureFactory futureFactory = new FutureFactory();
     private final ConnectionFactory connectionFactory;
+    private final Waypoint.Factory waypointFactory;
 
     @Inject
-    public SQLStorage(ConnectionFactory connectionFactory) {
+    public SQLStorage(ConnectionFactory connectionFactory, Waypoint.Factory waypointFactory) {
         this.connectionFactory = connectionFactory;
+        this.waypointFactory = waypointFactory;
     }
 
     private List<String> readDeployFile() throws IOException {
@@ -100,6 +103,7 @@ public class SQLStorage implements Storage {
         }
 
         prepStmt.setString(startIdx++, waypoint.getName());
+        prepStmt.setInt(startIdx++, waypoint.getColor().value());
         prepStmt.setBoolean(startIdx++, waypoint.isGlobal());
 
         // Fill in location data
@@ -107,7 +111,7 @@ public class SQLStorage implements Storage {
         prepStmt.setString(startIdx++, pos.getWorldName());
         prepStmt.setDouble(startIdx++, pos.getX());
         prepStmt.setDouble(startIdx++, pos.getY());
-        prepStmt.setDouble(startIdx++, pos.getZ());
+        prepStmt.setDouble(startIdx, pos.getZ());
     }
 
     @Override
@@ -116,7 +120,7 @@ public class SQLStorage implements Storage {
             try (Connection conn = this.connectionFactory.openConnection();
                  PreparedStatement prepStmt = conn.prepareStatement(insertionSQL())) {
                 fillInPrepStmt(prepStmt, waypoint, 1, true);
-                fillInPrepStmt(prepStmt, waypoint, 9, false);
+                fillInPrepStmt(prepStmt, waypoint, 10, false);
 
                 prepStmt.execute();
             }
@@ -148,16 +152,18 @@ public class SQLStorage implements Storage {
                     UUID uniqueId = UUID.fromString(results.getString("id"));
                     UUID ownerId = UUID.fromString(results.getString("ownerId"));
                     String name = results.getString("name");
+                    NamedTextColor color = NamedTextColor.namedColor(results.getInt("color"));
                     boolean global = results.getBoolean("global");
                     String world = results.getString("world");
                     double x = results.getDouble("x");
                     double y = results.getDouble("y");
                     double z = results.getDouble("z");
 
-                    waypoints.add(new Waypoint(
+                    waypoints.add(this.waypointFactory.create(
                             uniqueId,
                             ownerId,
                             name,
+                            color,
                             global,
                             new Position(world, x, y, z)
                     ));

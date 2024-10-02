@@ -18,6 +18,7 @@ public final class MessageKeys {
         public static final ConfigKey<String> INVALID_ARGUMENT = ConfigKey.stringKey("command.invalid_argument");
         public static final ConfigKey<String> MAX_LENGTH = ConfigKey.stringKey("command.max_length");
         public static final ConfigKey<String> NEED_TO_BE_A_PLAYER = ConfigKey.stringKey("command.need_to_be_a_player");
+        public static final ConfigKey<String> NO_SUCH_COLOR = ConfigKey.stringKey("command.no_such_color");
         public static final ConfigKey<String> SYNTAX_HINT = ConfigKey.stringKey("command.syntax_hint");
         public static final ConfigKey<String> SYNTAX_ERROR = ConfigKey.stringKey("command.syntax_error");
         public static final ConfigKey<String> UNEXPECTED_ERROR = ConfigKey.stringKey("command.unexpected_error");
@@ -29,8 +30,6 @@ public final class MessageKeys {
     }
 
     public static final class Waypoint {
-        public static final ConfigKey<String> NO_SUCH_WAYPOINT = ConfigKey.stringKey("waypoint.no_such_waypoint");
-
         public static final ConfigKey<String> CREATION_SUCCESS = ConfigKey.stringKey("waypoint.creation.success");
         public static final ConfigKey<String> CREATION_FAILURE = ConfigKey.stringKey("waypoint.creation.failure");
         public static final ConfigKey<String> CREATION_ALREADY_EXISTS = ConfigKey.stringKey("waypoint.creation.already_exists");
@@ -44,6 +43,11 @@ public final class MessageKeys {
         public static final ConfigKey<String> LIST_FOOTER_NEXT = ConfigKey.stringKey("waypoint.list.footer_next");
         public static final ConfigKey<String> LIST_FOOTER_SEPARATOR = ConfigKey.stringKey("waypoint.list.footer_separator");
         public static final ConfigKey<String> LIST_EMPTY = ConfigKey.stringKey("waypoint.list.empty");
+
+        public static final ConfigKey<String> NO_SUCH_WAYPOINT = ConfigKey.stringKey("waypoint.no_such_waypoint");
+
+        public static final ConfigKey<String> HOLOGRAM_COORDINATES = ConfigKey.stringKey("waypoint.hologram.coordinates");
+        public static final ConfigKey<String> HOLOGRAM_OWNER = ConfigKey.stringKey("waypoint.hologram.owner");
 
         public static final ConfigKey<String> UPDATE_SUCCESS = ConfigKey.stringKey("waypoint.update.success");
         public static final ConfigKey<String> UPDATE_FAILURE = ConfigKey.stringKey("waypoint.update.failure");

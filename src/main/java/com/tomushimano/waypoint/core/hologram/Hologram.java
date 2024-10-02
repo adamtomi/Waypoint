@@ -1,14 +1,37 @@
 package com.tomushimano.waypoint.core.hologram;
 
-import com.tomushimano.waypoint.core.Waypoint;
+import org.bukkit.entity.Player;
 
+import java.util.List;
+
+/**
+ * Holograms are composed of multiple {@link HologramLine lines}.
+ */
 public interface Hologram {
 
-    void spawn();
+    /**
+     * Returns the {@link HologramLine lines} associated with this
+     * hologram.
+     *
+     * @return The linest
+     */
+    List<HologramLine> lines();
 
-    void despawn();
+    /**
+     * Show the entire hologram to the player.
+     *
+     * @param player The player
+     */
+    default void show(Player player) {
+        lines().forEach(line -> line.spawnPacket().send(player));
+    }
 
-    static Hologram create(Waypoint waypoint) {
-        return new HologramImpl(waypoint);
+    /**
+     * Hide the entire hologram from the player.
+     *
+     * @param player The player
+     */
+    default void hide(Player player) {
+        lines().forEach(line -> line.despawnPacket().send(player));
     }
 }

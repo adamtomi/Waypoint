@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.Position;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -20,10 +21,12 @@ import java.util.stream.Collectors;
 public class WaypointService {
     /* Map a set of waypoints to the ownerId */
     private final Multimap<UUID, Waypoint> waypoints = HashMultimap.create();
+    private final Waypoint.Factory waypointFactory;
     private final StorageHolder storageHolder;
 
     @Inject
-    public WaypointService(StorageHolder storageHolder) {
+    public WaypointService(Waypoint.Factory waypointFactory, StorageHolder storageHolder) {
+        this.waypointFactory = waypointFactory;
         this.storageHolder = storageHolder;
     }
 
@@ -47,11 +50,10 @@ public class WaypointService {
         return Set.copyOf(this.waypoints.get(player.getUniqueId()));
     }
 
-    // TODO render waypoint
-    public CompletableFuture<Waypoint> createWaypoint(Player player, String name, boolean global) {
+    public CompletableFuture<Waypoint> createWaypoint(Player player, String name, NamedTextColor color, boolean global) {
         UUID uniqueId = UUID.randomUUID();
         UUID ownerId = player.getUniqueId();
-        Waypoint waypoint = new Waypoint(uniqueId, ownerId, name, global, Position.from(player.getLocation()));
+        Waypoint waypoint = this.waypointFactory.create(uniqueId, ownerId, name, color, global, Position.from(player.getLocation()));
         this.waypoints.put(ownerId, waypoint);
         waypoint.render();
 

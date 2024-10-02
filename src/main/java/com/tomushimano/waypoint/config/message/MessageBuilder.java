@@ -22,9 +22,13 @@ public class MessageBuilder {
         return this;
     }
 
-    public Component make() {
+    public String makeString() {
         String result = this.messageBase;
         for (Placeholder placeholder : this.placeholders) result = placeholder.process(result);
-        return this.serializer.deserialize(result);
+        return result;
+    }
+
+    public Component make() {
+        return this.serializer.deserialize(makeString());
     }
 }

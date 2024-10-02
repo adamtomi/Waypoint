@@ -44,6 +44,9 @@ public class Position {
         return this.z;
     }
 
+    public Position plus(double x, double y, double z) {
+        return new Position(this.worldName, this.x + x, this.y + y, this.z + z);
+    }
 
     public Location toBukkitLocation() {
         return new Location(
