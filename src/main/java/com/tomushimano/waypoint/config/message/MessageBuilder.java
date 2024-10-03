@@ -9,6 +9,8 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 public class MessageBuilder {
+    private static final char AMPERSAND = '&';
+    private static final char SECTION = '§';
     private final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
     private final List<Placeholder> placeholders = new ArrayList<>();
     private final String messageBase;
@@ -22,7 +24,7 @@ public class MessageBuilder {
         return this;
     }
 
-    public String makeString() {
+    private String makeString() {
         String result = this.messageBase;
         for (Placeholder placeholder : this.placeholders) result = placeholder.process(result);
         return result;
@@ -30,5 +32,9 @@ public class MessageBuilder {
 
     public Component make() {
         return this.serializer.deserialize(makeString());
+    }
+
+    public net.minecraft.network.chat.Component makeNMS() {
+        return net.minecraft.network.chat.Component.literal(makeString().replace(AMPERSAND, SECTION));
     }
 }

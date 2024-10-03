@@ -1,6 +1,5 @@
 package com.tomushimano.waypoint.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import static java.util.Objects.requireNonNull;
@@ -22,9 +21,9 @@ public class Position {
         requireNonNull(location, "location cannot be null");
         return new Position(
                 location.getWorld().getName(),
-                location.getBlockX(),
-                location.getBlockY(),
-                location.getBlockZ()
+                location.getX(),
+                location.getY(),
+                location.getZ()
         );
     }
 
@@ -46,14 +45,5 @@ public class Position {
 
     public Position plus(double x, double y, double z) {
         return new Position(this.worldName, this.x + x, this.y + y, this.z + z);
-    }
-
-    public Location toBukkitLocation() {
-        return new Location(
-                Bukkit.getWorld(this.worldName),
-                this.x,
-                this.y,
-                this.z
-        );
     }
 }

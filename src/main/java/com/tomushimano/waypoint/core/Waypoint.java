@@ -90,6 +90,11 @@ public class Waypoint {
         runTargeted(this.hologram::hide);
     }
 
+    public void rerender() {
+        hide();
+        render();
+    }
+
     public void setHologram(Hologram hologram) {
         this.hologram = requireNonNull(hologram, "hologram cannot be null");
     }

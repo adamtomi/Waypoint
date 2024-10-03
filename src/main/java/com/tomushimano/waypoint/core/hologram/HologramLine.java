@@ -4,11 +4,14 @@ import com.tomushimano.waypoint.core.hologram.network.PacketContainer;
 import com.tomushimano.waypoint.util.Position;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.Supplier;
+
 /**
  * Represents a single line of a hologram.
  * @see Hologram
  */
 public interface HologramLine {
+    double MARGIN = 0.3D;
 
     /**
      * Return a {@link PacketContainer} instance containing all
@@ -32,7 +35,7 @@ public interface HologramLine {
      * @param position The position
      * @return The created hologram line
      */
-    static HologramLine create(Component content, Position position) {
+    static HologramLine create(Supplier<Component> content, Supplier<Position> position) {
         return new HologramLineImpl(content, position);
     }
 
@@ -43,7 +46,7 @@ public interface HologramLine {
      * @param position The position
      * @return The created hologram line
      */
-    static HologramLine empty(Position position) {
-        return new HologramLineImpl(Component.empty(), position);
+    static HologramLine empty(Supplier<Position> position) {
+        return new HologramLineImpl(Component::empty, position);
     }
 }

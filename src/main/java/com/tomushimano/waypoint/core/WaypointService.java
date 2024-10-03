@@ -70,7 +70,8 @@ public class WaypointService {
     }
 
     public CompletableFuture<?> updateWaypoint(Waypoint waypoint) {
-        return this.storageHolder.get().save(waypoint);
+        return this.storageHolder.get().save(waypoint)
+                .thenRun(waypoint::rerender);
     }
 
     public CompletableFuture<?> loadWaypoints(Player player) {
@@ -101,5 +102,9 @@ public class WaypointService {
                 .map(Map.Entry::getValue)
                 .filter(x -> x.getName().equalsIgnoreCase(name) && x.getOwnerId().equals(player.getUniqueId()))
                 .findFirst();
+    }
+
+    public Set<Waypoint> getLoadedWaypoints() {
+        return Set.copyOf(this.waypoints.values());
     }
 }

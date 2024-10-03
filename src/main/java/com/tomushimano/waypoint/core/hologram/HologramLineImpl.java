@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -64,10 +65,10 @@ final class HologramLineImpl implements HologramLine {
     private final Memoized<Integer> fakeId = Memoized.of(ID_GENERATOR::decrementAndGet);
     // Generate a random UUID for this hologram line.
     private final Memoized<UUID> uniqueId = Memoized.of(UUID::randomUUID);
-    private final Component content;
-    private final Position position;
+    private final Supplier<Component> content;
+    private final Supplier<Position> position;
 
-    HologramLineImpl(Component content, Position position) {
+    HologramLineImpl(Supplier<Component> content, Supplier<Position> position) {
         this.content = requireNonNull(content, "content cannot be null");
         this.position = requireNonNull(position, "position cannot be null");
     }
@@ -75,8 +76,8 @@ final class HologramLineImpl implements HologramLine {
     @Override
     public PacketContainer spawnPacket() {
         return PacketContainer.of(
-                SPAWN_PACKET_FACTPORY.apply(this.fakeId.get(), this.uniqueId.get(), this.position),
-                ENTITY_DATA_PACKET_FACTORY.apply(this.fakeId.get(), this.content)
+                SPAWN_PACKET_FACTPORY.apply(this.fakeId.get(), this.uniqueId.get(), this.position.get()),
+                ENTITY_DATA_PACKET_FACTORY.apply(this.fakeId.get(), this.content.get())
         );
     }
 
