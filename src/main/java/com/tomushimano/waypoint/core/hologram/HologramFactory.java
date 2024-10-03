@@ -16,7 +16,7 @@ import java.util.List;
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 
 @Singleton
-public class HologramFactory {
+public final class HologramFactory {
     private final MessageConfig messageConfig;
 
     @Inject
@@ -37,9 +37,9 @@ public class HologramFactory {
 
         List<HologramLine> lines = List.of(
                 HologramLine.create(title, reference),
-                HologramLine.empty(reference.plus(0.0D, (offset = offset -0.3D), 0.0D)),
-                HologramLine.create(coordinates, reference.plus(0.0D, (offset = offset -0.3D), 0.0D)),
-                HologramLine.create(owner, reference.plus(0.0D, offset, 0.0D))
+                HologramLine.empty(reference.plus(0.0D, (offset -= 0.25D), 0.0D)),
+                HologramLine.create(coordinates, reference.plus(0.0D, (offset -= 0.25D), 0.0D)),
+                HologramLine.create(owner, reference.plus(0.0D, offset -0.25D, 0.0D))
         );
         return new HologramImpl(lines);
     }

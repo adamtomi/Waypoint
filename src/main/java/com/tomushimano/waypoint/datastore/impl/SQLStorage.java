@@ -92,7 +92,7 @@ public class SQLStorage implements Storage {
     }
 
     private String insertionSQL() {
-        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`id`) DO UPDATE SET `name` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?";
+        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`id`) DO UPDATE SET `name` = ?, `color` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?";
     }
 
     private void fillInPrepStmt(PreparedStatement prepStmt, Waypoint waypoint, int startIdx, boolean includeIds) throws SQLException {

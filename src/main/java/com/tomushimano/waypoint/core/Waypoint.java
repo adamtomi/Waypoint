@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -136,11 +137,12 @@ public class Waypoint {
                 UUID uuid,
                 UUID ownerId,
                 String name,
-                NamedTextColor color,
+                @Nullable NamedTextColor color,
                 boolean global,
                 Position pos
         ) {
-            Waypoint waypoint = new Waypoint(uuid, ownerId, name, color, global, pos);
+            NamedTextColor actualColor = color == null ? NamedTextColor.WHITE : color;
+            Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, global, pos);
             waypoint.setHologram(this.hologramFactory.createHologram(waypoint));
             return waypoint;
         }

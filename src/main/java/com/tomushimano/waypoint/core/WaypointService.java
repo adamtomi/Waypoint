@@ -5,11 +5,14 @@ import com.google.common.collect.Multimap;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +53,7 @@ public class WaypointService {
         return Set.copyOf(this.waypoints.get(player.getUniqueId()));
     }
 
-    public CompletableFuture<Waypoint> createWaypoint(Player player, String name, NamedTextColor color, boolean global) {
+    public CompletableFuture<Waypoint> createWaypoint(Player player, String name, @Nullable NamedTextColor color, boolean global) {
         UUID uniqueId = UUID.randomUUID();
         UUID ownerId = player.getUniqueId();
         Waypoint waypoint = this.waypointFactory.create(uniqueId, ownerId, name, color, global, Position.from(player.getLocation()));
@@ -83,7 +86,14 @@ public class WaypointService {
     }
 
     public void unloadWaypoints(Player player) {
-        // TODO unload waypoints, except for global ones, unless no one is online, because then unload all
+        Collection<Waypoint> waypoints = this.waypoints.get(player.getUniqueId());
+        boolean offline = Bukkit.getOnlinePlayers().size() == 1; // 1, because our player is still online
+        for (Waypoint waypoint : waypoints) {
+            if (!waypoint.isGlobal() || offline) {
+                waypoint.hide();
+                this.waypoints.remove(waypoint.getOwnerId(), waypoint);
+            }
+        }
     }
 
     public Optional<Waypoint> getByName(Player player, String name) {

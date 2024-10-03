@@ -63,7 +63,7 @@ final class HologramLineImpl implements HologramLine {
     // Use this fake id as an entity ID.
     private final Memoized<Integer> fakeId = Memoized.of(ID_GENERATOR::decrementAndGet);
     // Generate a random UUID for this hologram line.
-    private final UUID uniqueId = UUID.randomUUID();
+    private final Memoized<UUID> uniqueId = Memoized.of(UUID::randomUUID);
     private final Component content;
     private final Position position;
 
@@ -75,7 +75,7 @@ final class HologramLineImpl implements HologramLine {
     @Override
     public PacketContainer spawnPacket() {
         return PacketContainer.of(
-                SPAWN_PACKET_FACTPORY.apply(this.fakeId.get(), this.uniqueId, this.position),
+                SPAWN_PACKET_FACTPORY.apply(this.fakeId.get(), this.uniqueId.get(), this.position),
                 ENTITY_DATA_PACKET_FACTORY.apply(this.fakeId.get(), this.content)
         );
     }
