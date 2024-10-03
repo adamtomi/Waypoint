@@ -31,7 +31,7 @@ waypoint:
     empty: "&aNincs megjeleníthető waypoint."
   hologram:
     coordinates: "&f{coordinates}"
-    owner: "&f&lTulajdonos&8: &7&o{owner}"
+    owner: "&f&lTulajdonos&8: &7&o&n{owner}"
   no_such_waypoint: "&cNem található \"&l{name}&c\" nevű waypoint."
   update:
     success: "&aWaypoint \"&l{name}&a\" sikeresen frissítve."
