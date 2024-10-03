@@ -32,3 +32,10 @@ database:
       # Number of seconds to wait for a connection to become available, before throwing
       # an error.
       connection_timeout: 5
+
+# Hologram configuration
+hologram:
+  # The gap between hologram lines.
+  line_padding: 0.3
+  # The offset from the actual waypoint location.
+  top_offset: 2.0

@@ -22,6 +22,10 @@ public interface ConfigKey<T> {
         return simpleKey(key, ConfigurationSection::getInt);
     }
 
+    static ConfigKey<Double> doubleKey(String key) {
+        return simpleKey(key, ConfigurationSection::getDouble);
+    }
+
     static <E extends Enum<E>> ConfigKey<E> enumKey(String key, Class<E> type) {
         return simpleKey(key, (section, x) -> {
             String value = section.getString(x);

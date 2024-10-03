@@ -26,7 +26,18 @@ public final class StandardKeys {
         public static final ConfigKey<Integer> MAX_LIFETIME = ConfigKey.integerKey("database.mysql.pool.max_lifetime");
         public static final ConfigKey<Integer> CONN_TIMEOUT = ConfigKey.integerKey("database.mysql.pool.conn_timeout");
 
-        private Database() {}
+        private Database() {
+            throw new DontInvokeMe();
+        }
+    }
+
+    public static final class Hologram {
+        public static final ConfigKey<Double> LINE_PADDING = ConfigKey.doubleKey("hologram.line_padding");
+        public static final ConfigKey<Double> TOP_OFFSET = ConfigKey.doubleKey("hologram.top_offset");
+
+        private Hologram() {
+            throw new DontInvokeMe();
+        }
     }
 
 

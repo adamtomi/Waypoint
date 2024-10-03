@@ -11,7 +11,6 @@ import java.util.function.Supplier;
  * @see Hologram
  */
 public interface HologramLine {
-    double MARGIN = 0.3D;
 
     /**
      * Return a {@link PacketContainer} instance containing all
