@@ -2,9 +2,11 @@ package com.tomushimano.waypoint.core.listener;
 
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.slf4j.Logger;
@@ -33,5 +35,12 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         this.waypointService.unloadWaypoints(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        World world = event.getFrom();
+        this.waypointService.handleWorldChange(player, world);
     }
 }

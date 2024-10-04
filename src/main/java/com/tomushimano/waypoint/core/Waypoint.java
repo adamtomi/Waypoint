@@ -5,7 +5,6 @@ import com.tomushimano.waypoint.core.hologram.HologramFactory;
 import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -82,31 +80,21 @@ public class Waypoint {
         this.position = requireNonNull(position, "position cannot be null");
     }
 
-    public void render() {
-        runTargeted(this.hologram::show);
+    public void render(Player player) {
+        this.hologram.show(player);
     }
 
-    public void hide() {
-        runTargeted(this.hologram::hide);
+    public void hide(Player player) {
+        this.hologram.hide(player);
     }
 
-    public void rerender() {
-        hide();
-        render();
+    public void rerender(Player player) {
+        hide(player);
+        render(player);
     }
 
     public void setHologram(Hologram hologram) {
         this.hologram = requireNonNull(hologram, "hologram cannot be null");
-    }
-
-    private void runTargeted(Consumer<Player> action) {
-        if (this.global) {
-            Bukkit.getOnlinePlayers().forEach(action);
-        } else {
-            Player owner = Bukkit.getPlayer(this.ownerId);
-            if (owner == null) throw new IllegalStateException("The owner of the waypoint (%s) is offline".formatted(this.ownerId));
-            action.accept(owner);
-        }
     }
 
     @Override

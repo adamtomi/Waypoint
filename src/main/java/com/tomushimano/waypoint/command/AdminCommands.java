@@ -6,7 +6,6 @@ import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
-import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import grapefruit.command.CommandContainer;
 import grapefruit.command.annotation.CommandDefinition;
@@ -41,7 +40,7 @@ public class AdminCommands implements CommandModule {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_FAILURE).make());
         } else {
             long deltaT = System.currentTimeMillis() - start;
-            this.waypointService.getLoadedWaypoints().forEach(Waypoint::rerender);
+            this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_SUCCESS)
                     .with(Placeholder.of("duration", deltaT))
                     .make());

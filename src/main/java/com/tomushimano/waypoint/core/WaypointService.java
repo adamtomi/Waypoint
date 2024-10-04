@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -31,14 +32,6 @@ public class WaypointService {
     public WaypointService(Waypoint.Factory waypointFactory, StorageHolder storageHolder) {
         this.waypointFactory = waypointFactory;
         this.storageHolder = storageHolder;
-    }
-
-    public void loadWaypointsInWorld(World world) {
-
-    }
-
-    public void unloadWaypointsInWorld(World world) {
-
     }
 
     public Set<Waypoint> getAccessibleWaypoints(Player player) {
@@ -58,30 +51,28 @@ public class WaypointService {
         UUID ownerId = player.getUniqueId();
         Waypoint waypoint = this.waypointFactory.create(uniqueId, ownerId, name, color, global, Position.from(player.getLocation()));
         this.waypoints.put(ownerId, waypoint);
-        waypoint.render();
+        renderForTargets(waypoint);
 
         return this.storageHolder.get().save(waypoint).thenApply(x -> waypoint);
     }
 
     public CompletableFuture<?> removeWaypoint(Waypoint waypoint) {
-        waypoint.hide();
+        hideFromTargets(waypoint);
         this.waypoints.remove(waypoint.getOwnerId(), waypoint);
         return this.storageHolder.get().remove(waypoint);
     }
 
     public CompletableFuture<?> updateWaypoint(Waypoint waypoint) {
         return this.storageHolder.get().save(waypoint)
-                .thenRun(waypoint::rerender);
+                .thenRun(() -> rerenderForTargets(waypoint));
     }
 
     public CompletableFuture<?> loadWaypoints(Player player) {
         return this.storageHolder.get().loadAccessible(player.getUniqueId())
                 .thenAccept(x -> {
                     for (Waypoint each : x) {
-                        // If the waypoint wasn't in the map, render it.
-                        if (this.waypoints.put(each.getOwnerId(), each)) {
-                            each.render();
-                        }
+                        this.waypoints.put(each.getOwnerId(), each);
+                        each.render(player);
                     }
                 });
     }
@@ -91,7 +82,7 @@ public class WaypointService {
         boolean offline = Bukkit.getOnlinePlayers().size() == 1; // 1, because our player is still online
         for (Waypoint waypoint : waypoints) {
             if (!waypoint.isGlobal() || offline) {
-                waypoint.hide();
+                hideFromTargets(waypoint);
                 this.waypoints.remove(waypoint.getOwnerId(), waypoint);
             }
         }
@@ -104,7 +95,50 @@ public class WaypointService {
                 .findFirst();
     }
 
+    public void handleWorldChange(Player player, World from) {
+        // Collect accessible waypoints
+        Set<Waypoint> accessibleWaypoints = getAccessibleWaypoints(player);
+        for (Waypoint waypoint : accessibleWaypoints) {
+            Position position = waypoint.getPosition();
+
+            // If the waypoint is in the old world, we hide it
+            if (position.getWorldName().equals(from.getName())) {
+                waypoint.hide(player);
+            } else if (position.getWorldName().equals(player.getWorld().getName())) {
+                // If it is in the new world, we render it
+                waypoint.render(player);
+            }
+        }
+    }
+
     public Set<Waypoint> getLoadedWaypoints() {
         return Set.copyOf(this.waypoints.values());
+    }
+
+    /* Render the waypoint for its owner, or everyone if the waypoint is global */
+    public void renderForTargets(Waypoint waypoint) {
+        runWaypointAction(waypoint, waypoint::render);
+    }
+
+    public void rerenderForTargets(Waypoint waypoint) {
+        runWaypointAction(waypoint, waypoint::rerender);
+    }
+
+    /* Hide the waypoint from its owner, or everyone if the waypoint is global */
+    public void hideFromTargets(Waypoint waypoint) {
+        runWaypointAction(waypoint, waypoint::hide);
+    }
+
+    private void runWaypointAction(Waypoint waypoint, Consumer<Player> action) {
+        if (waypoint.isGlobal()) {
+            Bukkit.getOnlinePlayers().forEach(action);
+        } else {
+            Player owner = Bukkit.getPlayer(waypoint.getOwnerId());
+            if (owner == null) {
+                throw new IllegalStateException("Attempted to render a non-global waypoint, but its owner is offline.");
+            }
+
+            action.accept(owner);
+        }
     }
 }
