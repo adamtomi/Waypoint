@@ -10,7 +10,7 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
-import com.tomushimano.waypoint.util.Paginated;
+import com.tomushimano.waypoint.util.Paginator;
 import com.tomushimano.waypoint.util.Position;
 import grapefruit.command.CommandContainer;
 import grapefruit.command.annotation.CommandDefinition;
@@ -26,7 +26,9 @@ import java.util.Set;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+import static net.kyori.adventure.text.event.ClickEvent.copyToClipboard;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
+import static net.kyori.adventure.text.event.HoverEvent.showText;
 
 public class WaypointCommands implements CommandModule {
     private final CommandContainer container = new WaypointCommands_Container(this);
@@ -87,22 +89,12 @@ public class WaypointCommands implements CommandModule {
             return;
         }
 
-        Paginated<Waypoint> paginated = Paginated.<Waypoint>builder()
-                .items(waypoints)
-                .formatItem(x -> this.messageConfig.get(MessageKeys.Waypoint.LIST_ITEM)
-                        .with(
-                                Placeholder.of("name", x.getName()),
-                                Placeholder.of("world", x.getPosition().getWorldName()),
-                                Placeholder.of("coordinates", formatPosition(x.getPosition()))
-                        )
-                        .make())
-                .page(page)
-                .build();
+        Paginator<Waypoint> paginator = Paginator.create(waypoints.stream().sorted().toList());
 
         Component prevButton = this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_PREVIOUS).make()
-                        .clickEvent(runCommand("wp list %d".formatted(Math.max(0, page - 1))));
+                        .clickEvent(runCommand("/wp list -p %d".formatted(Math.max(0, page - 1))));
         Component nextButton = this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_NEXT).make()
-                        .clickEvent(runCommand("wp liust %d".formatted(Math.min(paginated.totalPages(), page + 1))));
+                        .clickEvent(runCommand("/wp list -p %d".formatted(Math.min(paginator.total(), page + 1))));
 
         Component footer = Component.text()
                 .append(prevButton)
@@ -110,14 +102,24 @@ public class WaypointCommands implements CommandModule {
                 .append(nextButton)
                 .build();
 
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.LIST_HEADER)
-                .with(
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.LIST_HEADER).with(
                         Placeholder.of("count", waypoints.size()),
-                        Placeholder.of("page", paginated.currentPage() + 1),
-                        Placeholder.of("totalpages", paginated.totalPages())
-                )
+                        Placeholder.of("page", paginator.normalize(page) + 1),
+                        Placeholder.of("totalpages", paginator.total()))
                 .make());
-        paginated.viewPage().forEach(sender::sendMessage);
+
+        for (Waypoint waypoint : paginator.page(page)) {
+            String formattedPosition = formatPosition(waypoint.getPosition());
+            Component message = this.messageConfig.get(MessageKeys.Waypoint.LIST_ITEM).with(
+                            Placeholder.of("name", waypoint.getName()),
+                            Placeholder.of("world", waypoint.getPosition().getWorldName()),
+                            Placeholder.of("coordinates", formattedPosition))
+                    .make()
+                    .hoverEvent(showText(this.messageConfig.get(MessageKeys.Waypoint.LIST_ITEM_HOVER).make()))
+                    .clickEvent(copyToClipboard(formattedPosition));
+            sender.sendMessage(message);
+        }
+
         sender.sendMessage(footer);
     }
 

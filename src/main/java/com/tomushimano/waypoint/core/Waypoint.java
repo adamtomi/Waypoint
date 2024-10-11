@@ -6,6 +6,7 @@ import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
-public class Waypoint {
+public class Waypoint implements Comparable<Waypoint> {
     private final UUID uuid;
     private final UUID ownerId;
     private String name;
@@ -115,6 +116,11 @@ public class Waypoint {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.uuid);
+    }
+
+    @Override
+    public int compareTo(@NotNull Waypoint waypoint) {
+        return this.name.compareToIgnoreCase(waypoint.name);
     }
 
     @Singleton

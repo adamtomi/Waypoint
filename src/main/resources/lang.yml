@@ -25,6 +25,7 @@ waypoint:
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
     item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
+    item_hover: "&2&l! &aKattints a koordináták kimásolásához!"
     footer_previous: "&8&l<&7Previous                  "
     footer_separator: "&8&l|"
     footer_next: "                   &7Next&8&l>"

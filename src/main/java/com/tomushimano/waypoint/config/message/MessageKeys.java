@@ -39,6 +39,7 @@ public final class MessageKeys {
 
         public static final ConfigKey<String> LIST_HEADER = ConfigKey.stringKey("waypoint.list.header");
         public static final ConfigKey<String> LIST_ITEM = ConfigKey.stringKey("waypoint.list.item");
+        public static final ConfigKey<String> LIST_ITEM_HOVER = ConfigKey.stringKey("waypoint.list.item_hover");
         public static final ConfigKey<String> LIST_FOOTER_PREVIOUS = ConfigKey.stringKey("waypoint.list.footer_previous");
         public static final ConfigKey<String> LIST_FOOTER_NEXT = ConfigKey.stringKey("waypoint.list.footer_next");
         public static final ConfigKey<String> LIST_FOOTER_SEPARATOR = ConfigKey.stringKey("waypoint.list.footer_separator");
