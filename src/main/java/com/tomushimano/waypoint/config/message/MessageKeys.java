@@ -5,6 +5,7 @@ import com.tomushimano.waypoint.util.DontInvokeMe;
 
 public final class MessageKeys {
     public static final class Admin {
+        public static final ConfigKey<String> INFO = ConfigKey.stringKey("admin.info");
         public static final ConfigKey<String> RELOAD_INITIATED = ConfigKey.stringKey("admin.reload.initiated");
         public static final ConfigKey<String> RELOAD_SUCCESS = ConfigKey.stringKey("admin.reload.success");
         public static final ConfigKey<String> RELOAD_FAILURE = ConfigKey.stringKey("admin.reload.failure");

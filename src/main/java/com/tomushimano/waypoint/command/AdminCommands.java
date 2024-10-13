@@ -6,13 +6,19 @@ import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import grapefruit.command.CommandContainer;
 import grapefruit.command.annotation.CommandDefinition;
+import grapefruit.command.annotation.argument.Arg;
 import grapefruit.command.dispatcher.CommandDispatcher;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
+
+import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 
 public class AdminCommands implements CommandModule {
     private final CommandContainer container = new AdminCommands_Container(this);
@@ -45,5 +51,16 @@ public class AdminCommands implements CommandModule {
                     .with(Placeholder.of("duration", deltaT))
                     .make());
         }
+    }
+
+    @CommandDefinition(route = "waypointadmin|wpa info", permission = "waypoint.admin.info")
+    public void info(@Sender Player sender, @Arg Waypoint waypoint) {
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.INFO).with(
+                Placeholder.of("name", waypoint.getName()),
+                Placeholder.of("uniqueId", waypoint.getUniqueId()),
+                Placeholder.of("global", waypoint.isGlobal()),
+                Placeholder.of("owner", Bukkit.getOfflinePlayer(waypoint.getOwnerId()).getName()),
+                Placeholder.of("coordinates", formatPosition(waypoint.getPosition())))
+                .make());
     }
 }
