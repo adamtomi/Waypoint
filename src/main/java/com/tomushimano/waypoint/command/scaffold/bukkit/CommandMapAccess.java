@@ -1,7 +1,6 @@
-package com.tomushimano.waypoint.command.scaffold.registration;
+package com.tomushimano.waypoint.command.scaffold.bukkit;
 
 import com.google.common.collect.ImmutableSet;
-import com.tomushimano.waypoint.command.CommandManager;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.Command;
 import grapefruit.command.dispatcher.CommandRegistrationHandler;
@@ -13,6 +12,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -21,13 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
-import static java.util.Objects.requireNonNull;
 
+@Singleton
 public final class CommandMapAccess extends CommandRegistrationHandler {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandMapAccess.class);
     private static final MethodHandle PLUGIN_COMMAND_FACTORY;
     private final Map<String, org.bukkit.command.Command> knownCommands = Bukkit.getCommandMap().getKnownCommands();
-    private final CommandManager commandManager;
+    private final BukkitCommandControl commandControl;
     private final JavaPlugin plugin;
 
     static {
@@ -40,9 +41,10 @@ public final class CommandMapAccess extends CommandRegistrationHandler {
         }
     }
 
-    public CommandMapAccess(CommandManager commandManager, JavaPlugin plugin) {
-        this.commandManager = requireNonNull(commandManager, "commandManager cannot be null");
-        this.plugin = requireNonNull(plugin, "plugin cannot be null");
+    @Inject
+    public CommandMapAccess(BukkitCommandControl commandControl, JavaPlugin plugin) {
+        this.commandControl = commandControl;
+        this.plugin = plugin;
     }
 
     @Override
@@ -60,12 +62,12 @@ public final class CommandMapAccess extends CommandRegistrationHandler {
 
         try {
             // Create plugin command instance
-            PluginCommand pluginCommand = createPluginCommand(primaryAlias, secondaryAliases, this.commandManager);
+            PluginCommand pluginCommand = createPluginCommand(primaryAlias, secondaryAliases, this.commandControl);
             // Store the constructed command instance in the bukkit command map
             for (String alias : allAliases) this.knownCommands.put(alias, pluginCommand);
 
             // Register aliases for tab-completion
-            this.commandManager.track(allAliases);
+            this.commandControl.track(allAliases);
         } catch (Throwable ex) {
             capture(ex, "Failed to register command with root aliases: %s".formatted(allAliases), LOGGER);
             // We don't want to proceed with the registration of this command any further.
