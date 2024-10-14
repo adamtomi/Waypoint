@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -78,14 +79,16 @@ public class WaypointService {
     }
 
     public void unloadWaypoints(Player player) {
-        Collection<Waypoint> waypoints = this.waypoints.get(player.getUniqueId());
+        Set<Waypoint> markedForRemoval = new HashSet<>();
         boolean offline = Bukkit.getOnlinePlayers().size() == 1; // 1, because our player is still online
-        for (Waypoint waypoint : waypoints) {
+        for (Waypoint waypoint : this.waypoints.get(player.getUniqueId())) {
             if (!waypoint.isGlobal() || offline) {
                 hideFromTargets(waypoint);
-                this.waypoints.remove(waypoint.getOwnerId(), waypoint);
+                markedForRemoval.add(waypoint);
             }
         }
+
+        markedForRemoval.forEach(x -> this.waypoints.remove(x.getOwnerId(), x));
     }
 
     public Optional<Waypoint> getByName(Player player, String name) {
