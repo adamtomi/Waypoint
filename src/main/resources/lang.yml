@@ -11,6 +11,7 @@ admin:
     failure: "&cHiba történt a konfiguráció újratöltése közben."
 
 command:
+  insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
   invalid_argument: "&cAz alábbi argumentum érvénytelen: &l{argument}"
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."

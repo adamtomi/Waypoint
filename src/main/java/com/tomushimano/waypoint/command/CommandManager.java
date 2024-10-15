@@ -19,6 +19,7 @@ import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
+import grapefruit.command.dispatcher.auth.CommandAuthorizationException;
 import grapefruit.command.dispatcher.condition.UnfulfilledConditionException;
 import grapefruit.command.dispatcher.config.DefaultConfigurer;
 import grapefruit.command.dispatcher.syntax.CommandSyntaxException;
@@ -99,6 +100,10 @@ public class CommandManager {
              */
             Component message = ((VerboseCondition) ex.condition()).describeFailure();
             sender.sendMessage(message);
+        } catch (CommandAuthorizationException ex) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
+                    .with(Placeholder.of("permission", ex.permission()))
+                    .make());
         } catch (CommandGraph.NoSuchCommandException ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND)
                     .with(Placeholder.of("command", ex.name()))
