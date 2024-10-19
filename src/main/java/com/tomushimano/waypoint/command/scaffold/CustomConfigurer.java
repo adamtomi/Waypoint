@@ -4,9 +4,9 @@ import com.tomushimano.waypoint.command.scaffold.mapper.NamedTextColorArgumentMa
 import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.bukkit.CommandMapAccess;
 import com.tomushimano.waypoint.core.Waypoint;
-import grapefruit.command.argument.modifier.ArgumentModifier;
-import grapefruit.command.dispatcher.condition.CommandCondition;
-import grapefruit.command.dispatcher.config.DispatcherConfigurer;
+import grapefruit.command.runtime.argument.modifier.ArgumentModifier;
+import grapefruit.command.runtime.dispatcher.condition.CommandCondition;
+import grapefruit.command.runtime.dispatcher.config.DispatcherConfigurer;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.inject.Inject;

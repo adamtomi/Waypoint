@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold;
 
-import grapefruit.command.argument.CommandArgumentException;
+import grapefruit.command.runtime.argument.CommandArgumentException;
 import net.kyori.adventure.text.Component;
 
 import java.io.Serial;

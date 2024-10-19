@@ -2,9 +2,9 @@ package com.tomushimano.waypoint.command.scaffold.bukkit;
 
 import com.google.common.collect.ImmutableSet;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import grapefruit.command.Command;
-import grapefruit.command.dispatcher.CommandRegistrationHandler;
-import grapefruit.command.dispatcher.tree.RouteNode;
+import grapefruit.command.runtime.Command;
+import grapefruit.command.runtime.dispatcher.CommandRegistrationHandler;
+import grapefruit.command.runtime.dispatcher.tree.RouteNode;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;

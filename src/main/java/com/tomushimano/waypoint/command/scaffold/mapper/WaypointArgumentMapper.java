@@ -6,10 +6,10 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
-import grapefruit.command.CommandException;
-import grapefruit.command.argument.mapper.ArgumentMapper;
-import grapefruit.command.dispatcher.CommandContext;
-import grapefruit.command.dispatcher.input.StringReader;
+import grapefruit.command.runtime.CommandException;
+import grapefruit.command.runtime.argument.mapper.ArgumentMapper;
+import grapefruit.command.runtime.dispatcher.CommandContext;
+import grapefruit.command.runtime.dispatcher.input.StringReader;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;

@@ -2,7 +2,7 @@ package com.tomushimano.waypoint.command.scaffold.condition;
 
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
-import grapefruit.command.dispatcher.CommandContext;
+import grapefruit.command.runtime.dispatcher.CommandContext;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 

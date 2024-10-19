@@ -1,7 +1,7 @@
 package com.tomushimano.waypoint.command.scaffold;
 
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import grapefruit.command.dispatcher.CommandDispatcher;
+import grapefruit.command.runtime.dispatcher.CommandDispatcher;
 import org.slf4j.Logger;
 
 public interface CommandModule {

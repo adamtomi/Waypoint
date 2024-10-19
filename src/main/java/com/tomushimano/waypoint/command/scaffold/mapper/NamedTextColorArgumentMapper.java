@@ -4,10 +4,10 @@ import com.tomushimano.waypoint.command.scaffold.RichCommandException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
-import grapefruit.command.CommandException;
-import grapefruit.command.argument.mapper.ArgumentMapper;
-import grapefruit.command.dispatcher.CommandContext;
-import grapefruit.command.dispatcher.input.StringReader;
+import grapefruit.command.runtime.CommandException;
+import grapefruit.command.runtime.argument.mapper.ArgumentMapper;
+import grapefruit.command.runtime.dispatcher.CommandContext;
+import grapefruit.command.runtime.dispatcher.input.StringReader;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.inject.Inject;

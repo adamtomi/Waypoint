@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold;
 
-import grapefruit.command.dispatcher.syntax.CommandSyntax;
+import grapefruit.command.runtime.dispatcher.syntax.CommandSyntax;
 
 import java.util.StringJoiner;
 import java.util.function.Function;

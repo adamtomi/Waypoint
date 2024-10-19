@@ -8,8 +8,8 @@ import com.tomushimano.waypoint.command.scaffold.modifier.MaxModifier;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
-import grapefruit.command.argument.modifier.ArgumentModifier;
-import grapefruit.command.dispatcher.condition.CommandCondition;
+import grapefruit.command.runtime.argument.modifier.ArgumentModifier;
+import grapefruit.command.runtime.dispatcher.condition.CommandCondition;
 
 @Module
 public interface CommandBinder {

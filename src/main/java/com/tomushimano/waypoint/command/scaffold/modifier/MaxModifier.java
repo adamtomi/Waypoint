@@ -4,9 +4,9 @@ import com.tomushimano.waypoint.command.scaffold.RichCommandException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
-import grapefruit.command.argument.CommandArgumentException;
-import grapefruit.command.argument.modifier.ArgumentModifier;
-import grapefruit.command.util.key.Key;
+import grapefruit.command.runtime.argument.CommandArgumentException;
+import grapefruit.command.runtime.argument.modifier.ArgumentModifier;
+import grapefruit.command.runtime.util.key.Key;
 
 import javax.inject.Inject;
 

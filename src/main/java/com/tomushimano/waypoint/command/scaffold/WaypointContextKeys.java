@@ -1,7 +1,7 @@
 package com.tomushimano.waypoint.command.scaffold;
 
 import com.tomushimano.waypoint.util.DontInvokeMe;
-import grapefruit.command.util.key.Key;
+import grapefruit.command.runtime.util.key.Key;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

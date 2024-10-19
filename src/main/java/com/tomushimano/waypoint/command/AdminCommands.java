@@ -8,10 +8,11 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
-import grapefruit.command.CommandContainer;
-import grapefruit.command.annotation.Arg;
-import grapefruit.command.annotation.Command;
-import grapefruit.command.dispatcher.CommandDispatcher;
+
+import grapefruit.command.runtime.annotation.Arg;
+import grapefruit.command.runtime.annotation.Command;
+import grapefruit.command.runtime.dispatcher.CommandDispatcher;
+import grapefruit.command.runtime.generated.CommandContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold;
 
-import grapefruit.command.annotation.meta.InjectedBy;
+import grapefruit.command.runtime.annotation.meta.InjectedBy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
