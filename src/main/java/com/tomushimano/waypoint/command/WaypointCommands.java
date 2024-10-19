@@ -13,9 +13,9 @@ import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.Paginator;
 import com.tomushimano.waypoint.util.Position;
 import grapefruit.command.CommandContainer;
-import grapefruit.command.annotation.CommandDefinition;
-import grapefruit.command.annotation.argument.Arg;
-import grapefruit.command.annotation.argument.Flag;
+import grapefruit.command.annotation.Arg;
+import grapefruit.command.annotation.Command;
+import grapefruit.command.annotation.Flag;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -46,7 +46,7 @@ public class WaypointCommands implements CommandModule {
         dispatcher.register(this.container);
     }
 
-    @CommandDefinition(route = "waypoint|wp set", permission = "waypoint.set", conditions = { IsPlayer.class })
+    @Command(route = "waypoint|wp set", permission = "waypoint.set", conditions = { IsPlayer.class })
     public void set(@Sender Player sender, @Arg @Max(255) String name, @Flag NamedTextColor color, @Flag boolean global) {
         // Check if a waypoint with this name exists already
         if (this.waypointService.getByName(sender, name).isPresent()) {
@@ -68,7 +68,7 @@ public class WaypointCommands implements CommandModule {
                 .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.CREATION_FAILURE).make(), "Failed to create waypoint", LOGGER));
     }
 
-    @CommandDefinition(route = "waypoint|wp remove|rm", permission = "waypoint.remove", conditions = { IsPlayer.class })
+    @Command(route = "waypoint|wp remove|rm", permission = "waypoint.remove", conditions = { IsPlayer.class })
     public void remove(@Sender Player sender, @Arg @Owning Waypoint waypoint) {
         this.waypointService.removeWaypoint(waypoint)
                 .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.DELETION_FAILURE).make(), "Failed to remove waypoint", LOGGER))
@@ -78,7 +78,7 @@ public class WaypointCommands implements CommandModule {
                 .thenAccept(sender::sendMessage);
     }
 
-    @CommandDefinition(route = "waypoint|wp list|ls", permission = "waypoint.list", conditions = { IsPlayer.class })
+    @Command(route = "waypoint|wp list|ls", permission = "waypoint.list", conditions = { IsPlayer.class })
     public void list(@Sender Player sender, @Flag boolean hideGlobal, @Flag int page) {
         Set<Waypoint> waypoints = hideGlobal
                 ? this.waypointService.getOwnedWaypoints(sender)
@@ -123,7 +123,7 @@ public class WaypointCommands implements CommandModule {
         sender.sendMessage(footer);
     }
 
-    @CommandDefinition(route = "waypoint|wp edit", permission = "waypoint.edit", conditions = { IsPlayer.class })
+    @Command(route = "waypoint|wp edit", permission = "waypoint.edit", conditions = { IsPlayer.class })
     public void edit(
             @Sender Player sender,
             @Arg @Owning Waypoint waypoint,
@@ -137,7 +137,7 @@ public class WaypointCommands implements CommandModule {
         updateAndReport(sender, waypoint);
     }
 
-    @CommandDefinition(route = "waypoint|wp reloc|movehere", permission = "waypoint.reloc", conditions = { IsPlayer.class })
+    @Command(route = "waypoint|wp reloc|movehere", permission = "waypoint.reloc", conditions = { IsPlayer.class })
     public void reloc(@Sender Player sender, @Arg @Owning Waypoint waypoint) {
         waypoint.setPosition(Position.from(sender.getLocation()));
         updateAndReport(sender, waypoint);

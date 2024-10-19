@@ -9,8 +9,8 @@ import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import grapefruit.command.CommandContainer;
-import grapefruit.command.annotation.CommandDefinition;
-import grapefruit.command.annotation.argument.Arg;
+import grapefruit.command.annotation.Arg;
+import grapefruit.command.annotation.Command;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -38,7 +38,7 @@ public class AdminCommands implements CommandModule {
         dispatcher.register(this.container);
     }
 
-    @CommandDefinition(route = "waypointadmin|wpa reload", permission = "waypoint.admin.reload")
+    @Command(route = "waypointadmin|wpa reload", permission = "waypoint.admin.reload")
     public void reload(@Sender CommandSender sender) {
         long start = System.currentTimeMillis();
         sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_INITIATED).make());
@@ -53,7 +53,7 @@ public class AdminCommands implements CommandModule {
         }
     }
 
-    @CommandDefinition(route = "waypointadmin|wpa info", permission = "waypoint.admin.info")
+    @Command(route = "waypointadmin|wpa info", permission = "waypoint.admin.info")
     public void info(@Sender Player sender, @Arg Waypoint waypoint) {
         sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.INFO).with(
                 Placeholder.of("name", waypoint.getName()),

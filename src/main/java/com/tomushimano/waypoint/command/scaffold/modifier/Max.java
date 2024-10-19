@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold.modifier;
 
-import grapefruit.command.annotation.modifier.Modifier;
+import grapefruit.command.annotation.meta.Modifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
