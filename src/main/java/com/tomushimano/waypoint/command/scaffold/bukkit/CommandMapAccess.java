@@ -2,9 +2,9 @@ package com.tomushimano.waypoint.command.scaffold.bukkit;
 
 import com.google.common.collect.ImmutableSet;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import grapefruit.command.runtime.Command;
 import grapefruit.command.runtime.dispatcher.CommandRegistrationHandler;
 import grapefruit.command.runtime.dispatcher.tree.RouteNode;
+import grapefruit.command.runtime.generated.CommandMirror;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -24,7 +24,7 @@ import java.util.Set;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
 @Singleton
-public final class CommandMapAccess extends CommandRegistrationHandler {
+public final class CommandMapAccess implements CommandRegistrationHandler {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandMapAccess.class);
     private static final MethodHandle PLUGIN_COMMAND_FACTORY;
     private final Map<String, org.bukkit.command.Command> knownCommands = Bukkit.getCommandMap().getKnownCommands();
@@ -47,18 +47,22 @@ public final class CommandMapAccess extends CommandRegistrationHandler {
         this.plugin = plugin;
     }
 
+    private Set<String> allAliases(RouteNode node) {
+        return ImmutableSet.<String>builder()
+                .add(node.primaryAlias())
+                .addAll(node.secondaryAliases())
+                .build();
+    }
+
     @Override
-    public void onRegister(Command command) {
-        RouteNode root = command.spec().route().getFirst();
+    public boolean register(CommandMirror command) {
+        RouteNode root = command.route().getFirst();
 
         String primaryAlias = root.primaryAlias();
         Set<String> secondaryAliases = root.secondaryAliases();
 
         unregisterIfExists(primaryAlias); // Unregister command with the primary alias, if it exists
-        Set<String> allAliases = ImmutableSet.<String>builder()
-                .add(primaryAlias)
-                .addAll(secondaryAliases)
-                .build();
+        Set<String> allAliases = allAliases(root);
 
         try {
             // Create plugin command instance
@@ -71,13 +75,23 @@ public final class CommandMapAccess extends CommandRegistrationHandler {
         } catch (Throwable ex) {
             capture(ex, "Failed to register command with root aliases: %s".formatted(allAliases), LOGGER);
             // We don't want to proceed with the registration of this command any further.
-            interrupt();
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void onUnregister(Command command) {
+    public boolean unregister(CommandMirror command) {
         // Do nothing, we don't support the unregistering of commands right now.
+        Set<String> allAliases = allAliases(command.route().getFirst());
+        for (String alias : allAliases) this.knownCommands.remove(alias);
+
+        // Remove tracked aliases
+        this.commandControl.untrack(allAliases);
+
+        // Always return true
+        return true;
     }
 
     private PluginCommand createPluginCommand(String label, Set<String> aliases, CommandExecutor executor) throws Throwable {

@@ -51,6 +51,10 @@ public final class BukkitCommandControl implements CommandExecutor, Listener {
         this.trackedAliases.addAll(aliases);
     }
 
+    public void untrack(Collection<String> aliases) {
+        this.trackedAliases.removeAll(aliases);
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         // Build command line
