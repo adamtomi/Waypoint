@@ -11,7 +11,7 @@ admin:
     failure: "&cHiba történt a konfiguráció újratöltése közben."
 
 command:
-  insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o{permission}&c\""
+  insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
   invalid_argument: "&cAz alábbi argumentum érvénytelen: &l{argument}"
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
@@ -33,9 +33,9 @@ waypoint:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
     item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
     item_hover: "&2&l! &aKattints a koordináták kimásolásához!"
-    footer_previous: "&8&l<&7Previous                  "
+    footer_previous: "&8&l<&7Előző                  "
     footer_separator: "&8&l|"
-    footer_next: "                   &7Next&8&l>"
+    footer_next: "                  &7Következő&8&l>"
     empty: "&aNincs megjeleníthető waypoint."
   hologram:
     coordinates: "&f{coordinates}"
