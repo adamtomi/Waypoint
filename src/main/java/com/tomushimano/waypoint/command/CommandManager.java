@@ -39,6 +39,7 @@ import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.PLAY
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SENDER_KEY;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
+@Deprecated
 public class CommandManager {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
     private final SyntaxFormatter syntaxFormatter = new SyntaxFormatter();

@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import static com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper.OWNING_NAME;
 
+@Deprecated
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.PARAMETER)
 @MappedBy(OWNING_NAME)

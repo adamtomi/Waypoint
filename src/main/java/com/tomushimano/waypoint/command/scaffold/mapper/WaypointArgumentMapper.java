@@ -19,6 +19,7 @@ import java.util.function.Function;
 
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.PLAYER_KEY;
 
+@Deprecated
 public class WaypointArgumentMapper implements ArgumentMapper<Waypoint> {
     public static final String OWNING_NAME = "__WAYPOINT_OWNING__";
     private final Function<Player, Set<Waypoint>> valueProvider;

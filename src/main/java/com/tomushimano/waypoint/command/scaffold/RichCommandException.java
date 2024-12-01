@@ -7,6 +7,7 @@ import java.io.Serial;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated
 public class RichCommandException extends CommandArgumentException {
     @Serial
     private static final long serialVersionUID = -5861910885488907453L;

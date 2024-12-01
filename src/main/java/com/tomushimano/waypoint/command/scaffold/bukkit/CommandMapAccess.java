@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
+@Deprecated
 @Singleton
 public final class CommandMapAccess implements CommandRegistrationHandler {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandMapAccess.class);

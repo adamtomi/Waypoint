@@ -10,6 +10,7 @@ import grapefruit.command.runtime.util.key.Key;
 
 import javax.inject.Inject;
 
+@Deprecated
 public class MaxModifier implements ArgumentModifier<String> {
     private static final int MAX_LENGTH_IN_ERR_MSG = 50;
     private static final Key<Integer> MAX_KEY = Key.named(Integer.class, "value");

@@ -25,6 +25,7 @@ import java.util.function.UnaryOperator;
 
 import static java.lang.String.join;
 
+@Deprecated
 @Singleton
 public final class BukkitCommandControl implements CommandExecutor, Listener {
     private static final UnaryOperator<String> STRIP_LEADING_SLASH = in -> in.startsWith("/") ? in.substring(1) : in;

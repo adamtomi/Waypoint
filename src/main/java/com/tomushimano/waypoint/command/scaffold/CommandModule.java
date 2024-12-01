@@ -4,6 +4,7 @@ import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.runtime.dispatcher.CommandDispatcher;
 import org.slf4j.Logger;
 
+@Deprecated
 public interface CommandModule {
     Logger LOGGER = NamespacedLoggerFactory.create(CommandModule.class);
 

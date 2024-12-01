@@ -30,6 +30,7 @@ import static net.kyori.adventure.text.event.ClickEvent.copyToClipboard;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 
+@Deprecated
 public class WaypointCommands implements CommandModule {
     private final CommandContainer container = new WaypointCommands_Container(this);
     private final WaypointService waypointService;

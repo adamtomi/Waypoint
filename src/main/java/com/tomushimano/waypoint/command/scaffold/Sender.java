@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SENDER_KEY_NAME;
 
+@Deprecated
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.PARAMETER)
 @InjectedBy(value = SENDER_KEY_NAME, nullable = false)

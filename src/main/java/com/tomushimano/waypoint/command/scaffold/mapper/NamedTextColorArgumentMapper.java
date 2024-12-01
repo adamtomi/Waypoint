@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import javax.inject.Inject;
 import java.util.List;
 
+@Deprecated
 public class NamedTextColorArgumentMapper implements ArgumentMapper<NamedTextColor> {
     private final MessageConfig messageConfig;
 

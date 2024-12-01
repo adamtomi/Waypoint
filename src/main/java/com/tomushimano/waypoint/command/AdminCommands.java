@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 
+@Deprecated
 public class AdminCommands implements CommandModule {
     private final CommandContainer container = new AdminCommands_Container(this);
     private final ConfigHelper configHelper;

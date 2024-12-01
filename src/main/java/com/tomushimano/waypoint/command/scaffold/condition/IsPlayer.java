@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SENDER_KEY;
 
+@Deprecated
 public class IsPlayer implements VerboseCondition {
     private final MessageConfig messageConfig;
 

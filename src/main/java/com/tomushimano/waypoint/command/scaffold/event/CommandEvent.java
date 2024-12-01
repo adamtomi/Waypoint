@@ -2,6 +2,7 @@ package com.tomushimano.waypoint.command.scaffold.event;
 
 import org.bukkit.command.CommandSender;
 
+@Deprecated
 public abstract class CommandEvent {
     private final CommandSender sender;
     private final String command;

@@ -5,6 +5,7 @@ import grapefruit.command.runtime.dispatcher.syntax.CommandSyntax;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
+@Deprecated
 public class SyntaxFormatter implements Function<CommandSyntax, String> {
     private static final char REQUIRED_OPENING = '<';
     private static final char REQUIRED_CLOSING = '>';

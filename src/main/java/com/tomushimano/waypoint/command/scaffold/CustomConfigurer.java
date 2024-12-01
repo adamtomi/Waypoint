@@ -16,6 +16,7 @@ import java.util.Set;
 import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.SENDER_KEY;
 import static com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper.OWNING_NAME;
 
+@Deprecated
 @Singleton
 public class CustomConfigurer extends DispatcherConfigurer {
     private final NamedTextColorArgumentMapper colorMapper;
