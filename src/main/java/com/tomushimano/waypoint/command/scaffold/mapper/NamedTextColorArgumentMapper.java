@@ -1,42 +1,46 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
-import com.tomushimano.waypoint.command.scaffold.RichCommandException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
-import grapefruit.command.runtime.CommandException;
-import grapefruit.command.runtime.argument.mapper.ArgumentMapper;
-import grapefruit.command.runtime.dispatcher.CommandContext;
-import grapefruit.command.runtime.dispatcher.input.StringReader;
+import grapefruit.command.argument.mapper.AbstractArgumentMapper;
+import grapefruit.command.argument.mapper.MappingResult;
+import grapefruit.command.dispatcher.CommandContext;
+import grapefruit.command.dispatcher.input.CommandInputTokenizer;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
-import java.util.List;
 
-@Deprecated
-public class NamedTextColorArgumentMapper implements ArgumentMapper<NamedTextColor> {
+public class NamedTextColorArgumentMapper extends AbstractArgumentMapper<CommandSender, NamedTextColor> {
+    private static final TypeToken<NamedTextColor> TYPE = TypeToken.get(NamedTextColor.class);
     private final MessageConfig messageConfig;
 
     @Inject
     public NamedTextColorArgumentMapper(MessageConfig messageConfig) {
+        super(TYPE, false);
         this.messageConfig = messageConfig;
     }
 
+    // TODO proper exceptions
     @Override
-    public NamedTextColor tryMap(CommandContext context, StringReader input) throws CommandException {
-        String value = input.readSingle();
+    public MappingResult<NamedTextColor> tryMap(CommandContext context, CommandInputTokenizer input) {
+        String value = input.readWord();
         NamedTextColor color = NamedTextColor.NAMES.value(value);
         if (color == null) {
-            throw new RichCommandException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
+            /* throw new RichCommandException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
                     .with(Placeholder.of("name", value))
                     .make());
+
+             */
+            return MappingResult.fail(input, value, new RuntimeException());
         }
 
-        return color;
+        return MappingResult.ok(color);
     }
 
+    /*
     @Override
     public List<String> complete(CommandContext context, String input) {
         return List.copyOf(NamedTextColor.NAMES.keys());
-    }
+    }*/
 }

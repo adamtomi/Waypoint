@@ -2,11 +2,13 @@ package com.tomushimano.waypoint.command.scaffold.bukkit;
 
 import com.google.common.collect.ImmutableSet;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import grapefruit.command.runtime.dispatcher.CommandRegistrationHandler;
-import grapefruit.command.runtime.dispatcher.tree.RouteNode;
-import grapefruit.command.runtime.generated.CommandMirror;
+import grapefruit.command.CommandModule;
+import grapefruit.command.argument.CommandArgument;
+import grapefruit.command.dispatcher.CommandRegistrationHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,9 +25,8 @@ import java.util.Set;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
-@Deprecated
 @Singleton
-public final class CommandMapAccess implements CommandRegistrationHandler {
+public final class CommandMapAccess implements CommandRegistrationHandler<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandMapAccess.class);
     private static final MethodHandle PLUGIN_COMMAND_FACTORY;
     private final Map<String, org.bukkit.command.Command> knownCommands = Bukkit.getCommandMap().getKnownCommands();
@@ -48,19 +49,19 @@ public final class CommandMapAccess implements CommandRegistrationHandler {
         this.plugin = plugin;
     }
 
-    private Set<String> allAliases(RouteNode node) {
+    private Set<String> allAliases(CommandArgument.Literal node) {
         return ImmutableSet.<String>builder()
-                .add(node.primaryAlias())
-                .addAll(node.secondaryAliases())
+                .add(node.name())
+                .addAll(node.aliases())
                 .build();
     }
 
     @Override
-    public boolean register(CommandMirror command) {
-        RouteNode root = command.route().getFirst();
+    public boolean register(CommandModule<CommandSender> command) {
+        CommandArgument.Literal root = command.chain().route().getFirst();
 
-        String primaryAlias = root.primaryAlias();
-        Set<String> secondaryAliases = root.secondaryAliases();
+        String primaryAlias = root.name();
+        Set<String> secondaryAliases = root.aliases();
 
         unregisterIfExists(primaryAlias); // Unregister command with the primary alias, if it exists
         Set<String> allAliases = allAliases(root);
@@ -83,9 +84,9 @@ public final class CommandMapAccess implements CommandRegistrationHandler {
     }
 
     @Override
-    public boolean unregister(CommandMirror command) {
+    public boolean unregister(CommandModule<CommandSender> command) {
         // Do nothing, we don't support the unregistering of commands right now.
-        Set<String> allAliases = allAliases(command.route().getFirst());
+        Set<String> allAliases = allAliases(command.chain().route().getFirst());
         for (String alias : allAliases) this.knownCommands.remove(alias);
 
         // Remove tracked aliases
@@ -103,7 +104,7 @@ public final class CommandMapAccess implements CommandRegistrationHandler {
     }
 
     private void unregisterIfExists(String label) {
-        org.bukkit.command.Command command = this.knownCommands.remove(label);
+        Command command = this.knownCommands.remove(label);
         if (command != null) command.getAliases().forEach(this.knownCommands::remove);
     }
 }

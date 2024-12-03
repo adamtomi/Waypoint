@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Deprecated
 public final class TabCompletionRequest extends CommandEvent {
     private final List<String> completions = new ArrayList<>();
 

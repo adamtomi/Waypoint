@@ -1,0 +1,81 @@
+package com.tomushimano.waypoint.command.impl;
+
+import com.tomushimano.waypoint.command.scaffold.mapper.NamedTextColorArgumentMapper;
+import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
+import grapefruit.command.CommandModule;
+import grapefruit.command.argument.CommandArgument;
+import grapefruit.command.argument.CommandChain;
+import grapefruit.command.argument.mapper.builtin.StringArgumentMapper;
+import grapefruit.command.dispatcher.CommandContext;
+import grapefruit.command.util.key.Key;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.slf4j.Logger;
+
+import javax.inject.Inject;
+
+import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
+import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+
+// TODO isPlayer condition
+public class SetCommand implements CommandModule<CommandSender> {
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(SetCommand.class);
+    private static final Key<String> NAME_KEY = Key.named(String.class, "name");
+    private static final Key<Boolean> GLOBAL_KEY = Key.named(Boolean.class, "global");
+    private static final Key<NamedTextColor> COLOR_KEY = Key.named(NamedTextColor.class, "color");
+    private final WaypointService waypointService;
+    private final MessageConfig messageConfig;
+
+    @Inject
+    public SetCommand(final WaypointService waypointService, final MessageConfig messageConfig) {
+        this.waypointService = waypointService;
+        this.messageConfig = messageConfig;
+    }
+
+    @Override
+    public CommandChain<CommandSender> chain() {
+        return CommandChain.<CommandSender>begin()
+                .then(CommandArgument.literal("waypoint").aliases("wp").build())
+                .then(CommandArgument.literal("set").build()) // .condition(isPlayer())
+                .arguments()
+                .then(CommandArgument.<CommandSender, String>required(NAME_KEY).mapWith(StringArgumentMapper.word()).build())
+                .flags()
+                .then(CommandArgument.<CommandSender>presenceFlag(GLOBAL_KEY).assumeShorthand().build())
+                // TODO text color mapper
+                .then(CommandArgument.<CommandSender, NamedTextColor>valueFlag(COLOR_KEY).assumeShorthand().mapWith(new NamedTextColorArgumentMapper(null)).build())
+                .build();
+    }
+
+    @Override
+    public void execute(final CommandContext<CommandSender> context) {
+        final Player sender = (Player) context.source();
+        final String name = context.require(NAME_KEY);
+
+        // Check if a waypoint with this name exists already
+        if (this.waypointService.getByName(sender, name).isPresent()) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.CREATION_ALREADY_EXISTS)
+                    .with(Placeholder.of("name", name))
+                    .make());
+            return;
+        }
+
+        final boolean global = context.has(GLOBAL_KEY);
+        final NamedTextColor color = context.require(COLOR_KEY);
+
+        this.waypointService.createWaypoint(sender, name, color, global)
+                .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)
+                        .with(
+                                Placeholder.of("name", x.getName()),
+                                Placeholder.of("world", x.getPosition().getWorldName()),
+                                Placeholder.of("coordinates", formatPosition(x.getPosition()))
+                        )
+                        .make())
+                .thenAccept(sender::sendMessage)
+                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.CREATION_FAILURE).make(), "Failed to create waypoint", LOGGER));
+    }
+}

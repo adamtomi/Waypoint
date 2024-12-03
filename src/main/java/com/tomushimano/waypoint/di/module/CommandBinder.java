@@ -1,32 +1,46 @@
 package com.tomushimano.waypoint.di.module;
 
-import com.tomushimano.waypoint.command.AdminCommands;
-import com.tomushimano.waypoint.command.WaypointCommands;
-import com.tomushimano.waypoint.command.scaffold.CommandModule;
-import com.tomushimano.waypoint.command.scaffold.condition.IsPlayer;
-import com.tomushimano.waypoint.command.scaffold.modifier.MaxModifier;
+import com.tomushimano.waypoint.command.impl.EditCommand;
+import com.tomushimano.waypoint.command.impl.InfoCommand;
+import com.tomushimano.waypoint.command.impl.ListCommand;
+import com.tomushimano.waypoint.command.impl.ReloadCommand;
+import com.tomushimano.waypoint.command.impl.RelocateCommand;
+import com.tomushimano.waypoint.command.impl.RemoveCommand;
+import com.tomushimano.waypoint.command.impl.SetCommand;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
-import grapefruit.command.runtime.argument.modifier.ArgumentModifier;
-import grapefruit.command.runtime.dispatcher.condition.CommandCondition;
+import grapefruit.command.CommandModule;
+import org.bukkit.command.CommandSender;
 
 @Module
 public interface CommandBinder {
 
     @Binds
     @IntoSet
-    CommandModule bindAdminCommands(AdminCommands instance);
+    CommandModule<CommandSender> bindEditCommand(EditCommand command);
 
     @Binds
     @IntoSet
-    CommandModule bindWaypointCommands(WaypointCommands instance);
+    CommandModule<CommandSender> bindInfoCommand(InfoCommand command);
 
     @Binds
     @IntoSet
-    CommandCondition bindIsPlayerCondition(IsPlayer condition);
+    CommandModule<CommandSender> bindListCommand(ListCommand command);
 
     @Binds
     @IntoSet
-    ArgumentModifier.Factory<?> bindMaxModifierFactory(MaxModifier.Factory factory);
+    CommandModule<CommandSender> bindReloadCommand(ReloadCommand command);
+
+    @Binds
+    @IntoSet
+    CommandModule<CommandSender> bindRelocateCommand(RelocateCommand command);
+
+    @Binds
+    @IntoSet
+    CommandModule<CommandSender> bindRemoveCommand(RemoveCommand command);
+
+    @Binds
+    @IntoSet
+    CommandModule<CommandSender> bindSetCommand(SetCommand command);
 }

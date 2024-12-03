@@ -1,60 +1,65 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
-import com.tomushimano.waypoint.command.scaffold.RichCommandException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
-import grapefruit.command.runtime.CommandException;
-import grapefruit.command.runtime.argument.mapper.ArgumentMapper;
-import grapefruit.command.runtime.dispatcher.CommandContext;
-import grapefruit.command.runtime.dispatcher.input.StringReader;
+import grapefruit.command.argument.mapper.AbstractArgumentMapper;
+import grapefruit.command.argument.mapper.MappingResult;
+import grapefruit.command.dispatcher.CommandContext;
+import grapefruit.command.dispatcher.input.CommandInputTokenizer;
+import io.leangen.geantyref.TypeToken;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.tomushimano.waypoint.command.scaffold.WaypointContextKeys.PLAYER_KEY;
-
-@Deprecated
-public class WaypointArgumentMapper implements ArgumentMapper<Waypoint> {
-    public static final String OWNING_NAME = "__WAYPOINT_OWNING__";
+public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender, Waypoint> {
+    private static final TypeToken<Waypoint> TYPE = TypeToken.get(Waypoint.class);
     private final Function<Player, Set<Waypoint>> valueProvider;
     private final MessageConfig messageConfig;
 
     private WaypointArgumentMapper(Function<Player, Set<Waypoint>> valueProvider, MessageConfig messageConfig) {
+        super(TYPE, false);
         this.valueProvider = valueProvider;
         this.messageConfig = messageConfig;
     }
 
+    // TODO MappingResult.fromOptional()
+    // TODO throws declaration
     @Override
-    public Waypoint tryMap(CommandContext context, StringReader input) throws CommandException {
-        String value = input.readSingle();
+    public MappingResult<Waypoint> tryMap(CommandContext context, CommandInputTokenizer input) {
+        String value = input.readWord();
+        // Assume the source to be a player // TODO <- improve this.
+        Player player = (Player) context.source();
         /*
          * This will not fail, because by the time we get to this point,
          * conditions have already been checked, and the IsPlayer condition
          * would've caught this.
          */
-        Set<Waypoint> candidates = this.valueProvider.apply(context.require(PLAYER_KEY));
-        return candidates.stream()
+        Optional<Waypoint> candidate = this.valueProvider.apply(player).stream()
                 .filter(x -> x.getName().equalsIgnoreCase(value))
-                .findFirst()
-                .orElseThrow(() -> new RichCommandException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
+                .findFirst();
+
+        /*
+         * () -> new RichCommandException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
                         .with(Placeholder.of("name", value))
-                        .make()));
+                        .make())
+         */
+        // TODO proper exception
+        return candidate.map(MappingResult::ok).orElseGet(() -> MappingResult.fail(input, value, new RuntimeException()));
     }
 
-    @Override
+    /* @Override
     public List<String> complete(CommandContext context, String input) {
         // See this#dispatch for note
         Set<Waypoint> candidates = this.valueProvider.apply(context.require(PLAYER_KEY));
         return candidates.stream()
                 .map(Waypoint::getName)
                 .toList();
-    }
+    } */
 
     public static final class Provider {
         private final WaypointService waypointService;
