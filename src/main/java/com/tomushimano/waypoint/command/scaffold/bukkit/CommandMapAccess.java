@@ -29,7 +29,7 @@ import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 public final class CommandMapAccess implements CommandRegistrationHandler<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandMapAccess.class);
     private static final MethodHandle PLUGIN_COMMAND_FACTORY;
-    private final Map<String, org.bukkit.command.Command> knownCommands = Bukkit.getCommandMap().getKnownCommands();
+    private final Map<String, Command> knownCommands = Bukkit.getCommandMap().getKnownCommands();
     private final BukkitCommandControl commandControl;
     private final JavaPlugin plugin;
 
