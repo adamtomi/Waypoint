@@ -46,8 +46,8 @@ public class ReloadCommand implements CommandModule<CommandSender> {
         if (!this.configHelper.reloadAll()) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_FAILURE).make());
         } else {
-            long deltaT = System.currentTimeMillis() - start;
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
+            long deltaT = System.currentTimeMillis() - start;
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_SUCCESS)
                     .with(Placeholder.of("duration", deltaT))
                     .make());
