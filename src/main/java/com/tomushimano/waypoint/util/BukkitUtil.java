@@ -2,7 +2,6 @@ package com.tomushimano.waypoint.util;
 
 import org.bukkit.entity.Player;
 
-@Deprecated
 public final class BukkitUtil {
     private BukkitUtil() {
         throw new DontInvokeMe();
