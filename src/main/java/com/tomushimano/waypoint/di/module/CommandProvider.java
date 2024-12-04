@@ -7,13 +7,14 @@ import grapefruit.command.dispatcher.CommandAuthorizer;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.config.DispatcherConfig;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permissible;
 
 @Module
 public class CommandProvider {
 
     @Provides
     public CommandAuthorizer<CommandSender> provideCommandAuthorizer() {
-        return (context, permission) -> context.source().hasPermission(permission);
+        return Permissible::hasPermission;
     }
 
     @Provides

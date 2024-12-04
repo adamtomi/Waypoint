@@ -44,7 +44,8 @@ public class ListCommand implements CommandModule<CommandSender> {
                 .then(literal("list").aliases("ls").build())
                 .flags()
                 .then(CommandArgument.<CommandSender>presenceFlag(HIDE_GLOBAL_KEY).assumeShorthand().build())
-                .then(CommandArgument.<CommandSender, Integer>valueFlag(PAGE_KEY).assumeShorthand().build())
+                // TODO int mapper
+                // .then(CommandArgument.<CommandSender, Integer>valueFlag(PAGE_KEY).assumeShorthand().build())
                 .build();
     }
 
