@@ -64,7 +64,7 @@ public class SetCommand implements CommandModule<CommandSender> {
         }
 
         final boolean global = context.has(GLOBAL_KEY);
-        final NamedTextColor color = context.require(COLOR_KEY);
+        final NamedTextColor color = context.getOrDefault(COLOR_KEY, NamedTextColor.WHITE);
 
         this.waypointService.createWaypoint(sender, name, color, global)
                 .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)
