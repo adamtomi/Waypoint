@@ -12,6 +12,7 @@ import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandArgumentException;
+import grapefruit.command.dispatcher.CommandAuthorizationException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+import static java.lang.String.join;
 
 public class CommandManager {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
@@ -58,7 +60,6 @@ public class CommandManager {
 
     public void shutdown() {
         this.eventBus.unregister(this);
-        // TODO implement unreg logic in reghandler
         this.dispatcher.unregister(this.commands);
         LOGGER.info("Shutting down async executor");
         ConcurrentUtil.terminate(this.executor, 1L);
@@ -80,6 +81,10 @@ public class CommandManager {
     private void runCommand(CommandSender sender, String commandLine) {
         try {
             this.dispatcher.dispatch(sender, commandLine);
+        } catch (CommandAuthorizationException ex) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
+                    .with(Placeholder.of("permission", join(", ", ex.lacking())))
+                    .make());
         } catch (CommandArgumentException ex) {
             // TODO proper formatting
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
