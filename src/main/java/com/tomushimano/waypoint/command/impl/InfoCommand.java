@@ -6,8 +6,8 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import grapefruit.command.CommandModule;
-import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import org.bukkit.Bukkit;
@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
-import static grapefruit.command.argument.CommandArgument.literal;
 
 public class InfoCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
@@ -33,12 +32,12 @@ public class InfoCommand implements CommandModule<CommandSender> {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(literal("waypoint").aliases("wp").build())
-                .then(literal("info").aliases("i").build())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypoint").aliases("wp").build())
+                .then(factory.literal("info").aliases("i").require("waypoint.info").build())
                 .arguments()
-                .then(CommandArgument.<CommandSender, Waypoint>required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.standard()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.standard()).build())
                 .build();
     }
 

@@ -2,8 +2,8 @@ package com.tomushimano.waypoint.command.scaffold.bukkit;
 
 import com.google.common.collect.ImmutableSet;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandArgument;
+import grapefruit.command.argument.CommandChain;
 import grapefruit.command.dispatcher.CommandRegistrationHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -44,12 +44,12 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
     }
 
     @Inject
-    public CommandMapAccess(BukkitCommandControl commandControl, JavaPlugin plugin) {
+    public CommandMapAccess(final BukkitCommandControl commandControl, final JavaPlugin plugin) {
         this.commandControl = commandControl;
         this.plugin = plugin;
     }
 
-    private Set<String> allAliases(CommandArgument.Literal node) {
+    private Set<String> allAliases(final CommandArgument.Literal node) {
         return ImmutableSet.<String>builder()
                 .add(node.name())
                 .addAll(node.aliases())
@@ -57,24 +57,24 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
     }
 
     @Override
-    public boolean register(CommandModule<CommandSender> command) {
-        CommandArgument.Literal root = command.chain().route().getFirst();
+    public boolean register(final CommandChain<CommandSender> chain) {
+        final CommandArgument.Literal root = chain.route().getFirst();
 
-        String primaryAlias = root.name();
-        Set<String> secondaryAliases = root.aliases();
+        final String primaryAlias = root.name();
+        final Set<String> secondaryAliases = root.aliases();
 
         unregisterIfExists(primaryAlias); // Unregister command with the primary alias, if it exists
-        Set<String> allAliases = allAliases(root);
+        final Set<String> allAliases = allAliases(root);
 
         try {
             // Create plugin command instance
-            PluginCommand pluginCommand = createPluginCommand(primaryAlias, secondaryAliases, this.commandControl);
+            final PluginCommand pluginCommand = createPluginCommand(primaryAlias, secondaryAliases, this.commandControl);
             // Store the constructed command instance in the bukkit command map
-            for (String alias : allAliases) this.knownCommands.put(alias, pluginCommand);
+            for (final String alias : allAliases) this.knownCommands.put(alias, pluginCommand);
 
             // Register aliases for tab-completion
             this.commandControl.track(allAliases);
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
             capture(ex, "Failed to register command with root aliases: %s".formatted(allAliases), LOGGER);
             // We don't want to proceed with the registration of this command any further.
             return false;
@@ -84,10 +84,10 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
     }
 
     @Override
-    public boolean unregister(CommandModule<CommandSender> command) {
+    public boolean unregister(final CommandChain<CommandSender> chain) {
         // Do nothing, we don't support the unregistering of commands right now.
-        Set<String> allAliases = allAliases(command.chain().route().getFirst());
-        for (String alias : allAliases) this.knownCommands.remove(alias);
+        final Set<String> allAliases = allAliases(chain.route().getFirst());
+        for (final String alias : allAliases) this.knownCommands.remove(alias);
 
         // Remove tracked aliases
         this.commandControl.untrack(allAliases);
@@ -96,15 +96,15 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
         return true;
     }
 
-    private PluginCommand createPluginCommand(String label, Set<String> aliases, CommandExecutor executor) throws Throwable {
-        PluginCommand instance = (PluginCommand) PLUGIN_COMMAND_FACTORY.invoke(label, this.plugin);
+    private PluginCommand createPluginCommand(final String label, final Set<String> aliases, final CommandExecutor executor) throws Throwable {
+        final PluginCommand instance = (PluginCommand) PLUGIN_COMMAND_FACTORY.invoke(label, this.plugin);
         instance.setExecutor(executor);
         instance.setAliases(List.copyOf(aliases));
         return instance;
     }
 
-    private void unregisterIfExists(String label) {
-        Command command = this.knownCommands.remove(label);
+    private void unregisterIfExists(final String label) {
+        final Command command = this.knownCommands.remove(label);
         if (command != null) command.getAliases().forEach(this.knownCommands::remove);
     }
 }

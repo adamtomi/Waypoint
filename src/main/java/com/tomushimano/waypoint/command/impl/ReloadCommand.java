@@ -7,12 +7,11 @@ import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.WaypointService;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
-
-import static grapefruit.command.argument.CommandArgument.literal;
 
 public class ReloadCommand implements CommandModule<CommandSender> {
     private final ConfigHelper configHelper;
@@ -31,10 +30,10 @@ public class ReloadCommand implements CommandModule<CommandSender> {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(literal("waypointadmin").aliases("wpa").build())
-                .then(literal("reload").aliases("rl").build())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypointadmin").aliases("wpa").build())
+                .then(factory.literal("reload").aliases("rl").require("waypoint.admin.reload").build())
                 .build();
     }
 

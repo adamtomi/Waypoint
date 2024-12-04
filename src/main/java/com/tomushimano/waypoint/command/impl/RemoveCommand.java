@@ -8,8 +8,8 @@ import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
-import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import org.bukkit.command.CommandSender;
@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
-import static grapefruit.command.argument.CommandArgument.literal;
 
 public class RemoveCommand implements CommandModule<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(RemoveCommand.class);
@@ -39,12 +38,12 @@ public class RemoveCommand implements CommandModule<CommandSender> {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(literal("waypoint").aliases("wp").build())
-                .then(literal("remove").aliases("rm").build())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypoint").aliases("wp").build())
+                .then(factory.literal("remove").aliases("rm").require("waypoint.remove").build())
                 .arguments()
-                .then(CommandArgument.<CommandSender, Waypoint>required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
                 .build();
     }
 

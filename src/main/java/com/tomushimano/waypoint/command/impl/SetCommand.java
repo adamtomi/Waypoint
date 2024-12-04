@@ -7,9 +7,8 @@ import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
-import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
-import grapefruit.command.argument.mapper.builtin.StringArgumentMapper;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,6 +20,7 @@ import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+import static grapefruit.command.argument.mapper.builtin.StringArgumentMapper.word;
 
 // TODO isPlayer condition
 public class SetCommand implements CommandModule<CommandSender> {
@@ -38,16 +38,15 @@ public class SetCommand implements CommandModule<CommandSender> {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(CommandArgument.literal("waypoint").aliases("wp").build())
-                .then(CommandArgument.literal("set").build()) // .condition(isPlayer())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypoint").aliases("wp").build())
+                .then(factory.literal("set").require("waypoint.set").build())
                 .arguments()
-                .then(CommandArgument.<CommandSender, String>required(NAME_KEY).mapWith(StringArgumentMapper.word()).build())
+                .then(factory.required(NAME_KEY).mapWith(word()).build())
                 .flags()
-                .then(CommandArgument.<CommandSender>presenceFlag(GLOBAL_KEY).assumeShorthand().build())
-                // TODO text color mapper
-                .then(CommandArgument.<CommandSender, NamedTextColor>valueFlag(COLOR_KEY).assumeShorthand().mapWith(new NamedTextColorArgumentMapper(null)).build())
+                .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
+                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(new NamedTextColorArgumentMapper(null)).build())
                 .build();
     }
 

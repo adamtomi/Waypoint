@@ -5,9 +5,8 @@ import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
-import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
-import grapefruit.command.argument.mapper.builtin.StringArgumentMapper;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
-import static grapefruit.command.argument.CommandArgument.literal;
+import static grapefruit.command.argument.mapper.builtin.StringArgumentMapper.word;
 
 public class EditCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
@@ -37,16 +36,16 @@ public class EditCommand extends UpdateWaypointCommand {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(literal("waypoint").aliases("wp").build())
-                .then(literal("edit").build())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypoint").aliases("wp").build())
+                .then(factory.literal("edit").require("waypoint.edit").build())
                 .arguments()
-                .then(CommandArgument.<CommandSender, Waypoint>required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
                 .flags()
-                .then(CommandArgument.<CommandSender, String>valueFlag(NAME_KEY).mapWith(StringArgumentMapper.word()).build())
-                .then(CommandArgument.<CommandSender, NamedTextColor>valueFlag(COLOR_KEY).mapWith(new NamedTextColorArgumentMapper(null)).assumeShorthand().build())
-                .then(CommandArgument.<CommandSender>presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
+                .then(factory.valueFlag(NAME_KEY).mapWith(word()).build())
+                .then(factory.valueFlag(COLOR_KEY).mapWith(new NamedTextColorArgumentMapper(null)).assumeShorthand().build())
+                .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
                 .build();
     }
 

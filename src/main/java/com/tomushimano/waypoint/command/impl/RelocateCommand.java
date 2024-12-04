@@ -5,16 +5,14 @@ import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.Position;
-import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-
-import static grapefruit.command.argument.CommandArgument.literal;
 
 public class RelocateCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
@@ -31,12 +29,12 @@ public class RelocateCommand extends UpdateWaypointCommand {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(literal("waypoint").aliases("wp").build())
-                .then(literal("relocate").aliases("reloc", "movehere").build())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypoint").aliases("wp").build())
+                .then(factory.literal("relocate").aliases("reloc", "movehere").require("waypoint.relocate").build())
                 .arguments()
-                .then(CommandArgument.<CommandSender, Waypoint>required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
                 .build();
     }
 

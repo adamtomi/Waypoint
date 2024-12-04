@@ -7,8 +7,8 @@ import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.util.Paginator;
 import grapefruit.command.CommandModule;
-import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
+import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import net.kyori.adventure.text.Component;
@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import java.util.Set;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
-import static grapefruit.command.argument.CommandArgument.literal;
 import static net.kyori.adventure.text.event.ClickEvent.copyToClipboard;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
@@ -38,14 +37,14 @@ public class ListCommand implements CommandModule<CommandSender> {
     }
 
     @Override
-    public CommandChain<CommandSender> chain() {
-        return CommandChain.<CommandSender>begin()
-                .then(literal("waypoint").aliases("wp").build())
-                .then(literal("list").aliases("ls").build())
+    public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
+        return factory.newChain()
+                .then(factory.literal("waypoint").aliases("wp").build())
+                .then(factory.literal("list").aliases("ls").require("waypoint.list").build())
                 .flags()
-                .then(CommandArgument.<CommandSender>presenceFlag(HIDE_GLOBAL_KEY).assumeShorthand().build())
+                .then(factory.presenceFlag(HIDE_GLOBAL_KEY).assumeShorthand().build())
                 // TODO int mapper
-                // .then(CommandArgument.<CommandSender, Integer>valueFlag(PAGE_KEY).assumeShorthand().build())
+                // .then(factory.valueFlag(PAGE_KEY).assumeShorthand().build())
                 .build();
     }
 
