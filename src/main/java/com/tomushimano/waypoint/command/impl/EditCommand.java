@@ -55,11 +55,11 @@ public class EditCommand extends UpdateWaypointCommand {
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
         final @Nullable String name = context.nullable(NAME_KEY);
         final @Nullable NamedTextColor color = context.nullable(COLOR_KEY);
-        final boolean toggleglobality = context.has(TOGGLE_GLOBALITY_KEY);
+        final boolean toggleGlobality = context.has(TOGGLE_GLOBALITY_KEY);
 
         if (name != null) waypoint.setName(name);
         if (color != null) waypoint.setColor(color);
-        if (toggleglobality) waypoint.setGlobal(!waypoint.isGlobal());
+        if (toggleGlobality) waypoint.setGlobal(!waypoint.isGlobal());
         updateAndReport(sender, waypoint);
     }
 }
