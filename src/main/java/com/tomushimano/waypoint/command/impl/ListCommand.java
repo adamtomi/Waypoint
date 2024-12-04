@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-
 import java.util.Set;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
