@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
-import static grapefruit.command.argument.mapper.builtin.StringArgumentMapper.word;
 
 // TODO isPlayer condition
 public class SetCommand implements CommandModule<CommandSender> {
@@ -50,7 +49,7 @@ public class SetCommand implements CommandModule<CommandSender> {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("set").require("waypoint.set").build())
                 .arguments()
-                .then(factory.required(NAME_KEY).mapWith(word()).build())
+                .then(factory.required(NAME_KEY).mapWith(this.mapperHolder.varchar255()).build())
                 .flags()
                 .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
                 .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.mapperHolder.textColor()).build())

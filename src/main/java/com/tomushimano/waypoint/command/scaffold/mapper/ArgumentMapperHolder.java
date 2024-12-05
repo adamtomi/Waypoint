@@ -7,19 +7,22 @@ import javax.inject.Singleton;
 
 @Singleton
 /* Holds our custom argument mapper instances */
-public class ArgumentMapperHolder {
+public final class ArgumentMapperHolder {
     private final WaypointArgumentMapper stdWaypointMapper;
     private final WaypointArgumentMapper ownWaypointMapper;
     private final TextColorArgumentMapper textColorMapper;
+    private final VarcharArgumentMapper varcharArgumentMapper;
 
     @Inject
     public ArgumentMapperHolder(
             final WaypointArgumentMapper.Factory waypointArgumentMapperFactory,
-            final TextColorArgumentMapper textColorMapper
+            final TextColorArgumentMapper textColorMapper,
+            final VarcharArgumentMapper.Factory varcharArgumentMapperFactory
     ) {
         this.stdWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getAccessibleWaypoints);
         this.ownWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getOwnedWaypoints);
         this.textColorMapper = textColorMapper;
+        this.varcharArgumentMapper = varcharArgumentMapperFactory.create(255);
     }
 
     public WaypointArgumentMapper stdWaypoint() {
@@ -32,5 +35,9 @@ public class ArgumentMapperHolder {
 
     public TextColorArgumentMapper textColor() {
         return this.textColorMapper;
+    }
+
+    public VarcharArgumentMapper varchar255() {
+        return this.varcharArgumentMapper;
     }
 }

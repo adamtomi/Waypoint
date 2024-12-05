@@ -15,8 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
-import static grapefruit.command.argument.mapper.builtin.StringArgumentMapper.word;
-
 public class EditCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
@@ -42,7 +40,7 @@ public class EditCommand extends UpdateWaypointCommand {
                 .arguments()
                 .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypoint()).build())
                 .flags()
-                .then(factory.valueFlag(NAME_KEY).mapWith(word()).assumeShorthand().build())
+                .then(factory.valueFlag(NAME_KEY).mapWith(this.mapperHolder.varchar255()).assumeShorthand().build())
                 .then(factory.valueFlag(COLOR_KEY).mapWith(this.mapperHolder.textColor()).assumeShorthand().build())
                 .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
                 .build();
