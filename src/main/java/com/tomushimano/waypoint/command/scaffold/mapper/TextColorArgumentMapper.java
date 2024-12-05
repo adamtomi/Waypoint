@@ -17,7 +17,7 @@ import javax.inject.Inject;
 
 public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSender, TextColor> {
     private static final TypeToken<TextColor> TYPE = TypeToken.get(TextColor.class);
-    private static final String HASH = "#";
+    private static final char HASH = '#';
     private final MessageConfig messageConfig;
 
     @Inject
@@ -29,7 +29,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     @Override
     public TextColor tryMap(final CommandContext context, final CommandInputTokenizer input) throws CommandException {
         final String value = input.readWord();
-        if (value.startsWith(HASH)) {
+        if (value.charAt(0) == HASH) {
             final TextColor color = TextColor.fromCSSHexString(value);
             if (color == null) {
                 throw RichArgumentException.fromInput(input, value, this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make());
