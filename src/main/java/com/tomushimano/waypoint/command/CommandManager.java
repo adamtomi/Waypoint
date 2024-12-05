@@ -35,7 +35,8 @@ import static java.lang.String.join;
 
 public class CommandManager {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
-    private static final Comparator<NoSuchCommandException.Entry> NSCE_ENTRY_COMPARATOR = Comparator.comparing(NoSuchCommandException.Entry::name);
+    private static final Comparator<NoSuchCommandException.Alternative> NSCE_ALTERNATIVE_COMPARATOR =
+            Comparator.comparing(NoSuchCommandException.Alternative::name);
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
     );
@@ -117,8 +118,8 @@ public class CommandManager {
         final String prefix = extractPrefix(ex);
         printCommandArgPrefix(sender, ex, prefix);
 
-        final List<Component> options = ex.validAlternatives().stream()
-                .sorted(NSCE_ENTRY_COMPARATOR)
+        final List<Component> options = ex.alternatives().stream()
+                .sorted(NSCE_ALTERNATIVE_COMPARATOR)
                 .map(x -> this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND_ENTRY).with(
                         Placeholder.of("prefix", prefix),
                         Placeholder.of("name", x.name()),

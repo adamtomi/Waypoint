@@ -36,7 +36,7 @@ public class VarcharArgumentMapper extends AbstractArgumentMapper<CommandSender,
         this.maxLength = maxLength;
 
         this.delegateMapper = StringArgumentMapper.<CommandSender>builder()
-                .test(PATTERN, (arg, input) ->
+                .test(PATTERN, (input, arg) ->
                         RichArgumentException.fromInput(input, arg, this.messageConfig.get(MessageKeys.Command.REGEX_ERROR)
                                 .with(Placeholder.of("regex", PATTERN.pattern()))
                                 .make())
