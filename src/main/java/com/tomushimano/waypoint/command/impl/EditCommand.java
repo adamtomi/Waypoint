@@ -1,7 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
-import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
@@ -23,19 +22,16 @@ public class EditCommand extends UpdateWaypointCommand {
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
     private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
     private static final Key<Boolean> TOGGLE_GLOBALITY_KEY = Key.named(Boolean.class, "toggle-globality");
-    private final WaypointArgumentMapper.Provider waypointArgumentMapperProvider;
-    private final TextColorArgumentMapper textColorArgumentMapper;
+    private final ArgumentMapperHolder mapperHolder;
 
     @Inject
     public EditCommand(
             final WaypointService waypointService,
             final MessageConfig messageConfig,
-            final WaypointArgumentMapper.Provider waypointArgumentMapperProvider,
-            final TextColorArgumentMapper textColorArgumentMapper
+            final ArgumentMapperHolder mapperHolder
     ) {
         super(waypointService, messageConfig);
-        this.waypointArgumentMapperProvider = waypointArgumentMapperProvider;
-        this.textColorArgumentMapper = textColorArgumentMapper;
+        this.mapperHolder = mapperHolder;
     }
 
     @Override
@@ -44,10 +40,10 @@ public class EditCommand extends UpdateWaypointCommand {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("edit").require("waypoint.edit").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypointMapper()).build())
                 .flags()
                 .then(factory.valueFlag(NAME_KEY).mapWith(word()).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).mapWith(this.textColorArgumentMapper).assumeShorthand().build())
+                .then(factory.valueFlag(COLOR_KEY).mapWith(this.mapperHolder.textColorMapper()).assumeShorthand().build())
                 .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
                 .build();
     }

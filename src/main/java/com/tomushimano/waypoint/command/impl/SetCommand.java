@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -12,6 +12,7 @@ import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;
@@ -27,12 +28,18 @@ public class SetCommand implements CommandModule<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SetCommand.class);
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
     private static final Key<Boolean> GLOBAL_KEY = Key.named(Boolean.class, "global");
-    private static final Key<NamedTextColor> COLOR_KEY = Key.named(NamedTextColor.class, "color");
+    private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
+    private final ArgumentMapperHolder mapperHolder;
     private final WaypointService waypointService;
     private final MessageConfig messageConfig;
 
     @Inject
-    public SetCommand(final WaypointService waypointService, final MessageConfig messageConfig) {
+    public SetCommand(
+            final ArgumentMapperHolder mapperHolder,
+            final WaypointService waypointService,
+            final MessageConfig messageConfig
+    ) {
+        this.mapperHolder = mapperHolder;
         this.waypointService = waypointService;
         this.messageConfig = messageConfig;
     }
@@ -46,7 +53,7 @@ public class SetCommand implements CommandModule<CommandSender> {
                 .then(factory.required(NAME_KEY).mapWith(word()).build())
                 .flags()
                 .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(new TextColorArgumentMapper(null)).build())
+                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.mapperHolder.textColorMapper()).build())
                 .build();
     }
 
@@ -64,7 +71,7 @@ public class SetCommand implements CommandModule<CommandSender> {
         }
 
         final boolean global = context.has(GLOBAL_KEY);
-        final NamedTextColor color = context.getOrDefault(COLOR_KEY, NamedTextColor.WHITE);
+        final TextColor color = context.getOrDefault(COLOR_KEY, NamedTextColor.WHITE);
 
         this.waypointService.createWaypoint(sender, name, color, global)
                 .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.CREATION_SUCCESS)

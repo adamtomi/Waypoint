@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
@@ -16,16 +16,16 @@ import javax.inject.Inject;
 
 public class RelocateCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
-    private final WaypointArgumentMapper.Provider waypointArgumentMapperProvider;
+    private final ArgumentMapperHolder mapperHolder;
 
     @Inject
     public RelocateCommand(
             final WaypointService waypointService,
             final MessageConfig messageConfig,
-            final WaypointArgumentMapper.Provider waypointArgumentMapperProvider
+            final ArgumentMapperHolder mapperHolder
     ) {
         super(waypointService, messageConfig);
-        this.waypointArgumentMapperProvider = waypointArgumentMapperProvider;
+        this.mapperHolder = mapperHolder;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class RelocateCommand extends UpdateWaypointCommand {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("relocate").aliases("reloc", "movehere").require("waypoint.relocate").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypointMapper()).build())
                 .build();
     }
 

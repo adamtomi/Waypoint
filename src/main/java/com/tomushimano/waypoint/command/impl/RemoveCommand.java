@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -22,17 +22,17 @@ import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 public class RemoveCommand implements CommandModule<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(RemoveCommand.class);
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
-    private final WaypointArgumentMapper.Provider waypointArgumentMapperProvider;
+    private final ArgumentMapperHolder mapperHolder;
     private final WaypointService waypointService;
     private final MessageConfig messageConfig;
 
     @Inject
     public RemoveCommand(
-            final WaypointArgumentMapper.Provider waypointArgumentMapperProvider,
+            final ArgumentMapperHolder mapperHolder,
             final WaypointService waypointService,
             final MessageConfig messageConfig
     ) {
-        this.waypointArgumentMapperProvider = waypointArgumentMapperProvider;
+        this.mapperHolder = mapperHolder;
         this.waypointService = waypointService;
         this.messageConfig = messageConfig;
     }
@@ -43,7 +43,7 @@ public class RemoveCommand implements CommandModule<CommandSender> {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("remove").aliases("rm").require("waypoint.remove").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypointMapper()).build())
                 .build();
     }
 

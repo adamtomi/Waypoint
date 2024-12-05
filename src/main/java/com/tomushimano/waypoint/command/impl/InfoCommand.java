@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -19,15 +19,15 @@ import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 
 public class InfoCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
-    private final WaypointArgumentMapper.Provider waypointArgumentMapperProvider;
+    private final ArgumentMapperHolder mapperHolder;
     private final MessageConfig messageConfig;
 
     @Inject
     public InfoCommand(
-            final WaypointArgumentMapper.Provider waypointArgumentMapperProvider,
+            final ArgumentMapperHolder mapperHolder,
             final MessageConfig messageConfig
     ) {
-        this.waypointArgumentMapperProvider = waypointArgumentMapperProvider;
+        this.mapperHolder = mapperHolder;
         this.messageConfig = messageConfig;
     }
 
@@ -37,7 +37,7 @@ public class InfoCommand implements CommandModule<CommandSender> {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("info").aliases("i").require("waypoint.info").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.standard()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.stdWaypointMapper()).build())
                 .build();
     }
 
