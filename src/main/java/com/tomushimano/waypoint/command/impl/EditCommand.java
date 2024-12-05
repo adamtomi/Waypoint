@@ -40,10 +40,10 @@ public class EditCommand extends UpdateWaypointCommand {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("edit").require("waypoint.edit").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypointMapper()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypoint()).build())
                 .flags()
                 .then(factory.valueFlag(NAME_KEY).mapWith(word()).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).mapWith(this.mapperHolder.textColorMapper()).assumeShorthand().build())
+                .then(factory.valueFlag(COLOR_KEY).mapWith(this.mapperHolder.textColor()).assumeShorthand().build())
                 .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
                 .build();
     }

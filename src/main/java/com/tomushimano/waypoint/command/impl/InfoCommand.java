@@ -37,7 +37,7 @@ public class InfoCommand implements CommandModule<CommandSender> {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("info").aliases("i").require("waypoint.info").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.stdWaypointMapper()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.stdWaypoint()).build())
                 .build();
     }
 

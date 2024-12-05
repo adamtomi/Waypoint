@@ -43,7 +43,7 @@ public class RemoveCommand implements CommandModule<CommandSender> {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("remove").aliases("rm").require("waypoint.remove").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypointMapper()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypoint()).build())
                 .build();
     }
 

@@ -22,15 +22,15 @@ public class ArgumentMapperHolder {
         this.textColorMapper = textColorMapper;
     }
 
-    public WaypointArgumentMapper stdWaypointMapper() {
+    public WaypointArgumentMapper stdWaypoint() {
         return this.stdWaypointMapper;
     }
 
-    public WaypointArgumentMapper ownWaypointMapper() {
+    public WaypointArgumentMapper ownWaypoint() {
         return this.ownWaypointMapper;
     }
 
-    public TextColorArgumentMapper textColorMapper() {
+    public TextColorArgumentMapper textColor() {
         return this.textColorMapper;
     }
 }

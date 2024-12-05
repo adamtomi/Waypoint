@@ -34,7 +34,7 @@ public class RelocateCommand extends UpdateWaypointCommand {
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("relocate").aliases("reloc", "movehere").require("waypoint.relocate").build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypointMapper()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypoint()).build())
                 .build();
     }
 
