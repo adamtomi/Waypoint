@@ -38,8 +38,10 @@ public final class MessageKeys {
     }
 
     public static final class Command {
+        public static final ConfigKey<String> DUPLICATE_FLAG = messageKey("command.duplicate_flag");
         public static final ConfigKey<String> INSUFFICIENT_PERMISSIONS = messageKey("command.insufficient_permissions");
         public static final ConfigKey<String> INVALID_ARGUMENT = messageKey("command.invalid_argument");
+        public static final ConfigKey<String> INVALID_FLAG = messageKey("command.invalid_flag");
         public static final ConfigKey<String> MALFORMED_COLOR = messageKey("command.malformed_color");
         public static final ConfigKey<String> MAX_LENGTH = messageKey("command.max_length");
         public static final ConfigKey<String> NEED_TO_BE_A_PLAYER = messageKey("command.need_to_be_a_player");

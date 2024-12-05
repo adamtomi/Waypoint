@@ -13,6 +13,8 @@ import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandArgumentException;
+import grapefruit.command.argument.DuplicateFlagException;
+import grapefruit.command.argument.UnrecognizedFlagException;
 import grapefruit.command.dispatcher.CommandAuthorizationException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
@@ -95,14 +97,15 @@ public class CommandManager {
                     .make());
         } catch (final CommandSyntaxException ex) {
             handleSyntaxError(sender, ex);
-
+        } catch (final DuplicateFlagException ex) {
+            handleDuplicateFlag(sender, ex);
         } catch (final NoSuchCommandException ex) {
             handleNoSuchCommand(sender, ex);
-
         } catch (final RichArgumentException ex) {
             printCommandArgPrefix(sender, ex);
             sender.sendMessage(ex.richMessage());
-
+        } catch (final UnrecognizedFlagException ex) {
+            handleUnrecognizedFlag(sender, ex);
         } catch (final Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
             // Extract cause. CommandInvocationException wraps other exceptions, so
@@ -112,6 +115,18 @@ public class CommandManager {
                     : ex;
             capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
         }
+    }
+
+    private void handleDuplicateFlag(final CommandSender sender, final DuplicateFlagException ex) {
+        printCommandArgPrefix(sender, ex);
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.DUPLICATE_FLAG).make());
+    }
+
+    private void handleUnrecognizedFlag(final CommandSender sender, final UnrecognizedFlagException ex) {
+        printCommandArgPrefix(sender, ex);
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_FLAG)
+                .with(Placeholder.of("flag", ex.exactFlag()))
+                .make());
     }
 
     private void handleNoSuchCommand(final CommandSender sender, final NoSuchCommandException ex) {
