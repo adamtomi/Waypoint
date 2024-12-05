@@ -5,7 +5,7 @@ import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Position;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -152,7 +152,7 @@ public class SQLStorage implements Storage {
                     UUID uniqueId = UUID.fromString(results.getString("id"));
                     UUID ownerId = UUID.fromString(results.getString("ownerId"));
                     String name = results.getString("name");
-                    NamedTextColor color = NamedTextColor.namedColor(results.getInt("color"));
+                    final TextColor color = TextColor.color(results.getInt("color"));
                     boolean global = results.getBoolean("global");
                     String world = results.getString("world");
                     double x = results.getDouble("x");
