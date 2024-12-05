@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.Position;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -46,7 +46,7 @@ public class WaypointService {
         return Set.copyOf(this.waypoints.get(player.getUniqueId()));
     }
 
-    public CompletableFuture<Waypoint> createWaypoint(Player player, String name, @Nullable NamedTextColor color, boolean global) {
+    public CompletableFuture<Waypoint> createWaypoint(Player player, String name, @Nullable TextColor color, boolean global) {
         UUID uniqueId = UUID.randomUUID();
         UUID ownerId = player.getUniqueId();
         Waypoint waypoint = this.waypointFactory.create(uniqueId, ownerId, name, color, global, Position.from(player.getLocation()));
