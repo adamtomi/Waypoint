@@ -12,14 +12,12 @@ import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
-import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.dispatcher.CommandAuthorizationException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.input.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.slf4j.Logger;
 
@@ -33,7 +31,6 @@ import java.util.concurrent.Executors;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static java.lang.String.join;
-import static net.kyori.adventure.text.Component.text;
 
 public class CommandManager {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
