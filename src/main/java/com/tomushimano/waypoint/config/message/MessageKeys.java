@@ -65,6 +65,8 @@ public final class MessageKeys {
         public static final ConfigKey<String> DELETION_SUCCESS = messageKey("waypoint.deletion.success");
         public static final ConfigKey<String> DELETION_FAILURE = messageKey("waypoint.deletion.failure");
 
+        public static final ConfigKey<String> DISTANCE = messageKey("waypoint.distance");
+
         public static final ConfigKey<String> LIST_HEADER = messageKey("waypoint.list.header");
         public static final ConfigKey<String> LIST_ITEM = messageKey("waypoint.list.item");
         public static final ConfigKey<String> LIST_ITEM_HOVER = messageKey("waypoint.list.item_hover");

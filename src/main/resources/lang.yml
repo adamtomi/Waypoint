@@ -36,6 +36,7 @@ waypoint:
   deletion:
     success: "&aAz alábbi waypoint el lett távolítva: &7&o\"{name}\"&a."
     failure: "&cHiba történt a waypoint eltávolítása közben."
+  distance: "&aA megadott waypoint &l{distance} &ablokk távolságra van tőled."
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
     item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"

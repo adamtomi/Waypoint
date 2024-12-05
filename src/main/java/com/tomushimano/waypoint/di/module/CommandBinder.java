@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.di.module;
 
+import com.tomushimano.waypoint.command.impl.DistanceCommand;
 import com.tomushimano.waypoint.command.impl.EditCommand;
 import com.tomushimano.waypoint.command.impl.InfoCommand;
 import com.tomushimano.waypoint.command.impl.ListCommand;
@@ -18,29 +19,33 @@ public interface CommandBinder {
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindEditCommand(EditCommand command);
+    CommandModule<CommandSender> bindDistanceCommand(final DistanceCommand command);
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindInfoCommand(InfoCommand command);
+    CommandModule<CommandSender> bindEditCommand(final EditCommand command);
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindListCommand(ListCommand command);
+    CommandModule<CommandSender> bindInfoCommand(final InfoCommand command);
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindReloadCommand(ReloadCommand command);
+    CommandModule<CommandSender> bindListCommand(final ListCommand command);
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindRelocateCommand(RelocateCommand command);
+    CommandModule<CommandSender> bindReloadCommand(final ReloadCommand command);
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindRemoveCommand(RemoveCommand command);
+    CommandModule<CommandSender> bindRelocateCommand(final RelocateCommand command);
 
     @Binds
     @IntoSet
-    CommandModule<CommandSender> bindSetCommand(SetCommand command);
+    CommandModule<CommandSender> bindRemoveCommand(final RemoveCommand command);
+
+    @Binds
+    @IntoSet
+    CommandModule<CommandSender> bindSetCommand(final SetCommand command);
 }
