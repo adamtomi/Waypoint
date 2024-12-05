@@ -16,6 +16,7 @@ import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.dispatcher.CommandAuthorizationException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
+import grapefruit.command.dispatcher.input.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -35,6 +37,7 @@ import static net.kyori.adventure.text.Component.text;
 
 public class CommandManager {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
+    private static final Comparator<NoSuchCommandException.Entry> NSCE_ENTRY_COMPARATOR = Comparator.comparing(NoSuchCommandException.Entry::name);
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
     );
@@ -91,6 +94,9 @@ public class CommandManager {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
                     .with(Placeholder.of("permission", join(", ", ex.lacking())))
                     .make());
+        } catch (final CommandSyntaxException ex) {
+            handleSyntaxError(sender, ex);
+
         } catch (final NoSuchCommandException ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
                     .with(
@@ -99,7 +105,7 @@ public class CommandManager {
                     )
                     .make());
 
-            // TODO print available commands with paginator?
+            handleNoSuchCommand(sender, ex);
 
         } catch (final RichArgumentException ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
@@ -119,5 +125,32 @@ public class CommandManager {
                     : ex;
             capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
         }
+    }
+
+    private void handleNoSuchCommand(final CommandSender sender, final NoSuchCommandException ex) {
+        final String[] split = ex.consumed().split(" ");
+        final StringJoiner joiner = new StringJoiner(" ");
+
+        for (int i = 0; i < split.length - 1; i++) joiner.add(split[i]);
+
+        final String prefix = joiner.toString();
+
+        final List<Component> options = ex.validAlternatives().stream()
+                .sorted(NSCE_ENTRY_COMPARATOR)
+                .map(x -> this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND_ENTRY).with(
+                        Placeholder.of("prefix", prefix),
+                        Placeholder.of("name", x.name()),
+                        Placeholder.of("aliases", join(", ", x.aliases()))).make())
+                .toList();
+
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND).make());
+        options.forEach(sender::sendMessage);
+    }
+
+    private void handleSyntaxError(final CommandSender sender, final CommandSyntaxException ex) {
+        sender.sendMessage(this.messageConfig.get(ex.reason().equals(CommandSyntaxException.Reason.TOO_FEW_ARGUMENTS)
+                ? MessageKeys.Command.SYNTAX_ERROR_TOO_FEW
+                : MessageKeys.Command.SYNTAX_ERROR_TOO_MANY).make());
+        // TODO print correct syntax (with localized names where possible)
     }
 }

@@ -15,13 +15,16 @@ command:
   invalid_argument: |-
     &cHibás argumentumot adtál meg: "&o{argument}&c"
     &7/{input} &c&l<-
+    &r
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
   no_such_color: "&cNem található \"&o{name}\" nevű szín."
   syntax_hint: "&7/{syntax}"
-  syntax_error: "&cHelytelen parancs használat!"
+  syntax_error_too_few: "&cTúl kevés argumentumot adtál meg."
+  syntax_error_too_many: "&cTúl sok argumentumot adtál meg."
   unexpected_error: "&cHiba történt a parancs végrehajtása közben :("
-  unknown_subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
+  unknown_subcommand: "&cAz alábbi parancsok érhetők el számodra:"
+  unknown_subcommand_entry: "&f/{prefix} &l{name} &7&o({aliases})"
 
 waypoint:
   creation:
