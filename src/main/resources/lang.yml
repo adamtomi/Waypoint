@@ -14,11 +14,11 @@ command:
   insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. &o({permission})&c"
   invalid_argument: |-
     &cHibás argumentumot adtál meg: "&o{argument}&c"
-    &7/{input} &c&l<-
+    &7/{consumed} &c&l&o{argument} &7{remaining}
     &r
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
-  no_such_color: "&cNem található \"&o{name}\" nevű szín."
+  no_such_color: "&cNem található \"&o{name}&c\" nevű szín."
   regex_error: "&cA megadott argumentum nem felel meg az alábbi regex-nek: &7\"{regex}\""
   syntax_hint: "&7/{syntax}"
   syntax_error_too_few: "&cTúl kevés argumentumot adtál meg."

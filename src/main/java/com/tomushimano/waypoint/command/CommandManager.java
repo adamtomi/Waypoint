@@ -12,6 +12,7 @@ import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
+import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.dispatcher.CommandAuthorizationException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
@@ -95,24 +96,12 @@ public class CommandManager {
             handleSyntaxError(sender, ex);
 
         } catch (final NoSuchCommandException ex) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
-                    .with(
-                            Placeholder.of("argument", ex.argument()),
-                            Placeholder.of("input", ex.consumed())
-                    )
-                    .make());
-
             handleNoSuchCommand(sender, ex);
 
         } catch (final RichArgumentException ex) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
-                    .with(
-                            Placeholder.of("argument", ex.argument()),
-                            Placeholder.of("input", ex.consumed())
-                    )
-                    .make());
-
+            printCommandArgPrefix(sender, ex);
             sender.sendMessage(ex.richMessage());
+
         } catch (final Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
             // Extract cause. CommandInvocationException wraps other exceptions, so
@@ -125,12 +114,8 @@ public class CommandManager {
     }
 
     private void handleNoSuchCommand(final CommandSender sender, final NoSuchCommandException ex) {
-        final String[] split = ex.consumed().split(" ");
-        final StringJoiner joiner = new StringJoiner(" ");
-
-        for (int i = 0; i < split.length - 1; i++) joiner.add(split[i]);
-
-        final String prefix = joiner.toString();
+        final String prefix = extractPrefix(ex);
+        printCommandArgPrefix(sender, ex, prefix);
 
         final List<Component> options = ex.validAlternatives().stream()
                 .sorted(NSCE_ENTRY_COMPARATOR)
@@ -149,5 +134,29 @@ public class CommandManager {
                 ? MessageKeys.Command.SYNTAX_ERROR_TOO_FEW
                 : MessageKeys.Command.SYNTAX_ERROR_TOO_MANY).make());
         // TODO print correct syntax (with localized names where possible)
+    }
+
+    private String extractPrefix(final CommandArgumentException ex) {
+        final String[] split = ex.consumed().split(" ");
+        final StringJoiner joiner = new StringJoiner(" ");
+
+        for (int i = 0; i < split.length - 1; i++) joiner.add(split[i]);
+
+        return joiner.toString();
+    }
+
+    private void printCommandArgPrefix(final CommandSender sender, final CommandArgumentException ex) {
+        final String prefix = extractPrefix(ex);
+        printCommandArgPrefix(sender, ex, prefix);
+    }
+
+    private void printCommandArgPrefix(final CommandSender sender, final CommandArgumentException ex, final String prefix) {
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
+                .with(
+                        Placeholder.of("argument", ex.argument()),
+                        Placeholder.of("consumed", prefix),
+                        Placeholder.of("remaining", ex.remaining().trim())
+                )
+                .make());
     }
 }
