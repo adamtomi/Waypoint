@@ -1,10 +1,11 @@
 admin:
   info: |-
-    &8 +--------[ &a&l{name} &8]--------+
+    &8+-----------------[ &a&l{name} &8]-----------------+
     &8- &7UUID: &a{uniqueId}
     &8- &7Tulajdonos: &f{owner}
     &8- &7Globális: &f{global}
     &8- &7Pozíció: &f{coordinates}
+    &8- &7Színkód: &f{color} &o({colorname})
   reload:
     initiated: "&aKonfiguráció újratöltése..."
     success: "&aKonfiguráció sikeresen újratöltve &o{duration}ms &aalatt."

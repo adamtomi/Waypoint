@@ -10,6 +10,7 @@ import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -44,12 +45,18 @@ public class InfoCommand implements CommandModule<CommandSender> {
     @Override
     public void execute(final CommandContext<CommandSender> context) {
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
+        final String colorName = waypoint.getColor() instanceof NamedTextColor namedColor
+                ? namedColor.toString()
+                : "";
+
         context.source().sendMessage(this.messageConfig.get(MessageKeys.Admin.INFO).with(
                         Placeholder.of("name", waypoint.getName()),
                         Placeholder.of("uniqueId", waypoint.getUniqueId()),
                         Placeholder.of("global", waypoint.isGlobal()),
                         Placeholder.of("owner", Bukkit.getOfflinePlayer(waypoint.getOwnerId()).getName()),
-                        Placeholder.of("coordinates", formatPosition(waypoint.getPosition())))
+                        Placeholder.of("coordinates", formatPosition(waypoint.getPosition())),
+                        Placeholder.of("color", waypoint.getColor().asHexString()),
+                        Placeholder.of("colorname", colorName))
                 .make());
     }
 }
