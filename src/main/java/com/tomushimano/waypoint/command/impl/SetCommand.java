@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.NamedTextColorArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -46,7 +46,7 @@ public class SetCommand implements CommandModule<CommandSender> {
                 .then(factory.required(NAME_KEY).mapWith(word()).build())
                 .flags()
                 .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(new NamedTextColorArgumentMapper(null)).build())
+                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(new TextColorArgumentMapper(null)).build())
                 .build();
     }
 

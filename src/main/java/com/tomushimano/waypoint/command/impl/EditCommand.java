@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.NamedTextColorArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
@@ -9,7 +9,7 @@ import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -21,18 +21,21 @@ import static grapefruit.command.argument.mapper.builtin.StringArgumentMapper.wo
 public class EditCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
-    private static final Key<NamedTextColor> COLOR_KEY = Key.named(NamedTextColor.class, "color");
+    private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
     private static final Key<Boolean> TOGGLE_GLOBALITY_KEY = Key.named(Boolean.class, "toggle-globality");
     private final WaypointArgumentMapper.Provider waypointArgumentMapperProvider;
+    private final TextColorArgumentMapper textColorArgumentMapper;
 
     @Inject
     public EditCommand(
             final WaypointService waypointService,
             final MessageConfig messageConfig,
-            final WaypointArgumentMapper.Provider waypointArgumentMapperProvider
+            final WaypointArgumentMapper.Provider waypointArgumentMapperProvider,
+            final TextColorArgumentMapper textColorArgumentMapper
     ) {
         super(waypointService, messageConfig);
         this.waypointArgumentMapperProvider = waypointArgumentMapperProvider;
+        this.textColorArgumentMapper = textColorArgumentMapper;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class EditCommand extends UpdateWaypointCommand {
                 .then(factory.required(WAYPOINT_KEY).mapWith(this.waypointArgumentMapperProvider.owning()).build())
                 .flags()
                 .then(factory.valueFlag(NAME_KEY).mapWith(word()).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).mapWith(new NamedTextColorArgumentMapper(null)).assumeShorthand().build())
+                .then(factory.valueFlag(COLOR_KEY).mapWith(this.textColorArgumentMapper).assumeShorthand().build())
                 .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
                 .build();
     }
@@ -54,7 +57,7 @@ public class EditCommand extends UpdateWaypointCommand {
         final Player sender = (Player) context.source();
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
         final @Nullable String name = context.nullable(NAME_KEY);
-        final @Nullable NamedTextColor color = context.nullable(COLOR_KEY);
+        final @Nullable TextColor color = context.nullable(COLOR_KEY);
         final boolean toggleGlobality = context.has(TOGGLE_GLOBALITY_KEY);
 
         if (name != null) waypoint.setName(name);

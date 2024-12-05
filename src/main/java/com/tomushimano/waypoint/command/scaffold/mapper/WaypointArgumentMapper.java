@@ -1,10 +1,13 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
+import com.tomushimano.waypoint.command.scaffold.RichArgumentException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import grapefruit.command.CommandException;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
-import grapefruit.command.argument.mapper.MappingResult;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import io.leangen.geantyref.TypeToken;
@@ -30,26 +33,19 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     // TODO MappingResult.fromOptional()
     // TODO throws declaration
     @Override
-    public MappingResult<Waypoint> tryMap(CommandContext context, CommandInputTokenizer input) {
-        String value = input.readWord();
-        // Assume the source to be a player // TODO <- improve this.
-        Player player = (Player) context.source();
-        /*
-         * This will not fail, because by the time we get to this point,
-         * conditions have already been checked, and the IsPlayer condition
-         * would've caught this.
-         */
-        Optional<Waypoint> candidate = this.valueProvider.apply(player).stream()
+    public Waypoint tryMap(final CommandContext context, final CommandInputTokenizer input) throws CommandException {
+        final String value = input.readWord();
+        if (!(context.source() instanceof Player player)) {
+            throw new IllegalStateException("Command source was not a player. Perhaps a command chain has incorrect conditions?");
+        }
+
+        final Optional<Waypoint> candidate = this.valueProvider.apply(player).stream()
                 .filter(x -> x.getName().equalsIgnoreCase(value))
                 .findFirst();
 
-        /*
-         * () -> new RichCommandException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
-                        .with(Placeholder.of("name", value))
-                        .make())
-         */
-        // TODO proper exception
-        return candidate.map(MappingResult::ok).orElseGet(() -> MappingResult.fail(input, value, new RuntimeException()));
+        return candidate.orElseThrow(() -> RichArgumentException.fromInput(input, value, this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
+                .with(Placeholder.of("name", value))
+                .make()));
     }
 
     /* @Override
@@ -66,7 +62,7 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
         private final MessageConfig messageConfig;
 
         @Inject
-        public Provider(WaypointService waypointService, MessageConfig messageConfig) {
+        public Provider(final WaypointService waypointService, final MessageConfig messageConfig) {
             this.waypointService = waypointService;
             this.messageConfig = messageConfig;
         }
