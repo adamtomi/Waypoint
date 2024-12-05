@@ -16,6 +16,7 @@ command:
     &cHibás argumentumot adtál meg: "&o{argument}&c"
     &7/{consumed} &c&l&o{argument} &7{remaining}
     &r
+  malformed_color: "&cÉrvénytelen színt adtál meg. Érvényes forma: &l#xxxxxx &7&o(x = 0->9, a->f)"
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
   no_such_color: "&cNem található \"&o{name}&c\" nevű szín."

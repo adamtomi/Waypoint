@@ -30,7 +30,12 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     public TextColor tryMap(final CommandContext context, final CommandInputTokenizer input) throws CommandException {
         final String value = input.readWord();
         if (value.startsWith(HASH)) {
-            throw new UnsupportedOperationException();
+            final TextColor color = TextColor.fromCSSHexString(value);
+            if (color == null) {
+                throw RichArgumentException.fromInput(input, value, this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make());
+            }
+
+            return color;
         }
 
         final NamedTextColor color = NamedTextColor.NAMES.value(value);
