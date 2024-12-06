@@ -14,9 +14,17 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSender, TextColor> {
     private static final TypeToken<TextColor> TYPE = TypeToken.get(TextColor.class);
+    private static final String[] HEX_CHAR_SET = new String[] {
+            "0", "1", "2", "3", "4", "5", "6", "7",
+            "8", "9", "a", "b", "c", "d", "e", "f"
+    };
     private static final char HASH = '#';
     private final MessageConfig messageConfig;
 
@@ -27,7 +35,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     }
 
     @Override
-    public TextColor tryMap(final CommandContext context, final CommandInputTokenizer input) throws CommandException {
+    public TextColor tryMap(final CommandContext<CommandSender> context, final CommandInputTokenizer input) throws CommandException {
         final String value = input.readWord();
         if (value.charAt(0) == HASH) {
             final TextColor color = TextColor.fromCSSHexString(value);
@@ -48,9 +56,19 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
         return color;
     }
 
-    /*
     @Override
-    public List<String> complete(CommandContext context, String input) {
-        return List.copyOf(NamedTextColor.NAMES.keys());
-    }*/
+    public List<String> complete(final CommandContext<CommandSender> context, final String input) {
+        if (!input.isEmpty() && input.charAt(0) == HASH) {
+            if (input.length() > 7) {
+                // The input is formatted as #xxxxxx, thus it's complete
+                return List.of();
+            }
+
+            return Arrays.stream(HEX_CHAR_SET)
+                    .map(x -> input + x)
+                    .toList();
+        }
+
+        return Stream.concat(NamedTextColor.NAMES.keys().stream(), Stream.of(String.valueOf(HASH))).toList();
+    }
 }

@@ -17,6 +17,7 @@ import io.leangen.geantyref.TypeToken;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -40,7 +41,7 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     }
 
     @Override
-    public Waypoint tryMap(final CommandContext context, final CommandInputTokenizer input) throws CommandException {
+    public Waypoint tryMap(final CommandContext<CommandSender> context, final CommandInputTokenizer input) throws CommandException {
         final String value = input.readWord();
         if (!(context.source() instanceof Player player)) {
             throw new IllegalStateException("Command source was not a player. Perhaps a command chain has incorrect conditions?");
@@ -55,14 +56,13 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
                 .make()));
     }
 
-    /* @Override
-    public List<String> complete(CommandContext context, String input) {
-        // See this#dispatch for note
-        Set<Waypoint> candidates = this.valueProvider.apply(context.require(PLAYER_KEY));
+    @Override
+    public List<String> complete(final CommandContext<CommandSender> context, final String input) {
+        final Set<Waypoint> candidates = this.valueProvider.apply(this.waypointService, (Player) context.source());
         return candidates.stream()
                 .map(Waypoint::getName)
                 .toList();
-    } */
+    }
 
     @AssistedFactory
     public interface Factory {
