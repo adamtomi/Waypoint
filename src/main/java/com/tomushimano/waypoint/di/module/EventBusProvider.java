@@ -6,6 +6,7 @@ import dagger.Provides;
 
 import javax.inject.Singleton;
 
+@Deprecated
 @Module
 public class EventBusProvider {
 
