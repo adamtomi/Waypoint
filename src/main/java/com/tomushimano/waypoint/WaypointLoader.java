@@ -1,7 +1,6 @@
 package com.tomushimano.waypoint;
 
 import com.tomushimano.waypoint.command.CommandManager;
-import com.tomushimano.waypoint.command.scaffold.bukkit.BukkitCommandControl;
 import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.datastore.StorageHolder;
@@ -23,7 +22,6 @@ public final class WaypointLoader {
     private static final Logger LOGGER = NamespacedLoggerFactory.create("Main");
     private final JavaPlugin plugin;
     private final CommandManager commandManager;
-    private final BukkitCommandControl commandControl;
     private final Set<Listener> listeners;
     private final ConfigHelper configHelper;
     private final StorageHolder storageHolder;
@@ -32,14 +30,12 @@ public final class WaypointLoader {
     public WaypointLoader(
             JavaPlugin plugin,
             CommandManager commandManager,
-            BukkitCommandControl commandControl,
             Set<Listener> listeners,
             ConfigHelper configHelper,
             StorageHolder storageHolder
     ) {
         this.plugin = plugin;
         this.commandManager = commandManager;
-        this.commandControl = commandControl;
         this.listeners = listeners;
         this.configHelper = configHelper;
         this.storageHolder = storageHolder;
@@ -63,12 +59,10 @@ public final class WaypointLoader {
         if (!this.storageHolder.get().connect()) fail();
 
         this.commandManager.register();
-        this.commandControl.register();
         registerListeners();
     }
 
     public void unload() {
-        this.commandControl.unregister();
         this.commandManager.shutdown();
         this.storageHolder.get().disconnect();
     }

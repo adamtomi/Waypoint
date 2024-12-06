@@ -1,11 +1,10 @@
 package com.tomushimano.waypoint.command;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.RichArgumentException;
-import com.tomushimano.waypoint.command.scaffold.event.CommandExecutionRequest;
-import com.tomushimano.waypoint.command.scaffold.event.TabCompletionRequest;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -21,70 +20,132 @@ import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.input.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import net.kyori.adventure.text.Component;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.UnaryOperator;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+import static grapefruit.command.util.StringUtil.containsIgnoreCase;
 import static java.lang.String.join;
 
-public class CommandManager {
+@Singleton
+public final class CommandManager implements CommandExecutor, Listener {
+    /* Removes the leading '/' from command strings */
+    private static final UnaryOperator<String> STRIP_LEADING_SLASH = in -> in.startsWith("/") ? in.substring(1) : in;
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
+    /* Creates a comparator that compares NoSuchCommandException$Alternative-s based on their name */
     private static final Comparator<NoSuchCommandException.Alternative> NSCE_ALTERNATIVE_COMPARATOR =
             Comparator.comparing(NoSuchCommandException.Alternative::name);
+    /* Create a threadpool for command execution */
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
     );
+    /* Completions will be provided by this manager for tracked aliases only. */
+    private final Set<String> trackedAliases = new HashSet<>();
     private final CommandDispatcher<CommandSender> dispatcher;
     private final Set<CommandModule<CommandSender>> commands;
+    private final JavaPlugin plugin;
     private final MessageConfig messageConfig;
-    private final EventBus eventBus;
 
     @Inject
     public CommandManager(
-            final CommandDispatcher<CommandSender> dispatcher,
+            final CommandDispatcherFactory dispatcherFactory,
             final Set<CommandModule<CommandSender>> commands,
-            final EventBus eventBus,
+            final JavaPlugin plugin,
             final MessageConfig messageConfig
     ) {
-        this.dispatcher = dispatcher;
+        this.dispatcher = dispatcherFactory.create(this);
         this.commands = commands;
+        this.plugin = plugin;
         this.messageConfig = messageConfig;
-        this.eventBus = eventBus;
     }
-
 
     public void register() {
         LOGGER.info("Registering commands...");
+        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         // Register command handlers
         this.dispatcher.register(this.commands);
-        this.eventBus.register(this);
     }
 
     public void shutdown() {
-        this.eventBus.unregister(this);
+        HandlerList.unregisterAll(this);
+        this.trackedAliases.clear();
         this.dispatcher.unregister(this.commands);
         LOGGER.info("Shutting down async executor");
         ConcurrentUtil.terminate(this.executor, 1L);
     }
 
-    @Subscribe
-    public void handle(final CommandExecutionRequest request) {
-        // Run the command asychronously
-        this.executor.execute(() -> runCommand(request.getSender(), request.getCommand()));
+    public void track(Collection<String> aliases) {
+        this.trackedAliases.addAll(aliases);
     }
 
-    @Subscribe
-    public void handle(final TabCompletionRequest request) {
-        final List<String> completions = this.dispatcher.complete(request.getSender(), request.getCommand());
-        request.addCompletions(completions);
+    public void untrack(Collection<String> aliases) {
+        this.trackedAliases.removeAll(aliases);
+    }
+
+    @Override
+    public boolean onCommand(
+            final @NotNull CommandSender sender,
+            final @NotNull Command command,
+            final @NotNull String label,
+            final @NotNull String[] args
+    ) {
+        // Build command line
+        final StringJoiner lineBuilder = new StringJoiner(" ");
+        lineBuilder.add(label);
+        for (final String arg : args) lineBuilder.add(arg);
+
+        // Dispatch command asynchronously
+        this.executor.execute(() -> runCommand(sender, lineBuilder.toString()));
+
+        // Always return true. Not like it really matters
+        return true;
+    }
+
+    @EventHandler
+    public void onTabComplete(final AsyncTabCompleteEvent event) {
+        final String buffer = event.getBuffer();
+        // If this is not a command, we don't want to proceed
+        if ((!event.isCommand() && !buffer.startsWith("/")) || buffer.indexOf(' ') == -1) return;
+
+        /*
+         * Collect args into a list. The list needs to be mutable, that's
+         * why List#of is not an option here.
+         */
+        final List<String> args = Lists.newArrayList(buffer.split(" ", -1));
+
+        // Get rid of leading '/' character
+        final String root = STRIP_LEADING_SLASH.apply(args.getFirst());
+
+        // See, if we need to provide completions for this event.
+        // If we don't track this alias currently, we don't proceed.
+        if (!containsIgnoreCase(root, this.trackedAliases)) return;
+
+        // Replace the first argument so that it doesn't contain the leading '/' anymore.
+        if (args.size() > 1) args.set(0, root);
+
+        final List<String> completions = this.dispatcher.complete(event.getSender(), join(" ", args));
+
+        event.setCompletions(completions);
+        event.setHandled(true);
     }
 
     // Forward the command to the dispatcher
