@@ -15,7 +15,6 @@ import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
-import grapefruit.command.dispatcher.CommandAuthorizationException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.input.CommandSyntaxException;
@@ -152,11 +151,7 @@ public final class CommandManager implements CommandExecutor, Listener {
     private void runCommand(final CommandSender sender, final String commandLine) {
         try {
             this.dispatcher.dispatch(sender, commandLine);
-        } catch (final CommandAuthorizationException ex) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
-                    .with(Placeholder.of("permission", join(", ", ex.lacking())))
-                    .make());
-        } catch (final CommandSyntaxException ex) {
+        }  catch (final CommandSyntaxException ex) {
             handleSyntaxError(sender, ex);
         } catch (final DuplicateFlagException ex) {
             handleDuplicateFlag(sender, ex);
