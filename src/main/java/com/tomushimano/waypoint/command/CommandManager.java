@@ -80,13 +80,13 @@ public final class CommandManager implements CommandExecutor, Listener {
 
     public void register() {
         LOGGER.info("Registering commands...");
-        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        // this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         // Register command handlers
         this.dispatcher.register(this.commands);
     }
 
     public void shutdown() {
-        HandlerList.unregisterAll(this);
+        // HandlerList.unregisterAll(this);
         this.trackedAliases.clear();
         this.dispatcher.unregister(this.commands);
         LOGGER.info("Shutting down async executor");
