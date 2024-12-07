@@ -50,7 +50,7 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
         this.plugin = plugin;
     }
 
-    private Set<String> allAliases(final CommandArgument.Literal node) {
+    private Set<String> allAliases(final CommandArgument.Literal<CommandSender> node) {
         return ImmutableSet.<String>builder()
                 .add(node.name())
                 .addAll(node.aliases())
@@ -59,7 +59,7 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
 
     @Override
     public boolean register(final CommandChain<CommandSender> chain) {
-        final CommandArgument.Literal root = chain.route().getFirst();
+        final CommandArgument.Literal<CommandSender> root = chain.route().getFirst();
 
         final String primaryAlias = root.name();
         final Set<String> secondaryAliases = root.aliases();
