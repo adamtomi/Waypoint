@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
@@ -14,27 +14,31 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 
+import static grapefruit.command.argument.condition.CommandCondition.and;
+
 public class RelocateCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
-    private final ArgumentMapperHolder mapperHolder;
+    private final CommandHelper helper;
 
     @Inject
     public RelocateCommand(
             final WaypointService waypointService,
             final MessageConfig messageConfig,
-            final ArgumentMapperHolder mapperHolder
+            final CommandHelper helper
     ) {
         super(waypointService, messageConfig);
-        this.mapperHolder = mapperHolder;
+        this.helper = helper;
     }
 
     @Override
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("relocate").aliases("reloc", "movehere").require("waypoint.relocate").build())
+                .then(factory.literal("relocate").aliases("reloc", "movehere").expect(and(
+                        this.helper.perm("waypoint.relocate"), this.helper.isPlayer()
+                )).build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypoint()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.helper.ownedWaypoint()).build())
                 .build();
     }
 

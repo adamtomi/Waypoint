@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -17,18 +17,19 @@ import org.bukkit.command.CommandSender;
 import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
+import static grapefruit.command.argument.condition.CommandCondition.and;
 
 public class InfoCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
-    private final ArgumentMapperHolder mapperHolder;
+    private final CommandHelper helper;
     private final MessageConfig messageConfig;
 
     @Inject
     public InfoCommand(
-            final ArgumentMapperHolder mapperHolder,
+            final CommandHelper helper,
             final MessageConfig messageConfig
     ) {
-        this.mapperHolder = mapperHolder;
+        this.helper = helper;
         this.messageConfig = messageConfig;
     }
 
@@ -36,9 +37,11 @@ public class InfoCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("info").aliases("i").require("waypoint.info").build())
+                .then(factory.literal("info").aliases("i").expect(and(
+                        this.helper.perm("waypoint.info"), this.helper.isPlayer()
+                )).build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.stdWaypoint()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.helper.stdWaypoint()).build())
                 .build();
     }
 

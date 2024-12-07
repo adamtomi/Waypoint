@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -21,24 +21,24 @@ import javax.inject.Inject;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
+import static grapefruit.command.argument.condition.CommandCondition.and;
 
-// TODO isPlayer condition
 public class SetCommand implements CommandModule<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SetCommand.class);
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
     private static final Key<Boolean> GLOBAL_KEY = Key.named(Boolean.class, "global");
     private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
-    private final ArgumentMapperHolder mapperHolder;
+    private final CommandHelper helper;
     private final WaypointService waypointService;
     private final MessageConfig messageConfig;
 
     @Inject
     public SetCommand(
-            final ArgumentMapperHolder mapperHolder,
+            final CommandHelper helper,
             final WaypointService waypointService,
             final MessageConfig messageConfig
     ) {
-        this.mapperHolder = mapperHolder;
+        this.helper = helper;
         this.waypointService = waypointService;
         this.messageConfig = messageConfig;
     }
@@ -47,12 +47,14 @@ public class SetCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("set").require("waypoint.set").build())
+                .then(factory.literal("set").expect(and(
+                        this.helper.perm("waypoint.set"), this.helper.isPlayer()
+                )).build())
                 .arguments()
-                .then(factory.required(NAME_KEY).mapWith(this.mapperHolder.varchar255()).build())
+                .then(factory.required(NAME_KEY).mapWith(this.helper.varchar255()).build())
                 .flags()
                 .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.mapperHolder.textColor()).build())
+                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.helper.textColor()).build())
                 .build();
     }
 

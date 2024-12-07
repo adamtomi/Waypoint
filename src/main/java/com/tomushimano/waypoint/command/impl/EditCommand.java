@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
@@ -15,33 +15,37 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
+import static grapefruit.command.argument.condition.CommandCondition.and;
+
 public class EditCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
     private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
     private static final Key<Boolean> TOGGLE_GLOBALITY_KEY = Key.named(Boolean.class, "toggle-globality");
-    private final ArgumentMapperHolder mapperHolder;
+    private final CommandHelper helper;
 
     @Inject
     public EditCommand(
             final WaypointService waypointService,
             final MessageConfig messageConfig,
-            final ArgumentMapperHolder mapperHolder
+            final CommandHelper helper
     ) {
         super(waypointService, messageConfig);
-        this.mapperHolder = mapperHolder;
+        this.helper = helper;
     }
 
     @Override
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("edit").require("waypoint.edit").build())
+                .then(factory.literal("edit").expect(and(
+                        this.helper.perm("waypoint.edit"), this.helper.isPlayer()
+                )).build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.ownWaypoint()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.helper.ownedWaypoint()).build())
                 .flags()
-                .then(factory.valueFlag(NAME_KEY).mapWith(this.mapperHolder.varchar255()).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).mapWith(this.mapperHolder.textColor()).assumeShorthand().build())
+                .then(factory.valueFlag(NAME_KEY).mapWith(this.helper.varchar255()).assumeShorthand().build())
+                .then(factory.valueFlag(COLOR_KEY).mapWith(this.helper.textColor()).assumeShorthand().build())
                 .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
                 .build();
     }

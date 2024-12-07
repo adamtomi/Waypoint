@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.mapper.ArgumentMapperHolder;
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -15,14 +15,16 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 
+import static grapefruit.command.argument.condition.CommandCondition.and;
+
 public class DistanceCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
-    private final ArgumentMapperHolder mapperHolder;
+    private final CommandHelper helper;
     private final MessageConfig messageConfig;
 
     @Inject
-    public DistanceCommand(final ArgumentMapperHolder mapperHolder, final MessageConfig messageConfig) {
-        this.mapperHolder = mapperHolder;
+    public DistanceCommand(final CommandHelper helper, final MessageConfig messageConfig) {
+        this.helper = helper;
         this.messageConfig = messageConfig;
     }
 
@@ -30,9 +32,11 @@ public class DistanceCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("distance").aliases("dist").require("waypoint.distance").build())
+                .then(factory.literal("distance").aliases("dist").expect(and(
+                        this.helper.perm("waypoint.distance"), this.helper.isPlayer()
+                )).build())
                 .arguments()
-                .then(factory.required(WAYPOINT_KEY).mapWith(this.mapperHolder.stdWaypoint()).build())
+                .then(factory.required(WAYPOINT_KEY).mapWith(this.helper.stdWaypoint()).build())
                 .build();
     }
 

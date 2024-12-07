@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
@@ -14,16 +15,19 @@ import org.bukkit.command.CommandSender;
 import javax.inject.Inject;
 
 public class ReloadCommand implements CommandModule<CommandSender> {
+    private final CommandHelper commandHelper;
     private final ConfigHelper configHelper;
     private final MessageConfig messageConfig;
     private final WaypointService waypointService;
 
     @Inject
     public ReloadCommand(
+            final CommandHelper commandHelper,
             final ConfigHelper configHelper,
             final MessageConfig messageConfig,
             final WaypointService waypointService
     ) {
+        this.commandHelper = commandHelper;
         this.configHelper = configHelper;
         this.messageConfig = messageConfig;
         this.waypointService = waypointService;
@@ -33,7 +37,7 @@ public class ReloadCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypointadmin").aliases("wpa").build())
-                .then(factory.literal("reload").aliases("rl").require("waypoint.admin.reload").build())
+                .then(factory.literal("reload").aliases("rl").expect(this.commandHelper.perm("waypoint.admin.reload")).build())
                 .build();
     }
 

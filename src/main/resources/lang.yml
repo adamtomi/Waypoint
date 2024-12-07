@@ -13,7 +13,7 @@ admin:
 
 command:
   duplicate_flag: "&cEzt a flaget csak egyszer lehet megadni."
-  insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. &o({permission})&c"
+  insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
   invalid_argument: |-
     &cHibás argumentumot adtál meg: "&o{argument}&c"
     &7/{consumed} &c&l&o{argument} &7{remaining}

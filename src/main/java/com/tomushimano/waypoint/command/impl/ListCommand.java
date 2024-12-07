@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.command.impl;
 
+import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import java.util.Set;
 
 import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
+import static grapefruit.command.argument.condition.CommandCondition.and;
 import static net.kyori.adventure.text.event.ClickEvent.copyToClipboard;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
@@ -26,11 +28,17 @@ import static net.kyori.adventure.text.event.HoverEvent.showText;
 public class ListCommand implements CommandModule<CommandSender> {
     private static final Key<Boolean> HIDE_GLOBAL_KEY = Key.named(Boolean.class, "hide-global");
     private static final Key<Integer> PAGE_KEY = Key.named(Integer.class, "page");
+    private final CommandHelper helper;
     private final WaypointService waypointService;
     private final MessageConfig messageConfig;
 
     @Inject
-    public ListCommand(final WaypointService waypointService, final MessageConfig messageConfig) {
+    public ListCommand(
+            final CommandHelper helper,
+            final WaypointService waypointService,
+            final MessageConfig messageConfig
+    ) {
+        this.helper = helper;
         this.waypointService = waypointService;
         this.messageConfig = messageConfig;
     }
@@ -39,7 +47,9 @@ public class ListCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("list").aliases("ls").require("waypoint.list").build())
+                .then(factory.literal("list").aliases("ls").expect(and(
+                        this.helper.perm("waypoint.list"), this.helper.isPlayer()
+                )).build())
                 .flags()
                 .then(factory.presenceFlag(HIDE_GLOBAL_KEY).assumeShorthand().build())
                 // TODO int mapper

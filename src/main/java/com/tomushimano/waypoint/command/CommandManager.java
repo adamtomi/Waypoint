@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.RichArgumentException;
+import com.tomushimano.waypoint.command.scaffold.condition.RichConditionException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -24,7 +25,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -165,6 +165,8 @@ public final class CommandManager implements CommandExecutor, Listener {
         } catch (final RichArgumentException ex) {
             printCommandArgPrefix(sender, ex);
             sender.sendMessage(ex.richMessage());
+        } catch (final RichConditionException ex) {
+          sender.sendMessage(ex.richMessage());
         } catch (final UnrecognizedFlagException ex) {
             handleUnrecognizedFlag(sender, ex);
         } catch (final Throwable ex) {
