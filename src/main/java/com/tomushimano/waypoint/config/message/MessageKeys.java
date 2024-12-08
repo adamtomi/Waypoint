@@ -38,15 +38,23 @@ public final class MessageKeys {
     }
 
     public static final class Command {
+        public static final ConfigKey<String> DUPLICATE_FLAG = messageKey("command.duplicate_flag");
         public static final ConfigKey<String> INSUFFICIENT_PERMISSIONS = messageKey("command.insufficient_permissions");
         public static final ConfigKey<String> INVALID_ARGUMENT = messageKey("command.invalid_argument");
+        public static final ConfigKey<String> INVALID_FLAG = messageKey("command.invalid_flag");
+        public static final ConfigKey<String> MALFORMED_COLOR = messageKey("command.malformed_color");
+        public static final ConfigKey<String> MALFORMED_NUMBER = messageKey("command.malformed_number");
         public static final ConfigKey<String> MAX_LENGTH = messageKey("command.max_length");
         public static final ConfigKey<String> NEED_TO_BE_A_PLAYER = messageKey("command.need_to_be_a_player");
         public static final ConfigKey<String> NO_SUCH_COLOR = messageKey("command.no_such_color");
+        public static final ConfigKey<String> RANGE_ERROR = messageKey("command.range_error");
+        public static final ConfigKey<String> REGEX_ERROR = messageKey("command.regex_error");
         public static final ConfigKey<String> SYNTAX_HINT = messageKey("command.syntax_hint");
-        public static final ConfigKey<String> SYNTAX_ERROR = messageKey("command.syntax_error");
+        public static final ConfigKey<String> SYNTAX_ERROR_TOO_FEW = messageKey("command.syntax_error_too_few");
+        public static final ConfigKey<String> SYNTAX_ERROR_TOO_MANY = messageKey("command.syntax_error_too_many");
         public static final ConfigKey<String> UNEXPECTED_ERROR = messageKey("command.unexpected_error");
         public static final ConfigKey<String> UNKNOWN_SUBCOMMAND = messageKey("command.unknown_subcommand");
+        public static final ConfigKey<String> UNKNOWN_SUBCOMMAND_ENTRY = messageKey("command.unknown_subcommand_entry");
 
         private Command() {
             throw new DontInvokeMe();
@@ -60,6 +68,8 @@ public final class MessageKeys {
 
         public static final ConfigKey<String> DELETION_SUCCESS = messageKey("waypoint.deletion.success");
         public static final ConfigKey<String> DELETION_FAILURE = messageKey("waypoint.deletion.failure");
+
+        public static final ConfigKey<String> DISTANCE = messageKey("waypoint.distance");
 
         public static final ConfigKey<String> LIST_HEADER = messageKey("waypoint.list.header");
         public static final ConfigKey<String> LIST_ITEM = messageKey("waypoint.list.item");

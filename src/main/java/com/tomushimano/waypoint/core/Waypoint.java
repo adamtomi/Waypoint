@@ -20,7 +20,7 @@ public class Waypoint implements Comparable<Waypoint> {
     private final UUID uuid;
     private final UUID ownerId;
     private String name;
-    private NamedTextColor color;
+    private TextColor color;
     private boolean global;
     private Position position;
     private Hologram hologram;
@@ -29,7 +29,7 @@ public class Waypoint implements Comparable<Waypoint> {
             UUID uuid,
             UUID ownerId,
             String name,
-            NamedTextColor color,
+            TextColor color,
             boolean global,
             Position pos
     ) {
@@ -61,7 +61,7 @@ public class Waypoint implements Comparable<Waypoint> {
         return this.color;
     }
 
-    public void setColor(NamedTextColor color) {
+    public void setColor(TextColor color) {
         this.color = color;
     }
 
@@ -136,11 +136,11 @@ public class Waypoint implements Comparable<Waypoint> {
                 UUID uuid,
                 UUID ownerId,
                 String name,
-                @Nullable NamedTextColor color,
+                @Nullable TextColor color,
                 boolean global,
                 Position pos
         ) {
-            NamedTextColor actualColor = color == null ? NamedTextColor.WHITE : color;
+            TextColor actualColor = color == null ? NamedTextColor.WHITE : color;
             Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, global, pos);
             waypoint.setHologram(this.hologramFactory.createHologram(waypoint));
             return waypoint;

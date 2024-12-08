@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import static java.util.Objects.requireNonNull;
@@ -45,5 +46,9 @@ public class Position {
 
     public Position plus(double x, double y, double z) {
         return new Position(this.worldName, this.x + x, this.y + y, this.z + z);
+    }
+
+    public Location toLocation() {
+        return new Location(Bukkit.getWorld(this.worldName), this.x, this.y, this.z);
     }
 }

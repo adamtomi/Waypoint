@@ -25,8 +25,7 @@ dependencies {
     annotationProcessor("com.google.dagger:dagger-compiler:2.52")
 
     // Libs
-    implementation(files("libs/grapefruit-runtime-2.0.0-ALPHA.jar"))
-    annotationProcessor(files("libs/grapefruit-compiler-2.0.0-ALPHA.jar"))
+    implementation(files("libs/grapefruit-3.0.0-ALPHA.jar"))
     implementation("com.zaxxer:HikariCP:5.1.0") {
         exclude("org.slf4j")
     }

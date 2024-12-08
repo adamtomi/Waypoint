@@ -1,25 +1,37 @@
 admin:
   info: |-
-    &8 +--------[ &a&l{name} &8]--------+
+    &8+-----------------[ &a&l{name} &8]-----------------+
     &8- &7UUID: &a{uniqueId}
     &8- &7Tulajdonos: &f{owner}
     &8- &7Globális: &f{global}
     &8- &7Pozíció: &f{coordinates}
+    &8- &7Színkód: &f{color} &o({colorname})
   reload:
     initiated: "&aKonfiguráció újratöltése..."
     success: "&aKonfiguráció sikeresen újratöltve &o{duration}ms &aalatt."
     failure: "&cHiba történt a konfiguráció újratöltése közben."
 
 command:
+  duplicate_flag: "&cEzt a flaget csak egyszer lehet megadni."
   insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
-  invalid_argument: "&cAz alábbi argumentum érvénytelen: &l{argument}"
+  invalid_argument: |-
+    &cHibás argumentumot adtál meg: "&o{argument}&c"
+    &7/{consumed} &c&l&o{argument} &7{remaining}
+    &r
+  invalid_flag: "&cIsmeretlen parancs flag: \"&o{flag}&c\""
+  malformed_color: "&cÉrvénytelen színt adtál meg. Érvényes forma: &l#xxxxxx &7&o(x = 0->9, a->f)"
+  malformed_number: "&cKérlek adj meg egy nem negatív egész számot!"
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
-  no_such_color: "&cNem található \"&o{name}\" nevű szín."
+  no_such_color: "&cNem található \"&o{name}&c\" nevű szín."
+  range_error: "&cA megadott szám nem lehet kisebb, mint &l{min}&c."
+  regex_error: "&cA megadott argumentum nem felel meg az alábbi regex-nek: &7\"{regex}\""
   syntax_hint: "&7/{syntax}"
-  syntax_error: "&cHelytelen parancs használat!"
+  syntax_error_too_few: "&cTúl kevés argumentumot adtál meg."
+  syntax_error_too_many: "&cTúl sok argumentumot adtál meg."
   unexpected_error: "&cHiba történt a parancs végrehajtása közben :("
-  unknown_subcommand: "&cIsmeretlen alparancs &l\"{command}\"&c."
+  unknown_subcommand: "&cAz alábbi parancsok érhetők el számodra:"
+  unknown_subcommand_entry: "&f/{prefix} &l{name} &7&o({aliases})"
 
 waypoint:
   creation:
@@ -29,6 +41,7 @@ waypoint:
   deletion:
     success: "&aAz alábbi waypoint el lett távolítva: &7&o\"{name}\"&a."
     failure: "&cHiba történt a waypoint eltávolítása közben."
+  distance: "&aA megadott waypoint &l{distance} &ablokk távolságra van tőled."
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
     item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
