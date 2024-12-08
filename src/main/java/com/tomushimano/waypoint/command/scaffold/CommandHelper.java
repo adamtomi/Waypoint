@@ -2,6 +2,7 @@ package com.tomushimano.waypoint.command.scaffold;
 
 import com.tomushimano.waypoint.command.scaffold.condition.IsPlayerCondition;
 import com.tomushimano.waypoint.command.scaffold.condition.PermissionCondition;
+import com.tomushimano.waypoint.command.scaffold.mapper.IntArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.VarcharArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
@@ -15,6 +16,7 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 public final class CommandHelper {
     /* Mappers */
+    private final IntArgumentMapper.Factory intArgumentMapperFactory;
     private final WaypointArgumentMapper stdWaypointMapper;
     private final WaypointArgumentMapper ownedWaypointMapper;
     private final TextColorArgumentMapper textColorMapper;
@@ -25,18 +27,24 @@ public final class CommandHelper {
 
     @Inject
     public CommandHelper(
+            final IntArgumentMapper.Factory intArgumentMapperFactory,
             final WaypointArgumentMapper.Factory waypointArgumentMapperFactory,
             final TextColorArgumentMapper textColorMapper,
             final VarcharArgumentMapper.Factory varcharArgumentMapperFactory,
             final IsPlayerCondition isPlayerCondition,
             final PermissionCondition.Factory permissionConditionFactory
     ) {
+        this.intArgumentMapperFactory = intArgumentMapperFactory;
         this.stdWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getAccessibleWaypoints);
         this.ownedWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getOwnedWaypoints);
         this.textColorMapper = textColorMapper;
         this.varcharArgumentMapper = varcharArgumentMapperFactory.create(255);
         this.isPlayerCondition = isPlayerCondition;
         this.permissionConditionFactory = permissionConditionFactory;
+    }
+
+    public IntArgumentMapper positiveInt() {
+        return this.intArgumentMapperFactory.create(1, Integer.MAX_VALUE);
     }
 
     public WaypointArgumentMapper stdWaypoint() {

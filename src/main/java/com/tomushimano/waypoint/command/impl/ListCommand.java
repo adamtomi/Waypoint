@@ -52,8 +52,7 @@ public class ListCommand implements CommandModule<CommandSender> {
                 )).build())
                 .flags()
                 .then(factory.presenceFlag(HIDE_GLOBAL_KEY).assumeShorthand().build())
-                // TODO int mapper
-                // .then(factory.valueFlag(PAGE_KEY).assumeShorthand().build())
+                .then(factory.valueFlag(PAGE_KEY).assumeShorthand().mapWith(this.helper.positiveInt()).build())
                 .build();
     }
 

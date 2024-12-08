@@ -20,9 +20,11 @@ command:
     &r
   invalid_flag: "&cIsmeretlen parancs flag: \"&o{flag}&c\""
   malformed_color: "&cÉrvénytelen színt adtál meg. Érvényes forma: &l#xxxxxx &7&o(x = 0->9, a->f)"
+  malformed_number: "&cKérlek adj meg egy nem negatív egész számot!"
   max_length: "&cÉrvénytelen argumentum: &o\"{argument}\"&c. A maximum megengedett hossz &7&l{max}."
   need_to_be_a_player: "&cEzt a parancsot csak játékos használhatja."
   no_such_color: "&cNem található \"&o{name}&c\" nevű szín."
+  range_error: "&cA megadott szám nem lehet kisebb, mint &l{min}&c."
   regex_error: "&cA megadott argumentum nem felel meg az alábbi regex-nek: &7\"{regex}\""
   syntax_hint: "&7/{syntax}"
   syntax_error_too_few: "&cTúl kevés argumentumot adtál meg."

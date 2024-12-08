@@ -43,9 +43,11 @@ public final class MessageKeys {
         public static final ConfigKey<String> INVALID_ARGUMENT = messageKey("command.invalid_argument");
         public static final ConfigKey<String> INVALID_FLAG = messageKey("command.invalid_flag");
         public static final ConfigKey<String> MALFORMED_COLOR = messageKey("command.malformed_color");
+        public static final ConfigKey<String> MALFORMED_NUMBER = messageKey("command.malformed_number");
         public static final ConfigKey<String> MAX_LENGTH = messageKey("command.max_length");
         public static final ConfigKey<String> NEED_TO_BE_A_PLAYER = messageKey("command.need_to_be_a_player");
         public static final ConfigKey<String> NO_SUCH_COLOR = messageKey("command.no_such_color");
+        public static final ConfigKey<String> RANGE_ERROR = messageKey("command.range_error");
         public static final ConfigKey<String> REGEX_ERROR = messageKey("command.regex_error");
         public static final ConfigKey<String> SYNTAX_HINT = messageKey("command.syntax_hint");
         public static final ConfigKey<String> SYNTAX_ERROR_TOO_FEW = messageKey("command.syntax_error_too_few");
