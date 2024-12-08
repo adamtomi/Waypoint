@@ -1,6 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import java.nio.file.Files
-import java.nio.file.Paths
 
 plugins {
     id("java")
@@ -69,13 +67,12 @@ object C {
 }
 
 fun commitHashShort(): String {
-    val gitFolder = Paths.get("$projectDir/${C.GIT_FOLDER}")
-    val head = gitFolder.resolve(C.GIT_HEAD)
-    val content = Files.newBufferedReader(head).readText()
-    val isCommit = !content.startsWith(C.REFS_PREFIX)
+    val gitFolder = "$projectDir/${C.GIT_FOLDER}"
+    val headContent = File("$gitFolder/${C.GIT_HEAD}").readText(Charsets.UTF_8)
+    val isCommit = !headContent.startsWith(C.REFS_PREFIX)
 
-    if (isCommit) return content.trim().substring(0, C.HASH_LENGTH)
+    if (isCommit) return headContent.trim().substring(0, C.HASH_LENGTH)
 
-    val refHead = gitFolder.resolve(content.split(":")[1].trim())
-    return Files.newBufferedReader(refHead).readText().trim().substring(0, C.HASH_LENGTH)
+    val refContent = File("$gitFolder/${headContent.split(":")[1].trim()}").readText(Charsets.UTF_8)
+    return refContent.trim().substring(0, C.HASH_LENGTH)
 }
