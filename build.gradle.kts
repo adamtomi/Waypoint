@@ -1,4 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.nio.file.Files
+import java.nio.file.Paths
 
 plugins {
     id("java")
@@ -54,5 +56,26 @@ tasks.named<ShadowJar>("shadowJar") {
         relocate(it.key, it.value)
     }
 
-    archiveFileName.set("${project.name}-${project.version}.jar")
+    val commitHash = commitHashShort()
+    archiveFileName.set("${project.name}-${project.version}-$commitHash.jar")
+}
+
+// Constants
+object C {
+    const val GIT_FOLDER = ".git"
+    const val HASH_LENGTH = 7
+    const val GIT_HEAD = "HEAD"
+    const val REFS_PREFIX = "ref: "
+}
+
+fun commitHashShort(): String {
+    val gitFolder = Paths.get("$projectDir/${C.GIT_FOLDER}")
+    val head = gitFolder.resolve(C.GIT_HEAD)
+    val content = Files.newBufferedReader(head).readText()
+    val isCommit = !content.startsWith(C.REFS_PREFIX)
+
+    if (isCommit) return content.trim().substring(0, C.HASH_LENGTH)
+
+    val refHead = gitFolder.resolve(content.split(":")[1].trim())
+    return Files.newBufferedReader(refHead).readText().trim().substring(0, C.HASH_LENGTH)
 }
