@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.tomushimano"
-version = "1.0.0-ALPHA"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
