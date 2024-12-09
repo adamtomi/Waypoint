@@ -59,7 +59,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     @Override
     public List<String> complete(final CommandContext<CommandSender> context, final String input) {
         if (!input.isEmpty() && input.charAt(0) == HASH) {
-            if (input.length() > 7) {
+            if (input.length() >= 7) {
                 // The input is formatted as #xxxxxx, thus it's complete
                 return List.of();
             }
