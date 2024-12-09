@@ -14,7 +14,6 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
