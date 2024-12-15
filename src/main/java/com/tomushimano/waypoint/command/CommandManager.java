@@ -90,11 +90,11 @@ public final class CommandManager implements CommandExecutor, Listener {
         ConcurrentUtil.terminate(this.executor, 1L);
     }
 
-    public void track(Collection<String> aliases) {
+    public void track(final Collection<String> aliases) {
         this.trackedAliases.addAll(aliases);
     }
 
-    public void untrack(Collection<String> aliases) {
+    public void untrack(final Collection<String> aliases) {
         this.trackedAliases.removeAll(aliases);
     }
 
@@ -149,7 +149,7 @@ public final class CommandManager implements CommandExecutor, Listener {
     private void runCommand(final CommandSender sender, final String commandLine) {
         try {
             this.dispatcher.dispatch(sender, commandLine);
-        }  catch (final CommandSyntaxException ex) {
+        } catch (final CommandSyntaxException ex) {
             this.exceptionHandler.handleSyntaxError(sender, ex);
         } catch (final DuplicateFlagException ex) {
             this.exceptionHandler.handleDuplicateFlag(sender, ex);
