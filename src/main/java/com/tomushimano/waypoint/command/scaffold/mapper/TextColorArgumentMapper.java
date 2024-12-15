@@ -9,7 +9,6 @@ import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.argument.mapper.CommandInputAccess;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.MissingInputException;
-import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
@@ -20,17 +19,14 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSender, TextColor> {
-    private static final TypeToken<TextColor> TYPE = TypeToken.get(TextColor.class);
-    private static final String[] HEX_CHAR_SET = new String[] {
-            "0", "1", "2", "3", "4", "5", "6", "7",
-            "8", "9", "a", "b", "c", "d", "e", "f"
-    };
+    private static final String HEX_ALPHABET = "0123456789abcdef";
+    private static final String[] HEX_CHAR_SET = HEX_ALPHABET.split("");
     private static final char HASH = '#';
     private final MessageConfig messageConfig;
 
     @Inject
     public TextColorArgumentMapper(final MessageConfig messageConfig) {
-        super(TYPE, false);
+        super(TextColor.class, false);
         this.messageConfig = messageConfig;
     }
 
@@ -62,6 +58,13 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
             if (input.length() >= 7) {
                 // The input is formatted as #xxxxxx, thus it's complete
                 return List.of();
+            }
+
+            for (int i = 1; i < input.length(); i++) {
+                final char c = input.charAt(i);
+                if (HEX_ALPHABET.indexOf(c) == -1) {
+                    return List.of();
+                }
             }
 
             return Arrays.stream(HEX_CHAR_SET)
