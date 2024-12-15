@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.tomushimano"
-version = "1.0.0"
+version = "${project.properties["version"]}-${commitHashShort()}"
 
 repositories {
     mavenCentral()
@@ -54,8 +54,7 @@ tasks.named<ShadowJar>("shadowJar") {
         relocate(it.key, it.value)
     }
 
-    val commitHash = commitHashShort()
-    archiveFileName.set("${project.name}-${project.version}-$commitHash.jar")
+    archiveFileName.set("${project.name}-${project.version}.jar")
 }
 
 // Constants
