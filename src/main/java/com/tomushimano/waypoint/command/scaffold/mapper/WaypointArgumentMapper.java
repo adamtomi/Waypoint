@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
-import com.tomushimano.waypoint.command.scaffold.RichArgumentException;
+import com.tomushimano.waypoint.command.scaffold.VerboseArgumentException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -9,10 +9,11 @@ import com.tomushimano.waypoint.core.WaypointService;
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
-import grapefruit.command.CommandException;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
+import grapefruit.command.argument.mapper.ArgumentMappingException;
+import grapefruit.command.argument.mapper.CommandInputAccess;
 import grapefruit.command.dispatcher.CommandContext;
-import grapefruit.command.dispatcher.input.CommandInputTokenizer;
+import grapefruit.command.dispatcher.input.MissingInputException;
 import io.leangen.geantyref.TypeToken;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,8 +42,8 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     }
 
     @Override
-    public Waypoint tryMap(final CommandContext<CommandSender> context, final CommandInputTokenizer input) throws CommandException {
-        final String value = input.readWord();
+    public Waypoint tryMap(final CommandContext<CommandSender> context, final CommandInputAccess access) throws ArgumentMappingException, MissingInputException {
+        final String value = access.input().readWord();
         if (!(context.source() instanceof Player player)) {
             throw new IllegalStateException("Command source was not a player. Perhaps a command chain has incorrect conditions?");
         }
@@ -51,9 +52,9 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
                 .filter(x -> x.getName().equalsIgnoreCase(value))
                 .findFirst();
 
-        return candidate.orElseThrow(() -> RichArgumentException.fromInput(input, value, this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
+        return candidate.orElseThrow(() -> access.generateFrom(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
                 .with(Placeholder.of("name", value))
-                .make()));
+                .make())));
     }
 
     @Override

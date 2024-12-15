@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
-import com.tomushimano.waypoint.command.scaffold.RichArgumentException;
 import com.tomushimano.waypoint.command.scaffold.condition.RichConditionException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
@@ -14,6 +13,7 @@ import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
+import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
@@ -155,8 +155,8 @@ public final class CommandManager implements CommandExecutor, Listener {
             this.exceptionHandler.handleDuplicateFlag(sender, ex);
         } catch (final NoSuchCommandException ex) {
             this.exceptionHandler.handleNoSuchCommand(sender, ex);
-        } catch (final RichArgumentException ex) {
-            this.exceptionHandler.handleRichArgumentException(sender, ex);
+        } catch (final ArgumentMappingException ex) {
+            this.exceptionHandler.handleArgumentMappingError(sender, ex);
         } catch (final RichConditionException ex) {
           sender.sendMessage(ex.richMessage());
         } catch (final UnrecognizedFlagException ex) {

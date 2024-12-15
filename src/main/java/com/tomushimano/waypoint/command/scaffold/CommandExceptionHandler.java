@@ -11,6 +11,7 @@ import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
+import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import grapefruit.command.tree.node.CommandNode;
@@ -145,8 +146,10 @@ public final class CommandExceptionHandler {
                 .make());
     }
 
-    public void handleRichArgumentException(final CommandSender sender, final RichArgumentException ex) {
+    public void handleArgumentMappingError(final CommandSender sender, final ArgumentMappingException ex) {
         printCommandArgPrefix(sender, ex);
-        sender.sendMessage(ex.richMessage());
+        // This cast is safe, because we always make sure to throw VerboseArgumentException instances
+        final VerboseArgumentException cause = (VerboseArgumentException) ex.getCause();
+        sender.sendMessage(cause.describeFailure());
     }
 }
