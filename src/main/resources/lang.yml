@@ -12,6 +12,10 @@ admin:
     failure: "&cHiba történt a konfiguráció újratöltése közben."
 
 command:
+  arg_optional_close: "]"
+  arg_optional_open: "["
+  arg_required_close: ">"
+  arg_required_open: "<"
   duplicate_flag: "&cEzt a flaget csak egyszer lehet megadni."
   insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
   invalid_argument: |-

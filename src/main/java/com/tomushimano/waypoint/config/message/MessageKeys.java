@@ -6,7 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public final class MessageKeys {
     
-    private static ConfigKey<String> messageKey(String key) {
+    public static ConfigKey<String> messageKey(final String key) {
         return new ConfigKey<>() {
             @Override
             public String key() {
@@ -14,8 +14,8 @@ public final class MessageKeys {
             }
 
             @Override
-            public String readFrom(ConfigurationSection config) {
-                String configured = config.getString(key);
+            public String readFrom(final ConfigurationSection config) {
+                final String configured = config.getString(key);
                 // Using the key itself as fallback. Not ideal, but at least
                 // we don't get exceptions thrown around because of a missing
                 // message key.
@@ -38,6 +38,10 @@ public final class MessageKeys {
     }
 
     public static final class Command {
+        public static final ConfigKey<String> ARG_OPTIONAL_CLOSE = messageKey("command.arg_optional_close");
+        public static final ConfigKey<String> ARG_OPTIONAL_OPEN = messageKey("command.arg_optional_open");
+        public static final ConfigKey<String> ARG_REQUIRED_CLOSE = messageKey("command.arg_required_close");
+        public static final ConfigKey<String> ARG_REQUIRED_OPEN = messageKey("command.arg_required_open");
         public static final ConfigKey<String> DUPLICATE_FLAG = messageKey("command.duplicate_flag");
         public static final ConfigKey<String> INSUFFICIENT_PERMISSIONS = messageKey("command.insufficient_permissions");
         public static final ConfigKey<String> INVALID_ARGUMENT = messageKey("command.invalid_argument");

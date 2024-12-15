@@ -24,7 +24,7 @@ public class MessageBuilder {
         return this;
     }
 
-    private String makeString() {
+    public String makeString() {
         String result = this.messageBase;
         for (Placeholder placeholder : this.placeholders) result = placeholder.process(result);
         return result;

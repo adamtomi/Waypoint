@@ -1,47 +1,23 @@
-admin:
-  info:
-    description: "Waypoint infók lekérése"
-    args:
-      waypoint: "A waypoint neve"
-  reload:
-    description: "Konfiguráció újratöltése, waypointok újrarenderelése"
+distance:
+  waypoint: "név"
+
 edit:
-  description: "Waypoint szerkesztése"
-  args:
-    waypoint:
-      description: "Szekesztendő waypoint neve"
-      args: "név"
-    name:
-      description: "A beállítandó új név"
-      name: "új név"
-    toggle-global:
-      description: "Ha eddig globális volt, akkor mostantól nem lesz az, ha eddig nem volt az, mostantól az lesz"
+  waypoint: "név"
+  name: "új név"
+  color: "új szín"
+
+info:
+  waypoint: "név"
+
 list:
-  description: "Számodra látható waypointok listázása"
-  args:
-    hide-global:
-      description: "Globális waypointok elrejtése"
-    page:
-      description: "Megjelenítendő oldal száma"
-      name: "oldalszám"
-reloc:
-  description: "A megadott waypoint áthelyezése a jelenlegi pozíciódra"
-  args:
-    waypoint:
-      description: "A waypoint neve, amit át kéne helyezni"
-      name: "név"
+  page: "oldalszám"
+
+relocate:
+  waypoint: "név"
+
 remove:
-  description: "Waypoint törlése"
-  args:
-    waypoint: "A waypoint neve"
+  waypoint: "név"
+
 set:
-  description: "Waypoint létrehozása és renderelése"
-  args:
-    name:
-      description: "A waypoint neve"
-      name: "név"
-    color:
-      description: "A waypoint színe"
-      name: "szín"
-    global:
-      description: "Globális legyen-e, vagy ne"
+  name: "név"
+  color: "szín"
