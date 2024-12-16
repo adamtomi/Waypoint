@@ -36,7 +36,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
         if (value.charAt(0) == HASH) {
             final TextColor color = TextColor.fromCSSHexString(value);
             if (color == null) {
-                throw access.generateFrom(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make()));
+                throw access.wrapException(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make()));
             }
 
             return color;
@@ -44,7 +44,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
 
         final NamedTextColor color = NamedTextColor.NAMES.value(value);
         if (color == null) {
-            throw access.generateFrom(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
+            throw access.wrapException(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
                     .with(Placeholder.of("name", value))
                     .make()));
         }

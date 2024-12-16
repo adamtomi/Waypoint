@@ -14,7 +14,6 @@ import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.argument.mapper.CommandInputAccess;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.MissingInputException;
-import io.leangen.geantyref.TypeToken;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,7 +23,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender, Waypoint> {
-    private static final TypeToken<Waypoint> TYPE = TypeToken.get(Waypoint.class);
     private final BiFunction<WaypointService, Player, Set<Waypoint>> valueProvider;
     private final WaypointService waypointService;
     private final MessageConfig messageConfig;
@@ -35,7 +33,7 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
             final WaypointService waypointService,
             final MessageConfig messageConfig
     ) {
-        super(TYPE, false);
+        super(Waypoint.class, false);
         this.valueProvider = valueProvider;
         this.waypointService = waypointService;
         this.messageConfig = messageConfig;
@@ -52,7 +50,7 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
                 .filter(x -> x.getName().equalsIgnoreCase(value))
                 .findFirst();
 
-        return candidate.orElseThrow(() -> access.generateFrom(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
+        return candidate.orElseThrow(() -> access.wrapException(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
                 .with(Placeholder.of("name", value))
                 .make())));
     }
