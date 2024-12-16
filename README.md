@@ -6,4 +6,4 @@
 - `/wp edit <waypoint> [--name <new-name>] [--color <color>] [--toggle-globality]`: Update waypoint data.
 - `/wp reloc <name>`: Relocate the waypoint to the player's current position.
 - `/wp dist <name>`: Display the distance (in blocks) from the provided waypoint.
-- `/wpa reload`: Reload configuration and waypoint holograms. **DOEST NOT** reload storage.
+- `/wpa reload`: Reload configuration and waypoint holograms. **DOES NOT** reload storage.
