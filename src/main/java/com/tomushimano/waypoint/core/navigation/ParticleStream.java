@@ -1,25 +1,38 @@
-package com.tomushimano.waypoint.util;
+package com.tomushimano.waypoint.core.navigation;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 public class ParticleStream {
     private final List<Location> locations;
+    private final Supplier<Particle.DustOptions> dustOptionsSupplier;
+    private final Runnable finishHook;
     private final Thread thread;
 
-    private ParticleStream(final List<Location> locations) {
+    private ParticleStream(
+            final List<Location> locations,
+            final Supplier<Particle.DustOptions> dustOptionsSupplier,
+            final Runnable finishHook
+    ) {
         this.locations = requireNonNull(locations, "locations canont be null");
+        this.dustOptionsSupplier = requireNonNull(dustOptionsSupplier, "dustOptionsSupplier cannot be null");
+        this.finishHook = requireNonNull(finishHook, "finishHook cannot be null");
         this.thread = Thread.currentThread();
     }
 
-    public static ParticleStream create(final Location origin, final Location destination) {
+    public static ParticleStream init(
+            final Location origin,
+            final Location destination,
+            final Supplier<Particle.DustOptions> dustOptionsSupplier,
+            final Runnable finishHook
+    ) {
         final int count = 15;
 
         final double xDiff = Math.min(destination.getX() - origin.getX(), count);
@@ -28,22 +41,12 @@ public class ParticleStream {
         final double xUnit = xDiff / count;
         final double zUnit = zDiff / count;
 
-        final double xOrigin = origin.getX();
-        final double zOrigin = origin.getZ();
-
-        System.out.println("------------------------------------");
-        System.out.println("%f; %s ==> %f; %f".formatted(xOrigin, zOrigin, destination.getX(), destination.getZ()));
-
         final List<Location> locations = new ArrayList<>(count);
         for (int i = 0; i <= count; i++) {
-            final double x = xOrigin + (i * xUnit);
-            final double z = zOrigin + (i * zUnit);
-
-            System.out.println("%f; %f".formatted(x, z));
             locations.add(origin.clone().add(i * xUnit, 0, i * zUnit));
         }
 
-        return new ParticleStream(locations);
+        return new ParticleStream(locations, dustOptionsSupplier, finishHook);
     }
 
     public void cancel() {
@@ -55,12 +58,15 @@ public class ParticleStream {
         try {
             for (int i = 0; i < count; i++) {
                 for (final Location location : this.locations) {
-                    player.spawnParticle(Particle.DUST, location, 10, new Particle.DustOptions(Color.RED, 5));
+                    player.spawnParticle(Particle.DUST, location, 5, this.dustOptionsSupplier.get());
                     Thread.sleep(100L);
                 }
 
                 Thread.sleep(10L);
             }
+
+            this.locations.clear();
+            this.finishHook.run();
         } catch (final InterruptedException ignored) {}
     }
 }

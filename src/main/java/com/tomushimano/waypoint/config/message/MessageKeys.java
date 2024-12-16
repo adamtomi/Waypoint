@@ -65,6 +65,18 @@ public final class MessageKeys {
         }
     }
 
+    public static final class Navigation {
+        public static final ConfigKey<String> ARRIVED = messageKey("navigation.arrived");
+        public static final ConfigKey<String> START_ALREADY_RUNNING = messageKey("navigation.start_already_running");
+        public static final ConfigKey<String> START_RUNNING_CANCELLED = messageKey("navigation.start_running_cancelled");
+        public static final ConfigKey<String> START_TOO_CLOSE = messageKey("navigation.start_too_close");
+        public static final ConfigKey<String> STARTED = messageKey("navigation.started");
+
+        private Navigation() {
+            throw new DontInvokeMe();
+        }
+    }
+
     public static final class Waypoint {
         public static final ConfigKey<String> CREATION_SUCCESS = messageKey("waypoint.creation.success");
         public static final ConfigKey<String> CREATION_FAILURE = messageKey("waypoint.creation.failure");

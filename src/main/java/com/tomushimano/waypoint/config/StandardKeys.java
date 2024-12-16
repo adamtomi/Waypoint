@@ -1,7 +1,9 @@
 package com.tomushimano.waypoint.config;
 
+import com.tomushimano.waypoint.config.util.ColorParser;
 import com.tomushimano.waypoint.datastore.StorageKind;
 import com.tomushimano.waypoint.util.DontInvokeMe;
+import org.bukkit.Color;
 
 public final class StandardKeys {
 
@@ -40,6 +42,17 @@ public final class StandardKeys {
         }
     }
 
+    public static final class Navigation {
+        public static final ConfigKey<Integer> ARRIVAL_DISTANCE = ConfigKey.integerKey("navigation.arrival_distance");
+        public static final ConfigKey<Integer> MIN_REQUIRED_DISTANCE = ConfigKey.integerKey("navigation.min_required_distance");
+        public static final ConfigKey<Integer> Y_OFFSET = ConfigKey.integerKey("navigation.y_offset");
+        public static final ConfigKey<Color> PARTICLE_COLOR = ConfigKey.simpleKey("navigation.particle.color", ColorParser.INSTANCE);
+        public static final ConfigKey<Integer> PARTICLE_SIZE = ConfigKey.integerKey("navigation.particle.size");
+
+        private Navigation() {
+            throw new DontInvokeMe();
+        }
+    }
 
     private StandardKeys() {
         throw new DontInvokeMe();

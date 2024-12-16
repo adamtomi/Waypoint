@@ -1,35 +1,45 @@
 package com.tomushimano.waypoint.command.impl;
 
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.config.StandardKeys;
+import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
-import com.tomushimano.waypoint.util.ParticleStream;
+import com.tomushimano.waypoint.core.navigation.NavigationService;
+import com.tomushimano.waypoint.di.qualifier.Cfg;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.util.key.Key;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
 public class StartNavigationCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> DESTINATION_KEY = Key.named(Waypoint.class, "destination");
     private static final Key<Boolean> FORCE_KEY = Key.named(Boolean.class, "force");
-    // TODO remove this
-    private static final Map<UUID, ParticleStream> runningParticles = new ConcurrentHashMap<>();
     private final CommandHelper helper;
+    private final NavigationService navigationService;
+    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @Inject
-    public StartNavigationCommand(final CommandHelper helper) {
+    public StartNavigationCommand(
+            final CommandHelper helper,
+            final NavigationService navigationService,
+            final MessageConfig messageConfig,
+            final @Cfg Configurable config
+    ) {
         this.helper = helper;
+        this.navigationService = navigationService;
+        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     @Override
@@ -50,29 +60,34 @@ public class StartNavigationCommand implements CommandModule<CommandSender> {
     @Override
     public void execute(final CommandContext<CommandSender> context) {
         final Player sender = (Player) context.source();
-        final Waypoint waypoint = context.require(DESTINATION_KEY);
 
-        final Location origin = sender.getLocation();
-        final Location destination = waypoint.getPosition().toLocation();
+        if (this.navigationService.isNavigating(sender)) {
+            if (context.has(FORCE_KEY)) {
+                final Waypoint currentDestination = this.navigationService.currentDestination(sender).orElseThrow();
+                sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_RUNNING_CANCELLED)
+                        .with(Placeholder.of("name", currentDestination.getName()))
+                        .make());
 
-        final ParticleStream existing = runningParticles.get(sender.getUniqueId());
-        if (existing != null) {
-            if (!context.has(FORCE_KEY)) {
-                sender.sendMessage("You already have a particle stream running.");
-                return;
+                this.navigationService.stopNavigation(sender);
             } else {
-                sender.sendMessage("Cancelling previous particle stream...");
-                existing.cancel();
-                runningParticles.remove(sender.getUniqueId());
+                sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_ALREADY_RUNNING).make());
+                return;
             }
         }
 
-        sender.sendMessage("Starting new particle stream...");
-        final ParticleStream stream = ParticleStream.create(origin, destination);
-        runningParticles.put(sender.getUniqueId(), stream);
-        stream.play(sender, 15);
+        final Waypoint waypoint = context.require(DESTINATION_KEY);
+        final int minDistance = this.config.get(StandardKeys.Navigation.MIN_REQUIRED_DISTANCE);
 
-        sender.sendMessage("Particle stream is over, removing it...");
-        runningParticles.remove(sender.getUniqueId(), stream);
+        if (waypoint.distance(sender) < minDistance) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_TOO_CLOSE)
+                    .with(Placeholder.of("blocks", minDistance))
+                    .make());
+            return;
+        }
+
+        sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.STARTED)
+                .with(Placeholder.of("name", waypoint.getName()))
+                .make());
+        this.navigationService.startNavigation(sender, waypoint);
     }
 }

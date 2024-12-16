@@ -5,6 +5,7 @@ import com.tomushimano.waypoint.core.hologram.HologramFactory;
 import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,6 +97,10 @@ public class Waypoint implements Comparable<Waypoint> {
 
     public void setHologram(Hologram hologram) {
         this.hologram = requireNonNull(hologram, "hologram cannot be null");
+    }
+
+    public long distance(final Entity entity) {
+        return (long) entity.getLocation().distance(this.position.toLocation());
     }
 
     @Override

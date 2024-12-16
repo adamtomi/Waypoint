@@ -45,7 +45,7 @@ public class DistanceCommand implements CommandModule<CommandSender> {
         final Player sender = (Player) context.source();
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
 
-        final long distance = (long) sender.getLocation().distance(waypoint.getPosition().toLocation());
+        final long distance = waypoint.distance(sender);
         sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.DISTANCE)
                 .with(Placeholder.of("distance", distance))
                 .make());

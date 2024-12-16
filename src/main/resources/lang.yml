@@ -37,6 +37,13 @@ command:
   unknown_subcommand: "&cAz alábbi parancsok érhetők el számodra:"
   unknown_subcommand_entry: "&f/{prefix} &l{name} &7&o({aliases})"
 
+navigation:
+  arrived: "&AMegérkeztél a kijelölt célponthoz!"
+  start_already_running: "&cMár elindítottad a navigálást. Vagy szakítsd meg, vagy futtasd le ezt a parancsot a &7--force &cflaggel."
+  start_running_cancelled: "&cAz előző navigáció a(z) \"&7{name}&c\" waypointhoz meg lett szakítva."
+  start_too_close: "&cTúl közel vagy ehhez a waypointhoz. Legalább &l{blocks} &cblokkra kell lenned, hogy elindíthasd a navigálást."
+  started: "&aNavigáció elindítva a következő waypointhoz: \"&7&o{name}&a\""
+
 waypoint:
   creation:
     success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"

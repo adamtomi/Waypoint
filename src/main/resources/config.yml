@@ -39,3 +39,21 @@ hologram:
   line_padding: 0.3
   # The offset from the actual waypoint location.
   top_offset: 2.0
+
+navigation:
+  particle:
+    # The color of the navigation particle indicators. The value has to be either a
+    # hexadecimal number representing a color, or a name from the following list:
+    # - white, silver, gray, black, red, maroon, yellow, olive, lime, green, aqua, teal
+    #   blue, navy, fuchsia, purple, orange
+    color: red
+    # The size of the particles. 5 is the default - and recommended - value.
+    size: 5
+    # Offset the y coordinate by this value.
+    y_offset: 2
+  # If the player is closer to the waypoint (in blocks) than this number,
+  # the navigation will not start.
+  min_required_distance: 15
+  # If the player gets to a distance (in blocks) of the value below (or closer),
+  # the navigation will stop.
+  arrival_distance: 15
