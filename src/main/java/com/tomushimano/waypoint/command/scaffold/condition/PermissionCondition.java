@@ -24,7 +24,7 @@ public class PermissionCondition implements CommandCondition<CommandSender> {
     @Override
     public void test(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
         if (!context.source().hasPermission(this.permission)) {
-            throw new RichConditionException(this, this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
+            throw new VerboseConditionException(this, this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
                     .with(Placeholder.of("permission", this.permission))
                     .make());
         }

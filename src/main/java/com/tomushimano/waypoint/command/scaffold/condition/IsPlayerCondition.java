@@ -21,7 +21,7 @@ public class IsPlayerCondition implements CommandCondition<CommandSender> {
     @Override
     public void test(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
         if (!(context.source() instanceof Player)) {
-            throw new RichConditionException(this, this.messageConfig.get(MessageKeys.Command.NEED_TO_BE_A_PLAYER).make());
+            throw new VerboseConditionException(this, this.messageConfig.get(MessageKeys.Command.NEED_TO_BE_A_PLAYER).make());
         }
     }
 }

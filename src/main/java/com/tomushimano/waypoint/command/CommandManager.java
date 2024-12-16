@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
-import com.tomushimano.waypoint.command.scaffold.condition.RichConditionException;
+import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
@@ -157,8 +157,8 @@ public final class CommandManager implements CommandExecutor, Listener {
             this.exceptionHandler.handleNoSuchCommand(sender, ex);
         } catch (final ArgumentMappingException ex) {
             this.exceptionHandler.handleArgumentMappingError(sender, ex);
-        } catch (final RichConditionException ex) {
-          sender.sendMessage(ex.richMessage());
+        } catch (final VerboseConditionException ex) {
+          sender.sendMessage(ex.describeFailure());
         } catch (final UnrecognizedFlagException ex) {
             this.exceptionHandler.handleUnrecognizedFlag(sender, ex);
         } catch (final Throwable ex) {
