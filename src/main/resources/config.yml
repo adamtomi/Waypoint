@@ -50,7 +50,7 @@ navigation:
     # The size of the particles. 5 is the default - and recommended - value.
     size: 5
     # Offset the y coordinate by this value.
-    y_offset: 2
+    y_offset: 4
   # If the player is closer to the waypoint (in blocks) than this number,
   # the navigation will not start.
   min_required_distance: 15

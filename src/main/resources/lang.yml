@@ -42,7 +42,10 @@ navigation:
   start_already_running: "&cMár elindítottad a navigálást. Vagy szakítsd meg, vagy futtasd le ezt a parancsot a &7--force &cflaggel."
   start_running_cancelled: "&cAz előző navigáció a(z) \"&7{name}&c\" waypointhoz meg lett szakítva."
   start_too_close: "&cTúl közel vagy ehhez a waypointhoz. Legalább &l{blocks} &cblokkra kell lenned, hogy elindíthasd a navigálást."
+  start_world_error: "&cUgyanabban a világban (\"&o{name}&c\") kell lenned, mint a waypoint."
   started: "&aNavigáció elindítva a következő waypointhoz: \"&7&o{name}&a\""
+  stop_none_running: "&cNincs mit leállítani."
+  stopped: "&aNavigálás a(z) &l{name} &awaypointhoz le lett állítva."
 
 waypoint:
   creation:

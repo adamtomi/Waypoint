@@ -58,11 +58,11 @@ public class ParticleStream {
         try {
             for (int i = 0; i < count; i++) {
                 for (final Location location : this.locations) {
-                    player.spawnParticle(Particle.DUST, location, 5, this.dustOptionsSupplier.get());
-                    Thread.sleep(100L);
+                    player.spawnParticle(Particle.DUST, location, 3, this.dustOptionsSupplier.get());
+                    Thread.sleep(30L);
                 }
 
-                Thread.sleep(10L);
+                Thread.sleep(100L);
             }
 
             this.locations.clear();

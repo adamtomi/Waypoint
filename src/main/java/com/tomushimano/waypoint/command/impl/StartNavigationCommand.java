@@ -85,6 +85,14 @@ public class StartNavigationCommand implements CommandModule<CommandSender> {
             return;
         }
 
+        final String worldName = waypoint.getPosition().getWorldName();
+        if (!worldName.equals(sender.getWorld().getName())) {
+            sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_WORLD_ERROR)
+                    .with(Placeholder.of("name", worldName))
+                    .make());
+            return;
+        }
+
         sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.STARTED)
                 .with(Placeholder.of("name", waypoint.getName()))
                 .make());

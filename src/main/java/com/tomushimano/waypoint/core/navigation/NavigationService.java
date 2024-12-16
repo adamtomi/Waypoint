@@ -4,6 +4,7 @@ import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 // TODO handle waypoint deletion and relocation
+// TODO cancel all on reload
 @Singleton
 public class NavigationService {
     private final Map<UUID, Navigation> activeNavigations = new ConcurrentHashMap<>();
@@ -43,8 +45,9 @@ public class NavigationService {
         }
 
         final UUID navigationId = UUID.randomUUID();
+        final Location origin = player.getLocation().clone().add(0, this.config.get(StandardKeys.Navigation.Y_OFFSET), 0);
         final ParticleStream stream = ParticleStream.init(
-                player.getLocation().clone().add(0, this.config.get(StandardKeys.Navigation.Y_OFFSET), 0),
+                origin,
                 destination.getPosition().toLocation(),
                 () -> new Particle.DustOptions(this.config.get(StandardKeys.Navigation.PARTICLE_COLOR), this.config.get(StandardKeys.Navigation.PARTICLE_SIZE)),
                 () -> particleStreamFinished(uniqueId, navigationId)
