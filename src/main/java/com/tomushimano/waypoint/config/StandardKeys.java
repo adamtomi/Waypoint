@@ -47,6 +47,9 @@ public final class StandardKeys {
         public static final ConfigKey<Integer> MIN_REQUIRED_DISTANCE = ConfigKey.integerKey("navigation.min_required_distance");
         public static final ConfigKey<Integer> Y_OFFSET = ConfigKey.integerKey("navigation.particle.y_offset");
         public static final ConfigKey<Color> PARTICLE_COLOR = ConfigKey.simpleKey("navigation.particle.color", ColorParser.INSTANCE);
+        public static final ConfigKey<Integer> PARTICLE_COUNT = ConfigKey.integerKey("navigation.particle.count");
+        public static final ConfigKey<Integer> PARTICLE_DENSITY = ConfigKey.integerKey("navigation.particle.density");
+        public static final ConfigKey<Integer> PARTICLE_LENGTH = ConfigKey.integerKey("navigation.particle.length");
         public static final ConfigKey<Integer> PARTICLE_SIZE = ConfigKey.integerKey("navigation.particle.size");
 
         private Navigation() {

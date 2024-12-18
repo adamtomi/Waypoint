@@ -5,7 +5,6 @@ import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
@@ -46,17 +45,17 @@ public class NavigationService {
 
         final UUID navigationId = UUID.randomUUID();
         final Location origin = player.getLocation().clone().add(0, this.config.get(StandardKeys.Navigation.Y_OFFSET), 0);
+        final ParticleConfig config = ParticleConfig.from(this.config);
         final ParticleStream stream = ParticleStream.init(
                 origin,
                 destination.getPosition().toLocation(),
-                () -> new Particle.DustOptions(this.config.get(StandardKeys.Navigation.PARTICLE_COLOR), this.config.get(StandardKeys.Navigation.PARTICLE_SIZE)),
+                config,
                 () -> particleStreamFinished(uniqueId, navigationId)
         );
 
         final Navigation navigation = new Navigation(navigationId, destination, stream);
         this.activeNavigations.put(uniqueId, navigation);
-        // TODO play indefinitely until player arrives.
-        stream.play(player, 15);
+        stream.play(player);
     }
 
     private void particleStreamFinished(final UUID uniqueId, final UUID navigationId) {

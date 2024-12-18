@@ -41,6 +41,7 @@ hologram:
   top_offset: 2.0
 
 navigation:
+  # Particle stream (navigation indicator) settings.
   particle:
     # The color of the navigation particle indicators. The value has to be either a
     # hexadecimal number representing a color, or a name from the following list:
@@ -49,8 +50,16 @@ navigation:
     color: red
     # The size of the particles. 5 is the default - and recommended - value.
     size: 5
+    # The number of particles to spawn for each position.
+    count: 3
     # Offset the y coordinate by this value.
-    y_offset: 4
+    y_offset: 3
+    # Controls how the dense the particle stream will be.
+    density: 50
+    # Controls how many points should be rendered in a stream. It is recommended
+    # to keep this setting the same as `navigation.min_required_distance`.
+    length: 15
+
   # If the player is closer to the waypoint (in blocks) than this number,
   # the navigation will not start.
   min_required_distance: 15
