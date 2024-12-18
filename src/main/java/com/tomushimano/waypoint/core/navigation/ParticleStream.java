@@ -49,16 +49,6 @@ public class ParticleStream {
         final double xUnit = xDiff / resolution;
         final double zUnit = zDiff / resolution;
 
-        System.out.println("xDiff " + xDiff);
-        System.out.println("zDiff " + zDiff);
-        System.out.println("_xUnit " + _xUnit);
-        System.out.println("_zUnit " + _zUnit);
-        System.out.println("xUnit " + xUnit);
-        System.out.println("zUnit " + zUnit );
-        System.out.println("density " + config.density());
-        System.out.println("xResolution " + xResolution);
-        System.out.println("zResolution " + zResolution);
-
         final List<Location> locations = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             locations.add(origin.clone().add(i * xUnit, 0, i * zUnit));
