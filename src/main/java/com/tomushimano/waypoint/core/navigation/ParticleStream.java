@@ -38,9 +38,6 @@ public class ParticleStream {
         final double xDiff = destination.getX() - origin.getX();
         final double zDiff = destination.getZ() - origin.getZ();
 
-        final double _xUnit = xDiff / length;
-        final double _zUnit = zDiff / length;
-
         final int xResolution = (int) ((Math.abs(xDiff) / UNIT) + 1) * config.density();
         final int zResolution = (int) ((Math.abs(zDiff) / UNIT) + 1) * config.density();
 
