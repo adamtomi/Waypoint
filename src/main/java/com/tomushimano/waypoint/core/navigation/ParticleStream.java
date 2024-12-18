@@ -43,8 +43,10 @@ public class ParticleStream {
         final int xResolution = (int) ((Math.abs(xDiff) / 100) + 1) * config.density();
         final int zResolution = (int) ((Math.abs(zDiff) / 100) + 1) * config.density();
 
-        final double xUnit = xDiff / xResolution;
-        final double zUnit = zDiff / zResolution;
+        final int resolution = Math.max(xResolution, zResolution);
+
+        final double xUnit = xDiff / resolution;
+        final double zUnit = zDiff / resolution;
 
         System.out.println("xDiff " + xDiff);
         System.out.println("zDiff " + zDiff);
@@ -86,9 +88,10 @@ public class ParticleStream {
 
                 Thread.sleep(100L);
             }
-
+        } catch (final InterruptedException ignored) {
+        } finally {
             this.locations.clear();
             this.finishHook.run();
-        } catch (final InterruptedException ignored) {}
+        }
     }
 }

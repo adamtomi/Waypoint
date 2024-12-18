@@ -3,6 +3,7 @@ package com.tomushimano.waypoint;
 import com.tomushimano.waypoint.command.CommandManager;
 import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.core.navigation.NavigationService;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import org.bukkit.event.Listener;
@@ -25,27 +26,30 @@ public final class WaypointLoader {
     private final Set<Listener> listeners;
     private final ConfigHelper configHelper;
     private final StorageHolder storageHolder;
+    private final NavigationService navigationService;
 
     @Inject
     public WaypointLoader(
-            JavaPlugin plugin,
-            CommandManager commandManager,
-            Set<Listener> listeners,
-            ConfigHelper configHelper,
-            StorageHolder storageHolder
+            final JavaPlugin plugin,
+            final CommandManager commandManager,
+            final Set<Listener> listeners,
+            final ConfigHelper configHelper,
+            final StorageHolder storageHolder,
+            final NavigationService navigationService
     ) {
         this.plugin = plugin;
         this.commandManager = commandManager;
         this.listeners = listeners;
         this.configHelper = configHelper;
         this.storageHolder = storageHolder;
+        this.navigationService = navigationService;
     }
 
     public void load() {
         try {
             LOGGER.info("Attempting to copy configuration files...");
             copyResources();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             capture(ex, "Failed to copy configuration files", LOGGER);
             fail();
         }
@@ -63,24 +67,25 @@ public final class WaypointLoader {
     }
 
     public void unload() {
+        this.navigationService.performShutdown();
         this.commandManager.shutdown();
         this.storageHolder.get().disconnect();
     }
 
     private void copyResources() throws IOException {
-        Path datafolder = this.plugin.getDataPath();
-        Set<String> files = Set.of(
+        final Path datafolder = this.plugin.getDataPath();
+        final Set<String> files = Set.of(
                 Configurable.COMMAND_YML,
                 Configurable.CONFIG_YML,
                 Configurable.LANG_YML
         );
 
-        for (String file : files) copyResourceIfNotExists(datafolder, file);
+        for (final String file : files) copyResourceIfNotExists(datafolder, file);
     }
 
     private void registerListeners() {
         LOGGER.info("Registering listeners...");
-        PluginManager pluginManager = this.plugin.getServer().getPluginManager();
+        final PluginManager pluginManager = this.plugin.getServer().getPluginManager();
         this.listeners.forEach(x -> pluginManager.registerEvents(x, this.plugin));
     }
 
