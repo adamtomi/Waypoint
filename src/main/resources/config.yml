@@ -55,7 +55,7 @@ navigation:
     # Offset the y coordinate by this value.
     y_offset: 3
     # Controls how the dense the particle stream will be.
-    density: 50
+    density: 5
     # Controls how many points should be rendered in a stream. It is recommended
     # to keep this setting the same as `navigation.min_required_distance`.
     length: 15

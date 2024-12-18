@@ -10,6 +10,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 public class ParticleStream {
+    private static final int UNIT = 10;
     private final List<Location> locations;
     private final ParticleConfig config;
     private final Runnable finishHook;
@@ -40,8 +41,8 @@ public class ParticleStream {
         final double _xUnit = xDiff / length;
         final double _zUnit = zDiff / length;
 
-        final int xResolution = (int) ((Math.abs(xDiff) / 100) + 1) * config.density();
-        final int zResolution = (int) ((Math.abs(zDiff) / 100) + 1) * config.density();
+        final int xResolution = (int) ((Math.abs(xDiff) / UNIT) + 1) * config.density();
+        final int zResolution = (int) ((Math.abs(zDiff) / UNIT) + 1) * config.density();
 
         final int resolution = Math.max(xResolution, zResolution);
 
