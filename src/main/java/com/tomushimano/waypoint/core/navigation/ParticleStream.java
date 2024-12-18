@@ -5,12 +5,15 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static java.util.Objects.requireNonNull;
 
 public class ParticleStream {
     private static final int UNIT = 10;
+    private final Deque<Update> pendingUpdates = new ConcurrentLinkedDeque<>();
     private final List<Location> locations;
     private final ParticleConfig config;
     private final Runnable finishHook;
@@ -34,6 +37,20 @@ public class ParticleStream {
             final ParticleConfig config,
             final Runnable finishHook
     ) {
+        final List<Location> locations = calculate(config, origin, destination);
+
+        return new ParticleStream(
+                locations,
+                config,
+                finishHook
+        );
+    }
+
+    private static List<Location> calculate(
+            final ParticleConfig config,
+            final Location origin,
+            final Location destination
+    ) {
         final int length = config.length();
         final double xDiff = destination.getX() - origin.getX();
         final double zDiff = destination.getZ() - origin.getZ();
@@ -51,11 +68,26 @@ public class ParticleStream {
             locations.add(origin.clone().add(i * xUnit, 0, i * zUnit));
         }
 
-        return new ParticleStream(
-                locations,
-                config,
-                finishHook
-        );
+        return locations;
+    }
+
+    public void updateOrigin(final Location origin) {
+        this.pendingUpdates.push(new Update(origin, true));
+    }
+
+    public void updateDestination(final Location destination) {
+        this.pendingUpdates.push(new Update(destination, false));
+    }
+
+    private void applyUpdate(final Update update) {
+        final Location origin = update.isOrigin() ? update.location() : this.locations.getFirst();
+        final Location destination = update.isOrigin ? this.locations.getLast() : update.location();
+        recalculate(origin, destination);
+    }
+
+    private void recalculate(final Location newOrigin, final Location newDestination) {
+        this.locations.clear();
+        this.locations.addAll(calculate(this.config, newOrigin, newDestination));
     }
 
     public void cancel() {
@@ -66,15 +98,22 @@ public class ParticleStream {
 
     public void play(final Player player) {
         try {
-            final int particleCount = config.count();
+            final int particleCount = this.config.count();
             final Particle.DustOptions dustOptions = new Particle.DustOptions(this.config.color(), this.config.size());
+
             while (this.running) {
+                final Update update = this.pendingUpdates.pollLast();
+                if (update != null) {
+                    this.pendingUpdates.clear();
+                    applyUpdate(update);
+                }
+
                 for (final Location location : this.locations) {
                     player.spawnParticle(Particle.DUST, location, particleCount, dustOptions);
                     Thread.sleep(30L);
                 }
 
-                Thread.sleep(100L);
+                Thread.sleep(1000L);
             }
         } catch (final InterruptedException ignored) {
         } finally {
@@ -82,4 +121,6 @@ public class ParticleStream {
             this.finishHook.run();
         }
     }
+
+    private record Update(Location location, boolean isOrigin) {}
 }

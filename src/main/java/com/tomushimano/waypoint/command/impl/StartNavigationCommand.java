@@ -96,6 +96,8 @@ public class StartNavigationCommand implements CommandModule<CommandSender> {
         sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.STARTED)
                 .with(Placeholder.of("name", waypoint.getName()))
                 .make());
-        this.navigationService.startNavigation(sender, waypoint);
+        this.navigationService.startNavigation(sender, waypoint, () -> sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.ARRIVED)
+                .with(Placeholder.of("name", waypoint.getName()))
+                .make()));
     }
 }
