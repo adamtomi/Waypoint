@@ -6,6 +6,7 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.core.navigation.NavigationService;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
@@ -25,16 +26,19 @@ public class RemoveCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
     private final CommandHelper helper;
     private final WaypointService waypointService;
+    private final NavigationService navigationService;
     private final MessageConfig messageConfig;
 
     @Inject
     public RemoveCommand(
             final CommandHelper helper,
             final WaypointService waypointService,
+            final NavigationService navigationService,
             final MessageConfig messageConfig
     ) {
         this.helper = helper;
         this.waypointService = waypointService;
+        this.navigationService = navigationService;
         this.messageConfig = messageConfig;
     }
 
@@ -56,10 +60,11 @@ public class RemoveCommand implements CommandModule<CommandSender> {
         final CommandSender sender = context.source();
 
         this.waypointService.removeWaypoint(waypoint)
-                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.DELETION_FAILURE).make(), "Failed to remove waypoint", LOGGER))
+                .thenRun(() -> this.navigationService.cancelAll(waypoint))
                 .thenApply(x -> this.messageConfig.get(MessageKeys.Waypoint.DELETION_SUCCESS)
                         .with(Placeholder.of("name", waypoint.getName()))
                         .make())
-                .thenAccept(sender::sendMessage);
+                .thenAccept(sender::sendMessage)
+                .exceptionally(capture(sender, this.messageConfig.get(MessageKeys.Waypoint.DELETION_FAILURE).make(), "Failed to remove waypoint", LOGGER));
     }
 }

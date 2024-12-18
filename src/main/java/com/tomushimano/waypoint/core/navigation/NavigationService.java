@@ -103,10 +103,10 @@ public class NavigationService {
     public void cancelAll(final Waypoint destination) {
         final Set<Map.Entry<UUID, Navigation>> markedForRemoval = this.activeNavigations.entrySet()
                 .stream()
-                .filter(x -> x.getValue().uniqueId().equals(destination.getUniqueId()))
+                .filter(x -> x.getValue().destination().equals(destination))
                 .collect(Collectors.toSet());
 
-        LOGGER.info("Cancelling all ({}) navigations to waypoint '{}'", markedForRemoval.size(), destination.getName());
+        LOGGER.info("Cancelling all ({}) navigations to waypoint '{}'...", markedForRemoval.size(), destination.getName());
         for (final Map.Entry<UUID, Navigation> entry : markedForRemoval) {
             entry.getValue().stream().cancel();
             this.activeNavigations.remove(entry.getKey(), entry.getValue());
