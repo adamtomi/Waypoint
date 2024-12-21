@@ -65,23 +65,18 @@ public final class NavigationTask implements Runnable {
     private void update() {
         final Location origin = this.player.getLocation();
         final Location destination = this.destination.getPosition().toLocation();
+        final int distanceMultiplier = this.config.get(StandardKeys.Navigation.PARTICLE_DISTANCE_MULTIPLIER);
 
         final double xDiff = destination.getX() - origin.getX();
         final double zDiff = destination.getZ() - origin.getZ();
 
-        final int xResolution = (int) ((Math.abs(xDiff) / UNIT) + 1); // * 5
-        final int zResolution = (int) ((Math.abs(zDiff) / UNIT) + 1); // * 5
-
-        final int resolution = Math.max(xResolution, zResolution);
+        final int resolution = (int) Math.max(Math.abs(xDiff), Math.abs(zDiff));
 
         final double xUnit = xDiff / resolution;
         final double zUnit = zDiff / resolution;
 
-        final int baseDistance = this.config.get(StandardKeys.Navigation.PARTICLE_DISTANCE);
-        final double a = xUnit / baseDistance * -1;
-        final double b = zUnit / baseDistance * -1;
-        final double x = xUnit * a + origin.getX();
-        final double z = zUnit * b + origin.getZ();
+        final double x = xUnit * distanceMultiplier + origin.getX();
+        final double z = zUnit * distanceMultiplier + origin.getZ();
         final int y = origin.getWorld().getHighestBlockYAt((int) x, (int) z);
 
         this.nextLocation = new Location(

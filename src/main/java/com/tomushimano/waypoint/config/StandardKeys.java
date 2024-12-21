@@ -49,7 +49,7 @@ public final class StandardKeys {
         public static final ConfigKey<Color> PARTICLE_COLOR = ConfigKey.simpleKey("navigation.particle.color", ColorParser.INSTANCE);
         public static final ConfigKey<Integer> PARTICLE_COUNT = ConfigKey.integerKey("navigation.particle.count");
         public static final ConfigKey<Integer> PARTICLE_DENSITY = ConfigKey.integerKey("navigation.particle.density");
-        public static final ConfigKey<Integer> PARTICLE_DISTANCE = ConfigKey.integerKey("navigation.particle.distance");
+        public static final ConfigKey<Integer> PARTICLE_DISTANCE_MULTIPLIER = ConfigKey.integerKey("navigation.particle.distance_multiplier");
         public static final ConfigKey<Integer> PARTICLE_Y_OFFSET = ConfigKey.integerKey("navigation.particle.y_offset");
         public static final ConfigKey<Integer> PARTICLE_SIZE = ConfigKey.integerKey("navigation.particle.size");
 

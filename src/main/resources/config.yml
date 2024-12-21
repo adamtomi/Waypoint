@@ -58,8 +58,8 @@ navigation:
     # Controls how the dense the particle column will be. The lower the number is,
     # the denser the particle column is. The minimum value (and maximum density) is 1.
     density: 2
-    # The distance is calculated from the player's current location
-    distance: 10
+    # The distance is calculated from the player's current location.
+    distance_multiplier: 30
 
   # If the player is closer to the waypoint (in blocks) than this number,
   # the navigation will not start.
