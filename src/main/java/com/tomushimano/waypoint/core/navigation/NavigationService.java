@@ -73,7 +73,7 @@ public class NavigationService {
         final Navigation navigation = new Navigation(navigationId, destination, stream, arrivalHook);
         this.activeNavigations.put(uniqueId, navigation);
         // this.executor.execute(() -> stream.play(player));
-        this.executor.execute(new NavigationTask(player, destination, this.messageConfig));
+        this.executor.execute(new NavigationTask(player, destination, this.messageConfig, stream));
     }
 
     private Location calculateOrigin(final Player player) {
