@@ -3,6 +3,7 @@ package com.tomushimano.waypoint.core.navigation;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
+import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.util.BukkitUtil;
@@ -34,10 +35,12 @@ public class NavigationService {
     );
     private final Map<UUID, Navigation> activeNavigations = new ConcurrentHashMap<>();
     private final Configurable config;
+    private final MessageConfig messageConfig;
 
     @Inject
-    public NavigationService(final @Cfg Configurable config) {
+    public NavigationService(final @Cfg Configurable config, final MessageConfig messageConfig) {
         this.config = config;
+        this.messageConfig = messageConfig;
     }
 
     public boolean isNavigating(final Player player) {
@@ -69,7 +72,8 @@ public class NavigationService {
 
         final Navigation navigation = new Navigation(navigationId, destination, stream, arrivalHook);
         this.activeNavigations.put(uniqueId, navigation);
-        this.executor.execute(() -> stream.play(player));
+        // this.executor.execute(() -> stream.play(player));
+        this.executor.execute(new NavigationTask(player, destination, this.messageConfig));
     }
 
     private Location calculateOrigin(final Player player) {

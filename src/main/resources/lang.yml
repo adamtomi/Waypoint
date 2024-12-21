@@ -39,6 +39,7 @@ command:
 
 navigation:
   arrived: "&AMegérkeztél a kijelölt célponthoz (\"&l{name}&a\")!"
+  distance_indicator: "&aJelenleg &l&o{blocks} &ablokkra vagy a célponttól."
   start_already_running: "&cMár elindítottad a navigálást. Vagy szakítsd meg, vagy futtasd le ezt a parancsot a &7--force &cflaggel."
   start_running_cancelled: "&cAz előző navigáció a(z) \"&7{name}&c\" waypointhoz meg lett szakítva."
   start_too_close: "&cTúl közel vagy ehhez a waypointhoz. Legalább &l{blocks} &cblokkra kell lenned, hogy elindíthasd a navigálást."
