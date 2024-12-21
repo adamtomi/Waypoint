@@ -8,11 +8,11 @@ public final class ConcurrentUtil {
         throw new DontInvokeMe();
     }
 
-    public static void terminate(ExecutorService executor, long timeoutSeconds) {
+    public static void terminate(final ExecutorService executor, final long timeoutSeconds) {
         try {
             // Attempt graceful shutdown
             if (!executor.awaitTermination(timeoutSeconds, TimeUnit.SECONDS)) executor.shutdownNow();
-        } catch (InterruptedException ex) {
+        } catch (final InterruptedException ex) {
             // It failed, we're shutting it down for good
             executor.shutdownNow();
         }

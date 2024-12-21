@@ -11,14 +11,12 @@ public final class WaypointBootstrap implements PluginBootstrap {
     private WaypointLoader loader;
 
     @Override
-    public void bootstrap(@NotNull BootstrapContext context) {
-        // TODO mojang command registration
-    }
+    public void bootstrap(final @NotNull BootstrapContext context) {}
 
     @Override
-    public @NotNull JavaPlugin createPlugin(@NotNull PluginProviderContext context) {
+    public @NotNull JavaPlugin createPlugin(final @NotNull PluginProviderContext context) {
         // Very nice solution, yay, much wow.
-        JavaPlugin plugin = new WaypointPlugin(
+        final JavaPlugin plugin = new WaypointPlugin(
                 () -> this.loader.load(),
                 () -> this.loader.unload()
         );

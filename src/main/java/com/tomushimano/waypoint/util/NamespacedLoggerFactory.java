@@ -10,7 +10,7 @@ public final class NamespacedLoggerFactory {
         throw new DontInvokeMe();
     }
 
-    public static Logger create(String name) {
+    public static Logger create(final String name) {
         return LoggerFactory.getLogger("%s/%s".formatted(BASE_NAME, name));
     }
 
@@ -26,9 +26,9 @@ public final class NamespacedLoggerFactory {
      * @param clazz The class
      * @return The retrieved name
      */
-    public static Logger create(Class<?> clazz) {
-        String[] path = clazz.getName().split("\\.");
-        String className = path[path.length - 1];
+    public static Logger create(final Class<?> clazz) {
+        final String[] path = clazz.getName().split("\\.");
+        final String className = path[path.length - 1];
         return create(className);
     }
 }

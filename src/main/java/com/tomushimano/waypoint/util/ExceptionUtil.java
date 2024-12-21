@@ -12,24 +12,29 @@ public final class ExceptionUtil {
         throw new DontInvokeMe();
     }
 
-    public static void capture(Throwable ex, String detail, Logger logger) {
+    public static void capture(final Throwable ex, final String detail, final Logger logger) {
         logger.error(">> An unexpected error has occurred, see below for details!");
         logger.error(detail, ex);
     }
 
-    private static Throwable unwrap(Throwable ex) {
+    private static Throwable unwrap(final Throwable ex) {
         if (ex instanceof CompletionException) return ex.getCause();
         return ex;
     }
 
-    public static <T> Function<Throwable, T> capture(String detail, Logger logger) {
+    public static <T> Function<Throwable, T> capture(final String detail, final Logger logger) {
         return ex -> {
             capture(unwrap(ex), detail, logger);
             return null;
         };
     }
 
-    public static <T> Function<Throwable, T> capture(CommandSender sender, Component message, String detail, Logger logger) {
+    public static <T> Function<Throwable, T> capture(
+            final CommandSender sender,
+            final Component message,
+            final String detail,
+            final Logger logger
+    ) {
         return ex -> {
             sender.sendMessage(message);
             capture(unwrap(ex), detail, logger);

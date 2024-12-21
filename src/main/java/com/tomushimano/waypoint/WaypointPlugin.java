@@ -9,8 +9,8 @@ public final class WaypointPlugin extends JavaPlugin {
     private final Runnable disableHook;
 
     WaypointPlugin(
-            Runnable enableHook,
-            Runnable disableHook
+            final Runnable enableHook,
+            final Runnable disableHook
     ) {
         this.enableHook = requireNonNull(enableHook, "enableHook cannot be null");
         this.disableHook = requireNonNull(disableHook, "disableHook cannot be null");

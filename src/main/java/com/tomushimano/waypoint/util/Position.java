@@ -11,14 +11,14 @@ public class Position {
     private final double y;
     private final double z;
 
-    public Position(String worldName, double x, double y, double z) {
+    public Position(final String worldName, final double x, final double y, final double z) {
         this.worldName = requireNonNull(worldName, "worldName cannot be null");
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public static Position from(Location location) {
+    public static Position from(final Location location) {
         requireNonNull(location, "location cannot be null");
         return new Position(
                 location.getWorld().getName(),
@@ -44,7 +44,7 @@ public class Position {
         return this.z;
     }
 
-    public Position plus(double x, double y, double z) {
+    public Position plus(final double x, final double y, final double z) {
         return new Position(this.worldName, this.x + x, this.y + y, this.z + z);
     }
 

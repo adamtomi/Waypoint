@@ -6,7 +6,7 @@ public interface Memoized<T> {
 
     T get();
 
-    static <T> Memoized<T> of(Supplier<T> factory) {
+    static <T> Memoized<T> of(final Supplier<T> factory) {
         return new Memoized<>() {
             private T value;
 
