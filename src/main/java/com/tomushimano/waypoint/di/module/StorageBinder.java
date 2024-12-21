@@ -5,7 +5,7 @@ import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.datastore.StorageHolderImpl;
 import com.tomushimano.waypoint.datastore.StorageKind;
 import com.tomushimano.waypoint.datastore.impl.SQLStorage;
-import com.tomushimano.waypoint.di.util.EnumKey;
+import com.tomushimano.waypoint.di.util.StorageKindKey;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
@@ -14,15 +14,15 @@ import dagger.multibindings.IntoMap;
 public interface StorageBinder {
 
     @Binds
-    StorageHolder bindStorageHolder(StorageHolderImpl impl);
+    StorageHolder bindStorageHolder(final StorageHolderImpl impl);
 
     @Binds
     @IntoMap
-    @EnumKey(StorageKind.SQLITE)
-    Storage bindSQLiteStorage(SQLStorage storage);
+    @StorageKindKey(StorageKind.SQLITE)
+    Storage bindSQLiteStorage(final SQLStorage storage);
 
     @Binds
     @IntoMap
-    @EnumKey(StorageKind.MYSQL)
-    Storage bindMySQLStorage(SQLStorage storage);
+    @StorageKindKey(StorageKind.MYSQL)
+    Storage bindMySQLStorage(final SQLStorage storage);
 }

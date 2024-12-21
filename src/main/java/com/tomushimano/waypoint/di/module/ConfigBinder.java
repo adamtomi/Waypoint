@@ -13,13 +13,13 @@ public interface ConfigBinder {
 
     @Binds
     @IntoSet
-    Configurable bindCommandYml(@Cmd Configurable configurable);
+    Configurable bindCommandYml(final @Cmd Configurable configurable);
 
     @Binds
     @IntoSet
-    Configurable bindConfigYml(@Cfg Configurable configurable);
+    Configurable bindConfigYml(final @Cfg Configurable configurable);
 
     @Binds
     @IntoSet
-    Configurable bindLangYml(@Lang Configurable configurable);
+    Configurable bindLangYml(final @Lang Configurable configurable);
 }

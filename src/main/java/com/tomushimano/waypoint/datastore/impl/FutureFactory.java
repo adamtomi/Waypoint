@@ -17,12 +17,12 @@ public class FutureFactory implements AutoCloseable {
     @Inject
     public FutureFactory() {}
 
-    public <T> CompletableFuture<T> futureOf(Callable<T> callable) {
-        CompletableFuture<T> future = new CompletableFuture<>();
+    public <T> CompletableFuture<T> futureOf(final Callable<T> callable) {
+        final CompletableFuture<T> future = new CompletableFuture<>();
         this.executor.execute(() -> {
             try {
                 future.complete(callable.call());
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 future.completeExceptionally(ex);
             }
         });
@@ -30,13 +30,13 @@ public class FutureFactory implements AutoCloseable {
         return future;
     }
 
-    public CompletableFuture<?> futureOf(VoidCallable callable) {
-        CompletableFuture<?> future = new CompletableFuture<>();
+    public CompletableFuture<?> futureOf(final VoidCallable callable) {
+        final CompletableFuture<?> future = new CompletableFuture<>();
         this.executor.execute(() -> {
             try {
                 callable.call();
                 future.complete(null);
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 future.completeExceptionally(ex);
             }
         });

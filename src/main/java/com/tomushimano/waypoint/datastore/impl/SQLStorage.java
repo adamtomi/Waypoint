@@ -34,23 +34,23 @@ public class SQLStorage implements Storage {
     private final Waypoint.Factory waypointFactory;
 
     @Inject
-    public SQLStorage(ConnectionFactory connectionFactory, Waypoint.Factory waypointFactory) {
+    public SQLStorage(final ConnectionFactory connectionFactory, final Waypoint.Factory waypointFactory) {
         this.connectionFactory = connectionFactory;
         this.waypointFactory = waypointFactory;
     }
 
     private List<String> readDeployFile() throws IOException {
-        List<String> result = new ArrayList<>();
-        StringBuilder commandBuilder = new StringBuilder();
-        try (InputStream in = WaypointPlugin.class.getResourceAsStream("/deploy.sql")) {
+        final List<String> result = new ArrayList<>();
+        final StringBuilder commandBuilder = new StringBuilder();
+        try (final InputStream in = WaypointPlugin.class.getResourceAsStream("/deploy.sql")) {
             if (in == null) throw new IOException("Deploy file does not exist");
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                for (String line : reader.lines().toList()) {
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                for (final String line : reader.lines().toList()) {
                     // Ignore comments
                     if (line.startsWith("--")) continue;
                     // Handle cases, where a comment appears after the line itself.
-                    String sanitized = line.trim().split("--")[0];
+                    final String sanitized = line.trim().split("--")[0];
                     commandBuilder.append(sanitized);
 
                     // Hit the end of the command
@@ -69,15 +69,15 @@ public class SQLStorage implements Storage {
 
     @Override
     public boolean connect() {
-        try (Connection conn = this.connectionFactory.openConnection();
-             Statement stmt = conn.createStatement()) {
-            List<String> commands = readDeployFile();
-            for (String command : commands) stmt.addBatch(command);
+        try (final Connection conn = this.connectionFactory.openConnection();
+             final Statement stmt = conn.createStatement()) {
+            final List<String> commands = readDeployFile();
+            for (final String command : commands) stmt.addBatch(command);
             stmt.executeBatch();
 
             LOGGER.info("Connection established successfully!");
             return true;
-        } catch (IOException | SQLException ex) {
+        } catch (final IOException | SQLException ex) {
             capture(ex, "Failed to connect to database", LOGGER);
         }
 
@@ -95,7 +95,13 @@ public class SQLStorage implements Storage {
         return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`id`) DO UPDATE SET `name` = ?, `color` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?";
     }
 
-    private void fillInPrepStmt(PreparedStatement prepStmt, Waypoint waypoint, int startIdx, boolean includeIds) throws SQLException {
+    private void fillInPrepStmt(
+            final PreparedStatement prepStmt,
+            final Waypoint waypoint,
+            final int from,
+            final boolean includeIds
+    ) throws SQLException {
+        int startIdx = from;
         // Fill in general data
         if (includeIds) {
             prepStmt.setString(startIdx++, waypoint.getUniqueId().toString());
@@ -115,10 +121,10 @@ public class SQLStorage implements Storage {
     }
 
     @Override
-    public CompletableFuture<?> save(Waypoint waypoint) {
+    public CompletableFuture<?> save(final Waypoint waypoint) {
         return this.futureFactory.futureOf(() -> {
-            try (Connection conn = this.connectionFactory.openConnection();
-                 PreparedStatement prepStmt = conn.prepareStatement(insertionSQL())) {
+            try (final Connection conn = this.connectionFactory.openConnection();
+                 final PreparedStatement prepStmt = conn.prepareStatement(insertionSQL())) {
                 fillInPrepStmt(prepStmt, waypoint, 1, true);
                 fillInPrepStmt(prepStmt, waypoint, 10, false);
 
@@ -128,10 +134,10 @@ public class SQLStorage implements Storage {
     }
 
     @Override
-    public CompletableFuture<?> remove(Waypoint waypoint) {
+    public CompletableFuture<?> remove(final Waypoint waypoint) {
         return this.futureFactory.futureOf(() -> {
-            try (Connection conn = this.connectionFactory.openConnection();
-                 PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM `waypoints` WHERE `id` = ?")) {
+            try (final Connection conn = this.connectionFactory.openConnection();
+                 final PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM `waypoints` WHERE `id` = ?")) {
                 prepStmt.setString(1, waypoint.getUniqueId().toString());
 
                 prepStmt.execute();
@@ -140,24 +146,24 @@ public class SQLStorage implements Storage {
     }
 
     @Override
-    public CompletableFuture<Set<Waypoint>> loadAccessible(UUID playerId) {
+    public CompletableFuture<Set<Waypoint>> loadAccessible(final UUID playerId) {
         return this.futureFactory.futureOf(() -> {
-            try (Connection conn = this.connectionFactory.openConnection();
-                PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM `waypoints` WHERE `ownerId` = ? OR `global` = true")) {
+            try (final Connection conn = this.connectionFactory.openConnection();
+                 final PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM `waypoints` WHERE `ownerId` = ? OR `global` = true")) {
                 prepStmt.setString(1, playerId.toString());
 
-                ResultSet results = prepStmt.executeQuery();
-                Set<Waypoint> waypoints = new HashSet<>();
+                final ResultSet results = prepStmt.executeQuery();
+                final Set<Waypoint> waypoints = new HashSet<>();
                 while (results.next()) {
-                    UUID uniqueId = UUID.fromString(results.getString("id"));
-                    UUID ownerId = UUID.fromString(results.getString("ownerId"));
-                    String name = results.getString("name");
+                    final UUID uniqueId = UUID.fromString(results.getString("id"));
+                    final UUID ownerId = UUID.fromString(results.getString("ownerId"));
+                    final String name = results.getString("name");
                     final TextColor color = TextColor.color(results.getInt("color"));
-                    boolean global = results.getBoolean("global");
-                    String world = results.getString("world");
-                    double x = results.getDouble("x");
-                    double y = results.getDouble("y");
-                    double z = results.getDouble("z");
+                    final boolean global = results.getBoolean("global");
+                    final String world = results.getString("world");
+                    final double x = results.getDouble("x");
+                    final double y = results.getDouble("y");
+                    final double z = results.getDouble("z");
 
                     waypoints.add(this.waypointFactory.create(
                             uniqueId,

@@ -4,7 +4,7 @@ import com.tomushimano.waypoint.datastore.StorageKind;
 import dagger.MapKey;
 
 @MapKey
-public @interface EnumKey {
+public @interface StorageKindKey {
 
     StorageKind value();
 }

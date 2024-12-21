@@ -18,7 +18,7 @@ public class StorageHolderImpl implements StorageHolder {
     private final Map<StorageKind, Storage> storageImpls;
 
     @Inject
-    public StorageHolderImpl(@Cfg Configurable config, Map<StorageKind, Storage> storageImpls) {
+    public StorageHolderImpl(final @Cfg Configurable config, final Map<StorageKind, Storage> storageImpls) {
         this.config = config;
         this.storageImpls = storageImpls;
     }
@@ -29,12 +29,12 @@ public class StorageHolderImpl implements StorageHolder {
     }
 
     private Storage compute() {
-        StorageKind storageKind = this.config.get(StandardKeys.Database.TYPE);
+        final StorageKind storageKind = this.config.get(StandardKeys.Database.TYPE);
         if (!this.storageImpls.containsKey(storageKind)) {
             throw new UnsupportedOperationException("Storage kind '%s' is not supported currently".formatted(storageKind));
         }
 
-        Storage impl = this.storageImpls.get(storageKind);
+        final Storage impl = this.storageImpls.get(storageKind);
         return requireNonNull(impl, "impl cannot be null");
     }
 }

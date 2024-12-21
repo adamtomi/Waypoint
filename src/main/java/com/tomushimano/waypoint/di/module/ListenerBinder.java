@@ -11,5 +11,5 @@ public interface ListenerBinder {
 
     @Binds
     @IntoSet
-    Listener bindPlayerEventListener(PlayerEventListener listener);
+    Listener bindPlayerEventListener(final PlayerEventListener listener);
 }

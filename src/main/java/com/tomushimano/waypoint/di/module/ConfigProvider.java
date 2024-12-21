@@ -16,21 +16,21 @@ public class ConfigProvider {
     @Cmd
     @Provides
     @Singleton
-    public Configurable provideCommandYmlHolder(JavaPlugin plugin) {
+    public Configurable provideCommandYmlHolder(final JavaPlugin plugin) {
         return Configurable.fileBacked(plugin.getDataPath().resolve(Configurable.COMMAND_YML));
     }
 
     @Cfg
     @Provides
     @Singleton
-    public Configurable provideConfigYmlHolder(JavaPlugin plugin) {
+    public Configurable provideConfigYmlHolder(final JavaPlugin plugin) {
         return Configurable.fileBacked(plugin.getDataPath().resolve(Configurable.CONFIG_YML));
     }
 
     @Lang
     @Provides
     @Singleton
-    public Configurable provideLangYmlHolder(JavaPlugin plugin) {
+    public Configurable provideLangYmlHolder(final JavaPlugin plugin) {
         return Configurable.fileBacked(plugin.getDataPath().resolve(Configurable.LANG_YML));
     }
 }

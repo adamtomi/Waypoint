@@ -12,9 +12,9 @@ public interface Storage {
 
     void disconnect();
 
-    CompletableFuture<?> save(Waypoint waypoint);
+    CompletableFuture<?> save(final Waypoint waypoint);
 
-    CompletableFuture<?> remove(Waypoint waypoint);
+    CompletableFuture<?> remove(final Waypoint waypoint);
 
-    CompletableFuture<Set<Waypoint>> loadAccessible(UUID playerId);
+    CompletableFuture<Set<Waypoint>> loadAccessible(final UUID playerId);
 }

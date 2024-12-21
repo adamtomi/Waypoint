@@ -22,14 +22,14 @@ public class ConnectionFactory implements AutoCloseable {
     private final Configurable config;
 
     @Inject
-    public ConnectionFactory(JavaPlugin plugin, @Cfg Configurable config) {
+    public ConnectionFactory(final JavaPlugin plugin, final @Cfg Configurable config) {
         this.plugin = plugin;
         this.config = config;
     }
 
     private HikariDataSource createDataSource() {
         // Create config containing common settings
-        HikariConfig config = new HikariConfig();
+        final HikariConfig config = new HikariConfig();
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -59,8 +59,8 @@ public class ConnectionFactory implements AutoCloseable {
         return new HikariDataSource(config);
     }
 
-    private String createJdbcUrl(String host, int port, String database, String queryParams) {
-        StringBuilder builder = new StringBuilder()
+    private String createJdbcUrl(final String host, final int port, final String database, final String queryParams) {
+        final StringBuilder builder = new StringBuilder()
                 .append("jdbc:mysql://")
                 .append(host)
                 .append(":")
