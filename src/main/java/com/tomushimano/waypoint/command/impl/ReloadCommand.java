@@ -6,6 +6,7 @@ import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.core.navigation.NavigationService;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
@@ -19,18 +20,21 @@ public class ReloadCommand implements CommandModule<CommandSender> {
     private final ConfigHelper configHelper;
     private final MessageConfig messageConfig;
     private final WaypointService waypointService;
+    private final NavigationService navigationService;
 
     @Inject
     public ReloadCommand(
             final CommandHelper commandHelper,
             final ConfigHelper configHelper,
             final MessageConfig messageConfig,
-            final WaypointService waypointService
+            final WaypointService waypointService,
+            final NavigationService navigationService
     ) {
         this.commandHelper = commandHelper;
         this.configHelper = configHelper;
         this.messageConfig = messageConfig;
         this.waypointService = waypointService;
+        this.navigationService = navigationService;
     }
 
     @Override
@@ -51,6 +55,7 @@ public class ReloadCommand implements CommandModule<CommandSender> {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_FAILURE).make());
         } else {
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
+            this.navigationService.cancelAll();
             long deltaT = System.currentTimeMillis() - start;
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_SUCCESS)
                     .with(Placeholder.of("duration", deltaT))

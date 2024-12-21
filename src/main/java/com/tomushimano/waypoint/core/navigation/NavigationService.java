@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-// TODO cancel all on reload (or just refresh the configs)
 @Singleton
 public class NavigationService {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(NavigationService.class);
@@ -119,5 +118,11 @@ public class NavigationService {
             entry.getValue().cancel();
             this.activeNavigations.remove(entry.getKey(), entry.getValue());
         }
+    }
+
+    public void cancelAll() {
+        LOGGER.info("Cancelling all ({}) navigations...", this.activeNavigations.size());
+        this.activeNavigations.forEach((key, value) -> value.cancel());
+        this.activeNavigations.clear();
     }
 }
