@@ -41,11 +41,6 @@ public class NavigationService {
         this.messageConfig = messageConfig;
     }
 
-    @Deprecated
-    public boolean isNavigating(final Player player) {
-        return this.activeNavigations.containsKey(player.getUniqueId());
-    }
-
     private Optional<NavigationTask> navigation(final Player player) {
         return Optional.ofNullable(this.activeNavigations.get(player.getUniqueId()));
     }

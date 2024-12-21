@@ -19,6 +19,8 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
+
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
 public class StartNavigationCommand implements CommandModule<CommandSender> {
@@ -60,12 +62,11 @@ public class StartNavigationCommand implements CommandModule<CommandSender> {
     @Override
     public void execute(final CommandContext<CommandSender> context) {
         final Player sender = (Player) context.source();
-
-        if (this.navigationService.isNavigating(sender)) {
+        final Optional<Waypoint> current = this.navigationService.currentDestination(sender);
+        if (current.isPresent()) {
             if (context.has(FORCE_KEY)) {
-                final Waypoint currentDestination = this.navigationService.currentDestination(sender).orElseThrow();
                 sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_RUNNING_CANCELLED)
-                        .with(Placeholder.of("name", currentDestination.getName()))
+                        .with(Placeholder.of("name", current.orElseThrow().getName()))
                         .make());
 
                 this.navigationService.stopNavigation(sender);
@@ -76,11 +77,11 @@ public class StartNavigationCommand implements CommandModule<CommandSender> {
         }
 
         final Waypoint waypoint = context.require(DESTINATION_KEY);
-        final int minDistance = this.config.get(StandardKeys.Navigation.MIN_REQUIRED_DISTANCE);
+        final int minimumDistance = this.config.get(StandardKeys.Navigation.MIN_REQUIRED_DISTANCE);
 
-        if (waypoint.distance(sender) < minDistance) {
+        if (waypoint.distance(sender) < minimumDistance) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_TOO_CLOSE)
-                    .with(Placeholder.of("blocks", minDistance))
+                    .with(Placeholder.of("blocks", minimumDistance))
                     .make());
             return;
         }
