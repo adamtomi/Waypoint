@@ -15,4 +15,8 @@ public final class DoubleCheck {
     public static int requirePositive(final int value, final String errorMessage) {
         return requireState(value, x -> x > 0, errorMessage);
     }
+
+    public static int requireNonNegative(final int value, final String errorMessage) {
+        return requireState(value, x -> x >= 0, errorMessage);
+    }
 }

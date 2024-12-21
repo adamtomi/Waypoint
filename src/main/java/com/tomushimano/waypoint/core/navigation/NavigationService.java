@@ -2,7 +2,6 @@ package com.tomushimano.waypoint.core.navigation;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
@@ -10,7 +9,6 @@ import com.tomushimano.waypoint.util.BukkitUtil;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;
@@ -33,7 +31,7 @@ public class NavigationService {
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-navigation-pool #%1$d").build()
     );
-    private final Map<UUID, Navigation> activeNavigations = new ConcurrentHashMap<>();
+    private final Map<UUID, NavigationTask> activeNavigations = new ConcurrentHashMap<>();
     private final Configurable config;
     private final MessageConfig messageConfig;
 
@@ -43,15 +41,17 @@ public class NavigationService {
         this.messageConfig = messageConfig;
     }
 
+    @Deprecated
     public boolean isNavigating(final Player player) {
         return this.activeNavigations.containsKey(player.getUniqueId());
     }
 
+    private Optional<NavigationTask> navigation(final Player player) {
+        return Optional.ofNullable(this.activeNavigations.get(player.getUniqueId()));
+    }
+
     public Optional<Waypoint> currentDestination(final Player player) {
-        final Navigation navigation = this.activeNavigations.get(player.getUniqueId());
-        return navigation == null
-                ? Optional.empty()
-                : Optional.of(navigation.destination());
+        return navigation(player).map(NavigationTask::destination);
     }
 
     public void startNavigation(final Player player, final Waypoint destination, final Runnable arrivalHook) {
@@ -61,27 +61,24 @@ public class NavigationService {
         }
 
         final UUID navigationId = UUID.randomUUID();
-
-        final ParticleConfig config = ParticleConfig.from(this.config);
-        final ParticleStream stream = ParticleStream.init(
-                calculateOrigin(player),
-                destination.getPosition().toLocation(),
-                config,
-                () -> particleStreamFinished(uniqueId, navigationId)
+        final NavigationTask task = new NavigationTask(
+                navigationId,
+                player,
+                destination,
+                this.messageConfig,
+                this.config,
+                () -> {
+                    arrivalHook.run();
+                    navigationFinished(uniqueId, navigationId);
+                }
         );
 
-        final Navigation navigation = new Navigation(navigationId, destination, stream, arrivalHook);
-        this.activeNavigations.put(uniqueId, navigation);
-        // this.executor.execute(() -> stream.play(player));
-        this.executor.execute(new NavigationTask(player, destination, this.messageConfig, stream));
+        this.activeNavigations.put(uniqueId, task);
+        this.executor.execute(task);
     }
 
-    private Location calculateOrigin(final Player player) {
-        return player.getLocation().clone().add(0, this.config.get(StandardKeys.Navigation.Y_OFFSET), 0);
-    }
-
-    private void particleStreamFinished(final UUID uniqueId, final UUID navigationId) {
-        final Navigation navigation = this.activeNavigations.get(uniqueId);
+    private void navigationFinished(final UUID uniqueId, final UUID navigationId) {
+        final NavigationTask navigation = this.activeNavigations.get(uniqueId);
         if (navigation == null) return;
 
         if (navigation.uniqueId().equals(navigationId)) {
@@ -90,7 +87,7 @@ public class NavigationService {
         }
     }
 
-    private void reportFinishedParticleStream(final UUID ownerId, final Navigation navigation) {
+    private void reportFinishedParticleStream(final UUID ownerId, final NavigationTask navigation) {
         final OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
         final String formattedOwner = BukkitUtil.formatPlayer(owner);
 
@@ -98,30 +95,15 @@ public class NavigationService {
     }
 
     public void stopNavigation(final Player player) {
-        final Navigation navigation = this.activeNavigations.remove(player.getUniqueId());
-        if (navigation != null) {
-            navigation.stream().cancel();
-        }
-    }
-
-    public void updateNavigation(final Player player) {
-        final Navigation navigation = this.activeNavigations.get(player.getUniqueId());
-        if (navigation == null) return;
-
-        if (navigation.destination().distance(player) <= this.config.get(StandardKeys.Navigation.ARRIVAL_DISTANCE)) {
-            // The player has arrived
-            navigation.arrivalHook().run();
-            stopNavigation(player);
-        } else {
-            navigation.stream().updateOrigin(calculateOrigin(player));
-        }
+        final NavigationTask navigation = this.activeNavigations.remove(player.getUniqueId());
+        if (navigation != null) navigation.cancel();
     }
 
     public void updateNavigations(final Waypoint waypoint) {
-        for (final Navigation navigation : this.activeNavigations.values()) {
+        for (final NavigationTask navigation : this.activeNavigations.values()) {
             if (!navigation.destination().equals(waypoint)) continue;
 
-            navigation.stream().updateDestination(waypoint.getPosition().toLocation());
+            navigation.queueUpdate();
         }
     }
 
@@ -132,14 +114,14 @@ public class NavigationService {
     }
 
     public void cancelAll(final Waypoint destination) {
-        final Set<Map.Entry<UUID, Navigation>> markedForRemoval = this.activeNavigations.entrySet()
+        final Set<Map.Entry<UUID, NavigationTask>> markedForRemoval = this.activeNavigations.entrySet()
                 .stream()
                 .filter(x -> x.getValue().destination().equals(destination))
                 .collect(Collectors.toSet());
 
         LOGGER.info("Cancelling all ({}) navigations to waypoint '{}'...", markedForRemoval.size(), destination.getName());
-        for (final Map.Entry<UUID, Navigation> entry : markedForRemoval) {
-            entry.getValue().stream().cancel();
+        for (final Map.Entry<UUID, NavigationTask> entry : markedForRemoval) {
+            entry.getValue().cancel();
             this.activeNavigations.remove(entry.getKey(), entry.getValue());
         }
     }

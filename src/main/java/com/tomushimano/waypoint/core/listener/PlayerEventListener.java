@@ -3,14 +3,12 @@ package com.tomushimano.waypoint.core.listener;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.slf4j.Logger;
 
@@ -50,23 +48,5 @@ public class PlayerEventListener implements Listener {
         final World world = event.getFrom();
         this.waypointService.handleWorldChange(player, world);
         this.navigationService.stopNavigation(player);
-    }
-
-    @EventHandler
-    public void onMove(final PlayerMoveEvent event) {
-        final Player player = event.getPlayer();
-        final Location from = event.getFrom();
-        final Location to = event.getTo();
-
-        if (
-                from.getX() == to.getX()
-                && from.getY() == to.getY()
-                && from.getZ() == to.getZ()
-        ) {
-            // Only pitch/yaw changed, do nothing
-            return;
-        }
-
-        this.navigationService.updateNavigation(player);
     }
 }

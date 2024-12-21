@@ -47,18 +47,19 @@ navigation:
     # hexadecimal number representing a color, or a name from the following list:
     # - white, silver, gray, black, red, maroon, yellow, olive, lime, green, aqua, teal
     #   blue, navy, fuchsia, purple, orange
-    color: red
+    color: "#3ac930"
     # The size of the particles. 5 is the default - and recommended - value.
     size: 5
     # The number of particles to spawn for each position.
-    count: 3
-    # Offset the y coordinate by this value.
-    y_offset: 3
-    # Controls how the dense the particle stream will be.
-    density: 5
-    # Controls how many points should be rendered in a stream. It is recommended
-    # to keep this setting the same as `navigation.min_required_distance`.
-    length: 15
+    count: 10
+    # This value is added to the current y coordinate of the player. The result is
+    # a taller - easier to notice - particle column.
+    y_offset: 30
+    # Controls how the dense the particle column will be. The lower the number is,
+    # the denser the particle column is. The minimum value (and maximum density) is 1.
+    density: 2
+    # The distance is calculated from the player's current location
+    distance: 10
 
   # If the player is closer to the waypoint (in blocks) than this number,
   # the navigation will not start.
@@ -66,3 +67,5 @@ navigation:
   # If the player gets to a distance (in blocks) of the value below (or closer),
   # the navigation will stop.
   arrival_distance: 15
+  # If the player gets into this distance from an indicator, a new one will be spawned.
+  arrived_at_indicator: 2

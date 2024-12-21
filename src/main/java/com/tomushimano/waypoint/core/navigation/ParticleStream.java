@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated
 public class ParticleStream {
     private static final int UNIT = 10;
     private final Deque<Update> pendingUpdates = new ConcurrentLinkedDeque<>();
@@ -51,7 +52,7 @@ public class ParticleStream {
             final Location origin,
             final Location destination
     ) {
-        final int length = config.length();
+        final int length = 0; // config.length();
         final double xDiff = destination.getX() - origin.getX();
         final double zDiff = destination.getZ() - origin.getZ();
 
