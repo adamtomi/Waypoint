@@ -15,7 +15,7 @@ public interface PacketContainer {
      *
      * @param player The player
      */
-    void send(Player player);
+    void send(final Player player);
 
     /**
      * Create a new {@link PacketContainer} from the provided packets.
@@ -23,7 +23,7 @@ public interface PacketContainer {
      * @param packets The packets
      * @return The created container
      */
-    static PacketContainer of(Packet<?>... packets) {
+    static PacketContainer of(final Packet<?>... packets) {
         return new PacketContainerImpl(List.of(packets));
     }
 }

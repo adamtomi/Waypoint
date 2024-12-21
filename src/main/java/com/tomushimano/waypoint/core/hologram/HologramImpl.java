@@ -7,7 +7,7 @@ import static java.util.Objects.requireNonNull;
 final class HologramImpl implements Hologram {
     private final List<HologramLine> lines;
 
-    HologramImpl(List<HologramLine> lines) {
+    HologramImpl(final List<HologramLine> lines) {
         this.lines = requireNonNull(lines, "lines cannot be null");
     }
 

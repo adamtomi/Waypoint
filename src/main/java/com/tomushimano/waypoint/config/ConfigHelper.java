@@ -16,15 +16,15 @@ public class ConfigHelper {
     private final Set<Configurable> configurations;
 
     @Inject
-    public ConfigHelper(Set<Configurable> configurations) {
+    public ConfigHelper(final Set<Configurable> configurations) {
         this.configurations = configurations;
     }
 
     public boolean reloadAll() {
-        for (Configurable config : this.configurations) {
+        for (final Configurable config : this.configurations) {
             try {
                 config.reload();
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 capture(ex, "Failed to load configuration from file: '%s'".formatted(config.getBackingFile()), LOGGER);
                 return false;
             }

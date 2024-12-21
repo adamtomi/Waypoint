@@ -10,7 +10,7 @@ final class SimpleConfigKey<T> implements ConfigKey<T> {
     private final String key;
     private final BiFunction<ConfigurationSection, String, T> parser;
 
-    SimpleConfigKey(String key, BiFunction<ConfigurationSection, String, T> parser) {
+    SimpleConfigKey(final String key, final BiFunction<ConfigurationSection, String, T> parser) {
         this.key = requireNonNull(key, "key cannot be null");
         this.parser = requireNonNull(parser, "parser cannot be null");
     }
@@ -21,8 +21,8 @@ final class SimpleConfigKey<T> implements ConfigKey<T> {
     }
 
     @Override
-    public T readFrom(ConfigurationSection config) {
-        T result = this.parser.apply(config, this.key);
+    public T readFrom(final ConfigurationSection config) {
+        final T result = this.parser.apply(config, this.key);
         if (result == null) throw new IllegalArgumentException("ConfigurationSection does not have key: '%s'".formatted(this.key));
 
         return result;

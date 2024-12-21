@@ -12,11 +12,11 @@ public class MessageConfig {
     private final Configurable config;
 
     @Inject
-    public MessageConfig(@Lang Configurable config) {
+    public MessageConfig(final @Lang Configurable config) {
         this.config = config;
     }
 
-    public MessageBuilder get(ConfigKey<String> key) {
+    public MessageBuilder get(final ConfigKey<String> key) {
         return new MessageBuilder(this.config.get(key));
     }
 }

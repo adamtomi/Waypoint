@@ -22,16 +22,16 @@ public final class EntityDataAccess {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> EntityDataAccessor<T> lookupNative(String name, Class<? extends Entity> holder) {
+    private static <T> EntityDataAccessor<T> lookupNative(final String name, final Class<? extends Entity> holder) {
         try {
-            Field field = holder.getDeclaredField(name);
+            final Field field = holder.getDeclaredField(name);
             if (!Modifier.isStatic(field.getModifiers())) {
                 throw new IllegalStateException("Expected field '%s' to be static".formatted(name));
             }
 
             field.setAccessible(true);
             return (EntityDataAccessor<T>) field.get(null); // Fields are expected to be static, so passing null is fine
-        } catch (ReflectiveOperationException ex) {
+        } catch (final ReflectiveOperationException ex) {
             throw new RuntimeException(ex);
         }
     }

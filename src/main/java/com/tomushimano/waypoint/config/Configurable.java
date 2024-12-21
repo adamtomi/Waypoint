@@ -8,13 +8,13 @@ public interface Configurable {
     String CONFIG_YML = "config.yml";
     String LANG_YML = "lang.yml";
 
-    <T> T get(ConfigKey<T> key);
+    <T> T get(final ConfigKey<T> key);
 
     void reload() throws IOException;
 
     Path getBackingFile();
 
-    static Configurable fileBacked(Path file) {
+    static Configurable fileBacked(final Path file) {
         return new ConfigurableImpl(file);
     }
 }

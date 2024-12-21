@@ -8,25 +8,25 @@ public interface ConfigKey<T> {
 
     String key();
 
-    T readFrom(ConfigurationSection config);
+    T readFrom(final ConfigurationSection config);
 
-    static <T> ConfigKey<T> simpleKey(String key, BiFunction<ConfigurationSection, String, T> parser) {
+    static <T> ConfigKey<T> simpleKey(final String key, final BiFunction<ConfigurationSection, String, T> parser) {
         return new SimpleConfigKey<>(key, parser);
     }
 
-    static ConfigKey<String> stringKey(String key) {
+    static ConfigKey<String> stringKey(final String key) {
         return simpleKey(key, ConfigurationSection::getString);
     }
 
-    static ConfigKey<Integer> integerKey(String key) {
+    static ConfigKey<Integer> integerKey(final String key) {
         return simpleKey(key, ConfigurationSection::getInt);
     }
 
-    static ConfigKey<Double> doubleKey(String key) {
+    static ConfigKey<Double> doubleKey(final String key) {
         return simpleKey(key, ConfigurationSection::getDouble);
     }
 
-    static <E extends Enum<E>> ConfigKey<E> enumKey(String key, Class<E> type) {
+    static <E extends Enum<E>> ConfigKey<E> enumKey(final String key, final Class<E> type) {
         return simpleKey(key, (section, x) -> {
             String value = section.getString(x);
             return value == null

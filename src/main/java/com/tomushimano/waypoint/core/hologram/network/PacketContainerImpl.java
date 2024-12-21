@@ -12,13 +12,13 @@ import static java.util.Objects.requireNonNull;
 final class PacketContainerImpl implements PacketContainer {
     private final List<Packet<?>> packets;
 
-    PacketContainerImpl(List<Packet<?>> packets) {
+    PacketContainerImpl(final List<Packet<?>> packets) {
         this.packets = requireNonNull(packets, "packets cannot be null");
     }
 
     @Override
-    public void send(Player player) {
-        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+    public void send(final Player player) {
+        final ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         this.packets.forEach(serverPlayer.connection::send);
     }
 }

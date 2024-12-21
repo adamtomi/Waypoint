@@ -53,7 +53,7 @@ final class HologramLineImpl implements HologramLine {
     );
     // Factory generating the entity data packet, that follows up the initial spawn packet
     private static final BiFunction<Integer, Component, Packet<?>> ENTITY_DATA_PACKET_FACTORY = (id, name) -> {
-        List<SynchedEntityData.DataValue<?>> values = ImmutableList.<SynchedEntityData.DataValue<?>>builder()
+        final List<SynchedEntityData.DataValue<?>> values = ImmutableList.<SynchedEntityData.DataValue<?>>builder()
                 .addAll(ENTITY_DATA_TEMPLATE)
                 .add(SynchedEntityData.DataValue.create(EntityDataAccess.CUSTOM_NAME, Optional.of(name)))
                 .build();
@@ -68,7 +68,7 @@ final class HologramLineImpl implements HologramLine {
     private final Supplier<Component> content;
     private final Supplier<Position> position;
 
-    HologramLineImpl(Supplier<Component> content, Supplier<Position> position) {
+    HologramLineImpl(final Supplier<Component> content, final Supplier<Position> position) {
         this.content = requireNonNull(content, "content cannot be null");
         this.position = requireNonNull(position, "position cannot be null");
     }

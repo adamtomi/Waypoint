@@ -22,7 +22,7 @@ public interface Hologram {
      *
      * @param player The player
      */
-    default void show(Player player) {
+    default void show(final Player player) {
         lines().forEach(line -> line.spawnPacket().send(player));
     }
 
@@ -31,7 +31,7 @@ public interface Hologram {
      *
      * @param player The player
      */
-    default void hide(Player player) {
+    default void hide(final Player player) {
         lines().forEach(line -> line.despawnPacket().send(player));
     }
 }

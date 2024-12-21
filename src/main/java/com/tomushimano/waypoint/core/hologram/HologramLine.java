@@ -34,7 +34,7 @@ public interface HologramLine {
      * @param position The position
      * @return The created hologram line
      */
-    static HologramLine create(Supplier<Component> content, Supplier<Position> position) {
+    static HologramLine create(final Supplier<Component> content, final Supplier<Position> position) {
         return new HologramLineImpl(content, position);
     }
 
@@ -45,7 +45,7 @@ public interface HologramLine {
      * @param position The position
      * @return The created hologram line
      */
-    static HologramLine empty(Supplier<Position> position) {
+    static HologramLine empty(final Supplier<Position> position) {
         return new HologramLineImpl(Component::empty, position);
     }
 }

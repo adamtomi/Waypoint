@@ -26,27 +26,27 @@ public final class HologramFactory {
     private final Configurable config;
 
     @Inject
-    public HologramFactory(MessageConfig messageConfig, @Cfg Configurable config) {
+    public HologramFactory(final MessageConfig messageConfig, final @Cfg Configurable config) {
         this.messageConfig = messageConfig;
         this.config = config;
     }
 
-    public Hologram createHologram(Waypoint waypoint) {
-        Supplier<Component> title = () -> Component.literal(waypoint.getName()).withColor(waypoint.getColor().value()).withStyle(ChatFormatting.BOLD);
-        Supplier<Component> coordinates = () -> this.messageConfig.get(MessageKeys.Waypoint.HOLOGRAM_COORDINATES)
+    public Hologram createHologram(final Waypoint waypoint) {
+        final Supplier<Component> title = () -> Component.literal(waypoint.getName()).withColor(waypoint.getColor().value()).withStyle(ChatFormatting.BOLD);
+        final Supplier<Component> coordinates = () -> this.messageConfig.get(MessageKeys.Waypoint.HOLOGRAM_COORDINATES)
                 .with(Placeholder.of("coordinates", formatPosition(waypoint.getPosition())))
                 .makeNMS();
-        Supplier<Component> owner = () -> this.messageConfig.get(MessageKeys.Waypoint.HOLOGRAM_OWNER)
+        final Supplier<Component> owner = () -> this.messageConfig.get(MessageKeys.Waypoint.HOLOGRAM_OWNER)
                 .with(Placeholder.of("owner", Bukkit.getOfflinePlayer(waypoint.getOwnerId()).getName()))
                 .makeNMS();
 
-        Function<Integer, Supplier<Position>> positionFactory = lineIdx -> () -> waypoint.getPosition().plus(
+        final Function<Integer, Supplier<Position>> positionFactory = lineIdx -> () -> waypoint.getPosition().plus(
                 0.0D,
                 this.config.get(StandardKeys.Hologram.TOP_OFFSET) - this.config.get(StandardKeys.Hologram.LINE_PADDING) * lineIdx,
                 0.0D
         );
 
-        List<HologramLine> lines = List.of(
+        final List<HologramLine> lines = List.of(
                 HologramLine.create(title, positionFactory.apply(0)),
                 HologramLine.empty(positionFactory.apply(1)),
                 HologramLine.create(coordinates, positionFactory.apply(2)),

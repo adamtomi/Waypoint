@@ -27,12 +27,12 @@ public class Waypoint implements Comparable<Waypoint> {
     private Hologram hologram;
 
     private Waypoint(
-            UUID uuid,
-            UUID ownerId,
-            String name,
-            TextColor color,
-            boolean global,
-            Position pos
+            final UUID uuid,
+            final UUID ownerId,
+            final String name,
+            final TextColor color,
+            final boolean global,
+            final Position pos
     ) {
         this.uuid = requireNonNull(uuid, "uuid cannot be null");
         this.ownerId = requireNonNull(ownerId, "ownerId cannot be null");
@@ -54,7 +54,7 @@ public class Waypoint implements Comparable<Waypoint> {
         return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = requireNonNull(name, "name cannot be null");
     }
 
@@ -62,7 +62,7 @@ public class Waypoint implements Comparable<Waypoint> {
         return this.color;
     }
 
-    public void setColor(TextColor color) {
+    public void setColor(final TextColor color) {
         this.color = color;
     }
 
@@ -70,7 +70,7 @@ public class Waypoint implements Comparable<Waypoint> {
         return this.global;
     }
 
-    public void setGlobal(boolean global) {
+    public void setGlobal(final boolean global) {
         this.global = global;
     }
 
@@ -78,24 +78,24 @@ public class Waypoint implements Comparable<Waypoint> {
         return this.position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(final Position position) {
         this.position = requireNonNull(position, "position cannot be null");
     }
 
-    public void render(Player player) {
+    public void render(final Player player) {
         this.hologram.show(player);
     }
 
-    public void hide(Player player) {
+    public void hide(final Player player) {
         this.hologram.hide(player);
     }
 
-    public void rerender(Player player) {
+    public void rerender(final Player player) {
         hide(player);
         render(player);
     }
 
-    public void setHologram(Hologram hologram) {
+    public void setHologram(final Hologram hologram) {
         this.hologram = requireNonNull(hologram, "hologram cannot be null");
     }
 
@@ -111,10 +111,10 @@ public class Waypoint implements Comparable<Waypoint> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Waypoint waypoint = (Waypoint) o;
+        final Waypoint waypoint = (Waypoint) o;
         return Objects.equals(this.uuid, waypoint.uuid);
     }
 
@@ -124,7 +124,7 @@ public class Waypoint implements Comparable<Waypoint> {
     }
 
     @Override
-    public int compareTo(@NotNull Waypoint waypoint) {
+    public int compareTo(final @NotNull Waypoint waypoint) {
         return this.name.compareToIgnoreCase(waypoint.name);
     }
 
@@ -133,20 +133,20 @@ public class Waypoint implements Comparable<Waypoint> {
         private final HologramFactory hologramFactory;
 
         @Inject
-        public Factory(HologramFactory hologramFactory) {
+        public Factory(final HologramFactory hologramFactory) {
             this.hologramFactory = hologramFactory;
         }
 
         public Waypoint create(
-                UUID uuid,
-                UUID ownerId,
-                String name,
-                @Nullable TextColor color,
-                boolean global,
-                Position pos
+                final UUID uuid,
+                final UUID ownerId,
+                final String name,
+                final @Nullable TextColor color,
+                final boolean global,
+                final Position pos
         ) {
-            TextColor actualColor = color == null ? NamedTextColor.WHITE : color;
-            Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, global, pos);
+            final TextColor actualColor = color == null ? NamedTextColor.WHITE : color;
+            final Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, global, pos);
             waypoint.setHologram(this.hologramFactory.createHologram(waypoint));
             return waypoint;
         }

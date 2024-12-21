@@ -15,18 +15,18 @@ public class MessageBuilder {
     private final List<Placeholder> placeholders = new ArrayList<>();
     private final String messageBase;
 
-    MessageBuilder(String messageBase) {
+    MessageBuilder(final String messageBase) {
         this.messageBase = requireNonNull(messageBase, "messageBase cannot be null");
     }
 
-    public MessageBuilder with(Placeholder... placeholders) {
+    public MessageBuilder with(final Placeholder... placeholders) {
         this.placeholders.addAll(List.of(placeholders));
         return this;
     }
 
     public String makeString() {
         String result = this.messageBase;
-        for (Placeholder placeholder : this.placeholders) result = placeholder.process(result);
+        for (final Placeholder placeholder : this.placeholders) result = placeholder.process(result);
         return result;
     }
 
