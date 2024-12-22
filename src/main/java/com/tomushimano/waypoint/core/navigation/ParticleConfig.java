@@ -8,6 +8,7 @@ import static com.tomushimano.waypoint.util.DoubleCheck.requireNonNegative;
 import static com.tomushimano.waypoint.util.DoubleCheck.requirePositive;
 import static java.util.Objects.requireNonNull;
 
+@Deprecated(forRemoval = true) // Get rid of this class
 public record ParticleConfig(Color color, int count, int density, int size, int extraHeight) {
     public ParticleConfig {
         requireNonNull(color, "color cannot be null");

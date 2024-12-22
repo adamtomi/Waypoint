@@ -55,7 +55,7 @@ public class ReloadCommand implements CommandModule<CommandSender> {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_FAILURE).make());
         } else {
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
-            this.navigationService.cancelAll();
+            this.navigationService.cancelAll(); // TODO don't cancel navigations
             long deltaT = System.currentTimeMillis() - start;
             sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_SUCCESS)
                     .with(Placeholder.of("duration", deltaT))
