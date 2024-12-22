@@ -12,6 +12,10 @@ info:
 list:
   page: "oldalszám"
 
+navigation:
+  start:
+    destination: "célpont"
+
 relocate:
   waypoint: "név"
 
