@@ -6,4 +6,6 @@
 - `/wp edit <waypoint> [--name <new-name>] [--color <color>] [--toggle-globality]`: Update waypoint data.
 - `/wp reloc <name>`: Relocate the waypoint to the player's current position.
 - `/wp dist <name>`: Display the distance (in blocks) from the provided waypoint.
+- `/wp nav start <name> [--force]`: Start a navigation to the specified waypoint. The `--force` flag replaces the current navgation (if it exists).
+- `/wp nav stop`: Stops the currently active navigation.
 - `/wpa reload`: Reload configuration and waypoint holograms. **DOES NOT** reload storage.
