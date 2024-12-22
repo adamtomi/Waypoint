@@ -58,8 +58,16 @@ navigation:
     # Controls how the dense the particle column will be. The lower the number is,
     # the denser the particle column is. The minimum value (and maximum density) is 1.
     density: 2
+
+  indicator:
     # The distance is calculated from the player's current location.
     distance_multiplier: 20
+    # Spawn a new indicator, if the player gets further from the currently
+    # visible indicator than this value.
+    max_distance: 40
+    # Spawn a new indicator, if the player gets closer to the currently
+    # visible indicator than this value.
+    arrival_distance: 5
 
   # If the player is closer to the waypoint (in blocks) than this number,
   # the navigation will not start.
@@ -67,5 +75,3 @@ navigation:
   # If the player gets to a distance (in blocks) of the value below (or closer),
   # the navigation will stop.
   arrival_distance: 15
-  # If the player gets into this distance from an indicator, a new one will be spawned.
-  arrived_at_indicator: 2

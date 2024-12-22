@@ -64,7 +64,7 @@ public final class NavigationTask implements Runnable {
     private void update() {
         final Location origin = this.player.getLocation();
         final Location destination = this.destination.getPosition().toLocation();
-        final int distanceMultiplier = this.config.get(StandardKeys.Navigation.PARTICLE_DISTANCE_MULTIPLIER);
+        final int distanceMultiplier = this.config.get(StandardKeys.Navigation.INDICATOR_DISTANCE_MULTIPLIER);
 
         final double xDiff = destination.getX() - origin.getX();
         final double zDiff = destination.getZ() - origin.getZ();
@@ -95,14 +95,15 @@ public final class NavigationTask implements Runnable {
                     this.destination.distance(this.player) > this.config.get(StandardKeys.Navigation.ARRIVAL_DISTANCE)
                     && this.running
             ) {
-                if (this.updateRequired.get()) {
-                    this.updateRequired.set(false);
-                    update();
-                }
-
                 final Location current = this.player.getLocation();
+                final double distance = current.distance(this.nextLocation);
                 // Recalculate next location if necessary
-                if (current.distance(this.nextLocation) <= this.config.get(StandardKeys.Navigation.ARRIVED_AT_INDICATOR)) {
+                if (
+                        this.updateRequired.get()
+                        || distance <= this.config.get(StandardKeys.Navigation.INDICATOR_ARRIVAL_DISTANCE)
+                        || distance >= this.config.get(StandardKeys.Navigation.INDICATOR_MAX_DISTANCE)
+                ) {
+                    this.updateRequired.set(false);
                     update();
                 }
 
