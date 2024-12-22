@@ -25,6 +25,7 @@ import java.util.StringJoiner;
 
 import static com.tomushimano.waypoint.config.message.MessageKeys.messageKey;
 import static java.lang.String.join;
+import static java.util.stream.Collectors.joining;
 
 public final class CommandExceptionHandler {
     /* Creates a comparator that compares command nodes based on their name */
@@ -77,7 +78,10 @@ public final class CommandExceptionHandler {
     private String formatSyntax(final CommandChain<?> chain) {
         final StringJoiner joiner = new StringJoiner(" ");
         chain.route().forEach(x -> joiner.add(x.name()));
-        final String parent = chain.route().get(1).name();
+        final String parent = chain.route().stream()
+                .skip(1L)
+                .map(CommandArgument::name)
+                .collect(joining("."));
         chain.arguments().forEach(x -> joiner.add(formatArgument(parent, x)));
         chain.flags().forEach(x -> joiner.add(formatArgument(parent, x)));
 
