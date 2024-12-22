@@ -51,7 +51,7 @@ public final class StandardKeys {
         public static final ConfigKey<Integer> PARTICLE_DENSITY = ConfigKey.integerKey("navigation.particle.density");
         public static final ConfigKey<Integer> PARTICLE_DISTANCE_MULTIPLIER = ConfigKey.integerKey("navigation.particle.distance_multiplier");
         public static final ConfigKey<Integer> PARTICLE_Y_OFFSET = ConfigKey.integerKey("navigation.particle.y_offset");
-        public static final ConfigKey<Integer> PARTICLE_SIZE = ConfigKey.integerKey("navigation.particle.size");
+        public static final ConfigKey<Float> PARTICLE_SIZE = ConfigKey.floatKey("navigation.particle.size");
 
         private Navigation() {
             throw new DontInvokeMe();

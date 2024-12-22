@@ -91,8 +91,6 @@ public final class NavigationTask implements Runnable {
     public void run() {
         try {
             this.thread = Thread.currentThread();
-            final ParticleConfig config = ParticleConfig.from(this.config);
-
             // Exit loop if the player is close the targeted waypoint
             while (
                     this.destination.distance(this.player) > this.config.get(StandardKeys.Navigation.ARRIVAL_DISTANCE)
@@ -114,12 +112,15 @@ public final class NavigationTask implements Runnable {
                         .make());
 
                 final Location origin = this.nextLocation;
-                final int maxY = origin.getBlockY() + config.extraHeight();
-                final Particle.DustOptions options = new Particle.DustOptions(config.color(), config.size());
+                final int maxY = origin.getBlockY() + this.config.get(StandardKeys.Navigation.PARTICLE_Y_OFFSET);
+                final Particle.DustOptions options = new Particle.DustOptions(
+                        this.config.get(StandardKeys.Navigation.PARTICLE_COLOR),
+                        this.config.get(StandardKeys.Navigation.PARTICLE_SIZE)
+                );
 
-                for (int y = maxY; y > origin.getBlockY(); y -= config.density()) {
+                for (int y = maxY; y > origin.getBlockY(); y -= this.config.get(StandardKeys.Navigation.PARTICLE_DENSITY)) {
                     final Location loc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-                    this.player.spawnParticle(Particle.DUST, loc, config.count(), options);
+                    this.player.spawnParticle(Particle.DUST, loc, this.config.get(StandardKeys.Navigation.PARTICLE_COUNT), options);
                     Thread.sleep(10L);
                 }
 

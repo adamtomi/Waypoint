@@ -119,10 +119,4 @@ public class NavigationService {
             this.activeNavigations.remove(entry.getKey(), entry.getValue());
         }
     }
-
-    public void cancelAll() {
-        LOGGER.info("Cancelling all ({}) navigations...", this.activeNavigations.size());
-        this.activeNavigations.forEach((key, value) -> value.cancel());
-        this.activeNavigations.clear();
-    }
 }

@@ -26,6 +26,13 @@ public interface ConfigKey<T> {
         return simpleKey(key, ConfigurationSection::getDouble);
     }
 
+    static ConfigKey<Float> floatKey(final String key) {
+        return simpleKey(key, ($config, $key) -> {
+            final double d = $config.getDouble($key);
+            return (float) d;
+        });
+    }
+
     static <E extends Enum<E>> ConfigKey<E> enumKey(final String key, final Class<E> type) {
         return simpleKey(key, (section, x) -> {
             String value = section.getString(x);
