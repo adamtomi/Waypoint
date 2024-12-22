@@ -68,6 +68,8 @@ public final class MessageKeys {
     public static final class Navigation {
         public static final ConfigKey<String> ARRIVED = messageKey("navigation.arrived");
         public static final ConfigKey<String> DISTANCE_INDICATOR = messageKey("navigation.distance_indicator");
+        public static final ConfigKey<String> INFO = messageKey("navigation.info");
+        public static final ConfigKey<String> INFO_NONE = messageKey("navigation.info_none");
         public static final ConfigKey<String> START_ALREADY_RUNNING = messageKey("navigation.start_already_running");
         public static final ConfigKey<String> START_RUNNING_CANCELLED = messageKey("navigation.start_running_cancelled");
         public static final ConfigKey<String> START_TOO_CLOSE = messageKey("navigation.start_too_close");
