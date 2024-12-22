@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.util.Objects.requireNonNull;
 
 public final class NavigationTask implements Runnable {
-    private static final int UNIT = 10;
     private final AtomicBoolean updateRequired = new AtomicBoolean(false);
     private final UUID uniqueId;
     private final Player player;
