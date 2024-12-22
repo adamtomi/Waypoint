@@ -18,13 +18,13 @@ import java.util.Optional;
 
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
-public class StopNavigationCommand implements CommandModule<CommandSender> {
+public class NavigationStopCommand implements CommandModule<CommandSender> {
     private final CommandHelper helper;
     private final NavigationService navigationService;
     private final MessageConfig messageConfig;
 
     @Inject
-    public StopNavigationCommand(
+    public NavigationStopCommand(
             final CommandHelper helper,
             final NavigationService navigationService,
             final MessageConfig messageConfig

@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
-public class StartNavigationCommand implements CommandModule<CommandSender> {
+public class NavigationStartCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> DESTINATION_KEY = Key.named(Waypoint.class, "destination");
     private static final Key<Boolean> FORCE_KEY = Key.named(Boolean.class, "force");
     private final CommandHelper helper;
@@ -31,7 +31,7 @@ public class StartNavigationCommand implements CommandModule<CommandSender> {
     private final Configurable config;
 
     @Inject
-    public StartNavigationCommand(
+    public NavigationStartCommand(
             final CommandHelper helper,
             final NavigationService navigationService,
             final MessageConfig messageConfig,
