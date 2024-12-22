@@ -30,7 +30,11 @@ command:
   no_such_color: "&cNem található \"&o{name}&c\" nevű szín."
   range_error: "&cA megadott szám nem lehet kisebb, mint &l{min}&c."
   regex_error: "&cA megadott argumentum nem felel meg az alábbi regex-nek: &7\"{regex}\""
-  syntax_hint: "&7/{syntax}"
+  syntax_hint: |-
+    &7/{syntax}
+    &r
+    &8&l> &7<...> &8&l- &f&oKötelező argumentum
+    &8&l> &7[...] &8&l- &f&oOpcionális argumentum
   syntax_error_too_few: "&cTúl kevés argumentumot adtál meg."
   syntax_error_too_many: "&cTúl sok argumentumot adtál meg."
   unexpected_error: "&cHiba történt a parancs végrehajtása közben :("
