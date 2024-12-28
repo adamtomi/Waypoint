@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
-import com.tomushimano.waypoint.command.scaffold.VerboseArgumentException;
+import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
@@ -11,9 +11,9 @@ import grapefruit.command.CommandException;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
-import grapefruit.command.argument.mapper.CommandInputAccess;
 import grapefruit.command.argument.mapper.builtin.StringArgumentMapper;
 import grapefruit.command.dispatcher.CommandContext;
+import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
 import io.leangen.geantyref.TypeToken;
 import org.bukkit.command.CommandSender;
@@ -36,7 +36,7 @@ public class VarcharArgumentMapper extends AbstractArgumentMapper<CommandSender,
         super(TYPE, false);
 
         this.delegateMapper = StringArgumentMapper.<CommandSender>word().with(Set.of(
-                regex(PATTERN, () -> new VerboseArgumentException(messageConfig.get(MessageKeys.Command.REGEX_ERROR)
+                regex(PATTERN, () -> new VerboseArgumentMappingException(messageConfig.get(MessageKeys.Command.REGEX_ERROR)
                         .with(Placeholder.of("regex", PATTERN.pattern()))
                         .make())),
                 new LengthFilter(messageConfig, maxLength)
@@ -44,8 +44,8 @@ public class VarcharArgumentMapper extends AbstractArgumentMapper<CommandSender,
     }
 
     @Override
-    public String tryMap(final CommandContext<CommandSender> context, final CommandInputAccess access) throws ArgumentMappingException, MissingInputException {
-        return this.delegateMapper.tryMap(context, access);
+    public String tryMap(final CommandContext<CommandSender> context, final CommandInputTokenizer input) throws ArgumentMappingException, MissingInputException {
+        return this.delegateMapper.tryMap(context, input);
     }
 
     private static final class LengthFilter implements Filter<CommandSender, String> {
@@ -69,7 +69,7 @@ public class VarcharArgumentMapper extends AbstractArgumentMapper<CommandSender,
                     ? value.substring(0, CUTOFF)
                     : value;
 
-            return new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.MAX_LENGTH)
+            return new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.MAX_LENGTH)
                     .with(Placeholder.of("max", this.maxLength), Placeholder.of("argument", normalized))
                     .make());
         }

@@ -1,13 +1,13 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
-import com.tomushimano.waypoint.command.scaffold.VerboseArgumentException;
+import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
-import grapefruit.command.argument.mapper.CommandInputAccess;
 import grapefruit.command.dispatcher.CommandContext;
+import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -31,12 +31,12 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     }
 
     @Override
-    public TextColor tryMap(final CommandContext<CommandSender> context, final CommandInputAccess access) throws ArgumentMappingException, MissingInputException {
-        final String value = access.input().readWord();
+    public TextColor tryMap(final CommandContext<CommandSender> context, final CommandInputTokenizer input) throws ArgumentMappingException, MissingInputException {
+        final String value = input.readWord();
         if (value.charAt(0) == HASH) {
             final TextColor color = TextColor.fromCSSHexString(value);
             if (color == null) {
-                throw access.wrapException(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make()));
+                throw new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make());
             }
 
             return color;
@@ -44,9 +44,9 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
 
         final NamedTextColor color = NamedTextColor.NAMES.value(value);
         if (color == null) {
-            throw access.wrapException(new VerboseArgumentException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
+            throw new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
                     .with(Placeholder.of("name", value))
-                    .make()));
+                    .make());
         }
 
         return color;

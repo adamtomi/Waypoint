@@ -11,9 +11,9 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
+import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
-import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
@@ -155,12 +155,12 @@ public final class CommandManager implements CommandExecutor, Listener {
             this.exceptionHandler.handleDuplicateFlag(sender, ex);
         } catch (final NoSuchCommandException ex) {
             this.exceptionHandler.handleNoSuchCommand(sender, ex);
-        } catch (final ArgumentMappingException ex) {
-            this.exceptionHandler.handleArgumentMappingError(sender, ex);
         } catch (final VerboseConditionException ex) {
           sender.sendMessage(ex.describeFailure());
         } catch (final UnrecognizedFlagException ex) {
             this.exceptionHandler.handleUnrecognizedFlag(sender, ex);
+        } catch (final CommandArgumentException ex) {
+            this.exceptionHandler.handleCommandArgumentError(sender, ex);
         } catch (final Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
             // Extract cause. CommandInvocationException wraps other exceptions, so
