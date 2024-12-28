@@ -36,8 +36,8 @@ public final class CommandMapAccess implements CommandRegistrationHandler<Comman
 
     static {
         try {
-            MethodHandles.Lookup caller = MethodHandles.lookup();
-            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(PluginCommand.class, caller);
+            final MethodHandles.Lookup caller = MethodHandles.lookup();
+            final MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(PluginCommand.class, caller);
             PLUGIN_COMMAND_FACTORY = lookup.findConstructor(PluginCommand.class, MethodType.methodType(void.class, String.class, Plugin.class));
         } catch (final ReflectiveOperationException ex) {
             throw new ExceptionInInitializerError(ex);
