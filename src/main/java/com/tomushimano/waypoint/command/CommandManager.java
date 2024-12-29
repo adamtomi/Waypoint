@@ -16,7 +16,7 @@ import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
 import grapefruit.command.completion.Completion;
 import grapefruit.command.dispatcher.CommandDispatcher;
-import grapefruit.command.dispatcher.CommandInvocationException;
+import grapefruit.command.dispatcher.CommandExecutionException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import org.bukkit.command.Command;
@@ -164,9 +164,9 @@ public final class CommandManager implements CommandExecutor, Listener {
             this.exceptionHandler.handleCommandArgumentError(sender, ex);
         } catch (final Throwable ex) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
-            // Extract cause. CommandInvocationException wraps other exceptions, so
+            // Extract cause. CommandExecutionException wraps other exceptions, so
             // just call getCause() on it to unwrap the exception we're interested in.
-            final Throwable cause = ex instanceof CommandInvocationException
+            final Throwable cause = ex instanceof CommandExecutionException
                     ? ex.getCause()
                     : ex;
             capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
