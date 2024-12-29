@@ -4,3 +4,4 @@ bootstrapper: "com.tomushimano.waypoint.WaypointBootstrap"
 version: "${version}"
 api-version: "1.21"
 authors: [ "tomushimano" ]
+website: "https://github.com/adamtomi/Waypoint"
