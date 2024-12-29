@@ -6,6 +6,8 @@ import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
+import grapefruit.command.completion.Completion;
+import grapefruit.command.completion.CompletionSupport;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
@@ -53,11 +55,13 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     }
 
     @Override
-    public List<String> complete(final CommandContext<CommandSender> context, final String input) {
+    public List<Completion> complete(final CommandContext<CommandSender> context, final String input) {
         if (!input.isEmpty() && input.charAt(0) == HASH) {
-            if (input.length() >= 7) {
+            if (input.length() > 7) {
                 // The input is formatted as #xxxxxx, thus it's complete
                 return List.of();
+            } else if (input.length() == 7) {
+                return CompletionSupport.strings(input);
             }
 
             for (int i = 1; i < input.length(); i++) {
@@ -69,9 +73,13 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
 
             return Arrays.stream(HEX_CHAR_SET)
                     .map(x -> input + x)
+                    .map(Completion::completion)
                     .toList();
         }
 
-        return Stream.concat(NamedTextColor.NAMES.keys().stream(), Stream.of(String.valueOf(HASH))).toList();
+        return Stream.concat(
+                NamedTextColor.NAMES.keys().stream().map(Completion::completion),
+                Stream.of(Completion.completion(String.valueOf(HASH)))
+        ).toList();
     }
 }

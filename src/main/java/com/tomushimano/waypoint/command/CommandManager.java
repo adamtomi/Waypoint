@@ -14,6 +14,7 @@ import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
+import grapefruit.command.completion.Completion;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandInvocationException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
@@ -139,9 +140,9 @@ public final class CommandManager implements CommandExecutor, Listener {
         // Replace the first argument so that it doesn't contain the leading '/' anymore.
         if (args.size() > 1) args.set(0, root);
 
-        final List<String> completions = this.dispatcher.complete(event.getSender(), join(" ", args));
+        final List<Completion> completions = this.dispatcher.complete(event.getSender(), join(" ", args));
 
-        event.setCompletions(completions);
+        event.completions(translateCompletions(completions));
         event.setHandled(true);
     }
 
@@ -170,5 +171,11 @@ public final class CommandManager implements CommandExecutor, Listener {
                     : ex;
             capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
         }
+    }
+
+    private List<AsyncTabCompleteEvent.Completion> translateCompletions(final List<Completion> completions) {
+        return completions.stream()
+                .map(x -> AsyncTabCompleteEvent.Completion.completion(x.content()))
+                .toList();
     }
 }

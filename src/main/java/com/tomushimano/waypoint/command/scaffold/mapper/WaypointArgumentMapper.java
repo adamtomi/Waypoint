@@ -11,6 +11,8 @@ import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
+import grapefruit.command.completion.Completion;
+import grapefruit.command.completion.CompletionSupport;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
@@ -56,11 +58,9 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     }
 
     @Override
-    public List<String> complete(final CommandContext<CommandSender> context, final String input) {
+    public List<Completion> complete(final CommandContext<CommandSender> context, final String input) {
         final Set<Waypoint> candidates = this.valueProvider.apply(this.waypointService, (Player) context.source());
-        return candidates.stream()
-                .map(Waypoint::getName)
-                .toList();
+        return CompletionSupport.strings(Waypoint::getName, candidates);
     }
 
     @AssistedFactory
