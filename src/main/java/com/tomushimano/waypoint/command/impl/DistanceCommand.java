@@ -33,7 +33,9 @@ public class DistanceCommand implements CommandModule<CommandSender> {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("distance").aliases("dist").expect(and(
-                        this.helper.perm("waypoint.distance"), this.helper.isPlayer()
+                        this.helper.perm("waypoint.distance"),
+                        this.helper.isPlayer(),
+                        this.helper.inWorld(WAYPOINT_KEY)
                 )).build())
                 .arguments()
                 .then(factory.required(WAYPOINT_KEY).mapWith(this.helper.stdWaypoint()).build())

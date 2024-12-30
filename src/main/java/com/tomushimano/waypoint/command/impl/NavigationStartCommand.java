@@ -48,7 +48,9 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
                 .then(factory.literal("navigation").aliases("nav").expect(and(
-                        this.helper.perm("waypoint.navigation"), this.helper.isPlayer()
+                        this.helper.perm("waypoint.navigation"),
+                        this.helper.isPlayer(),
+                        this.helper.inWorld(DESTINATION_KEY)
                 )).build())
                 .then(factory.literal("start").aliases("begin").build())
                 .arguments()
@@ -81,14 +83,6 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
         if (waypoint.distance(sender) < minimumDistance) {
             sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_TOO_CLOSE)
                     .with(Placeholder.of("blocks", minimumDistance))
-                    .make());
-            return;
-        }
-
-        final String worldName = waypoint.getPosition().getWorldName();
-        if (!worldName.equals(sender.getWorld().getName())) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_WORLD_ERROR)
-                    .with(Placeholder.of("name", worldName))
                     .make());
             return;
         }

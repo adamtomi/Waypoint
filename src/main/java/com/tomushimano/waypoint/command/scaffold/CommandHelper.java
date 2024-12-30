@@ -1,12 +1,15 @@
 package com.tomushimano.waypoint.command.scaffold;
 
+import com.tomushimano.waypoint.command.scaffold.condition.InWorldCondition;
 import com.tomushimano.waypoint.command.scaffold.condition.IsPlayerCondition;
 import com.tomushimano.waypoint.command.scaffold.condition.PermissionCondition;
 import com.tomushimano.waypoint.command.scaffold.mapper.IntArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.VarcharArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
+import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import grapefruit.command.util.key.Key;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,6 +25,7 @@ public final class CommandHelper {
     private final TextColorArgumentMapper textColorMapper;
     private final VarcharArgumentMapper varcharArgumentMapper;
     /* Conditions */
+    private final InWorldCondition.Factory inWorldFactory;
     private final IsPlayerCondition isPlayerCondition;
     private final PermissionCondition.Factory permissionConditionFactory;
 
@@ -31,6 +35,7 @@ public final class CommandHelper {
             final WaypointArgumentMapper.Factory waypointArgumentMapperFactory,
             final TextColorArgumentMapper textColorMapper,
             final VarcharArgumentMapper.Factory varcharArgumentMapperFactory,
+            final InWorldCondition.Factory inWorldFactory,
             final IsPlayerCondition isPlayerCondition,
             final PermissionCondition.Factory permissionConditionFactory
     ) {
@@ -39,6 +44,7 @@ public final class CommandHelper {
         this.ownedWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getOwnedWaypoints);
         this.textColorMapper = textColorMapper;
         this.varcharArgumentMapper = varcharArgumentMapperFactory.create(255);
+        this.inWorldFactory = inWorldFactory;
         this.isPlayerCondition = isPlayerCondition;
         this.permissionConditionFactory = permissionConditionFactory;
     }
@@ -70,5 +76,10 @@ public final class CommandHelper {
     public PermissionCondition perm(final String permission) {
         requireNonNull(permission, "permission cannot be null");
         return this.permissionConditionFactory.create(permission);
+    }
+
+    public InWorldCondition inWorld(final Key<Waypoint> waypointKey) {
+        requireNonNull(waypointKey, "waypointKey cannot be null");
+        return this.inWorldFactory.create(waypointKey);
     }
 }

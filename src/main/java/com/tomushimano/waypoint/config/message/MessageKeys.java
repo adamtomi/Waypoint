@@ -73,7 +73,6 @@ public final class MessageKeys {
         public static final ConfigKey<String> START_ALREADY_RUNNING = messageKey("navigation.start_already_running");
         public static final ConfigKey<String> START_RUNNING_CANCELLED = messageKey("navigation.start_running_cancelled");
         public static final ConfigKey<String> START_TOO_CLOSE = messageKey("navigation.start_too_close");
-        public static final ConfigKey<String> START_WORLD_ERROR = messageKey("navigation.start_world_error");
         public static final ConfigKey<String> STARTED = messageKey("navigation.started");
         public static final ConfigKey<String> STOP_NONE_RUNNING = messageKey("navigation.stop_none_running");
         public static final ConfigKey<String> STOPPED = messageKey("navigation.stopped");
@@ -110,6 +109,8 @@ public final class MessageKeys {
 
         public static final ConfigKey<String> UPDATE_SUCCESS = messageKey("waypoint.update.success");
         public static final ConfigKey<String> UPDATE_FAILURE = messageKey("waypoint.update.failure");
+
+        public static final ConfigKey<String> WORLD_ERROR = messageKey("waypoint.world_error");
 
         private Waypoint() {
             throw new DontInvokeMe();
