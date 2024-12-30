@@ -42,6 +42,7 @@ public final class MessageKeys {
         public static final ConfigKey<String> ARG_OPTIONAL_OPEN = messageKey("command.arg_optional_open");
         public static final ConfigKey<String> ARG_REQUIRED_CLOSE = messageKey("command.arg_required_close");
         public static final ConfigKey<String> ARG_REQUIRED_OPEN = messageKey("command.arg_required_open");
+        public static final ConfigKey<String> CONFIRMATION_REQUIRED = messageKey("command.confirmation_required");
         public static final ConfigKey<String> DUPLICATE_FLAG = messageKey("command.duplicate_flag");
         public static final ConfigKey<String> INSUFFICIENT_PERMISSIONS = messageKey("command.insufficient_permissions");
         public static final ConfigKey<String> INVALID_ARGUMENT = messageKey("command.invalid_argument");

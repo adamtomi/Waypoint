@@ -20,6 +20,7 @@ relocate:
   waypoint: "név"
 
 remove:
+  __confirmaion__: true
   waypoint: "név"
 
 set:

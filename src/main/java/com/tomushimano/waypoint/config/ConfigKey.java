@@ -33,6 +33,10 @@ public interface ConfigKey<T> {
         });
     }
 
+    static ConfigKey<Boolean> boolKey(final String key) {
+        return simpleKey(key, ConfigurationSection::getBoolean);
+    }
+
     static <E extends Enum<E>> ConfigKey<E> enumKey(final String key, final Class<E> type) {
         return simpleKey(key, (section, x) -> {
             String value = section.getString(x);

@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
+import com.tomushimano.waypoint.command.scaffold.ConfirmationHandler;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
 import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
@@ -58,6 +59,7 @@ public final class CommandManager implements CommandExecutor, Listener {
     private final CommandDispatcher<CommandSender> dispatcher;
     private final Set<CommandModule<CommandSender>> commands;
     private final CommandExceptionHandler exceptionHandler;
+    private final ConfirmationHandler confirmationHandler;
     private final JavaPlugin plugin;
     private final MessageConfig messageConfig;
 
@@ -66,12 +68,14 @@ public final class CommandManager implements CommandExecutor, Listener {
             final CommandDispatcherFactory dispatcherFactory,
             final Set<CommandModule<CommandSender>> commands,
             final CommandExceptionHandler exceptionHandler,
+            final ConfirmationHandler confirmationHandler,
             final JavaPlugin plugin,
             final MessageConfig messageConfig
     ) {
         this.dispatcher = dispatcherFactory.create(this);
         this.commands = commands;
         this.exceptionHandler = exceptionHandler;
+        this.confirmationHandler = confirmationHandler;
         this.plugin = plugin;
         this.messageConfig = messageConfig;
     }
@@ -79,6 +83,7 @@ public final class CommandManager implements CommandExecutor, Listener {
     public void register() {
         LOGGER.info("Registering commands...");
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        this.dispatcher.subscribe(this.confirmationHandler);
         // Register command handlers
         this.dispatcher.register(this.commands);
     }
@@ -87,6 +92,7 @@ public final class CommandManager implements CommandExecutor, Listener {
         HandlerList.unregisterAll(this);
         this.trackedAliases.clear();
         this.dispatcher.unregister(this.commands);
+        this.dispatcher.unsubscribe(this.confirmationHandler);
         LOGGER.info("Shutting down async executor");
         ConcurrentUtil.terminate(this.executor, 1L);
     }

@@ -16,6 +16,7 @@ command:
   arg_optional_open: "["
   arg_required_close: ">"
   arg_required_open: "<"
+  confirmation_required: "&c&l! &7Ha biztosan le szeretnéd futtatni ezt a parancsot, &c&nírd be még egyszer&7!"
   duplicate_flag: "&cEzt a flaget csak egyszer lehet megadni."
   insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
   invalid_argument: |-
