@@ -6,8 +6,11 @@ import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
+import com.tomushimano.waypoint.util.BukkitUtil;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -76,10 +79,11 @@ public final class NavigationTask implements Runnable {
 
         final double x = xUnit * distanceMultiplier + origin.getX();
         final double z = zUnit * distanceMultiplier + origin.getZ();
-        final int y = origin.getWorld().getHighestBlockYAt((int) x, (int) z);
+        final World world = origin.getWorld();
+        final int y = BukkitUtil.getSensibleHighestY(world, x, z, this.player);
 
         this.nextLocation = new Location(
-                origin.getWorld(),
+                world,
                 x,
                 y,
                 z
@@ -95,8 +99,7 @@ public final class NavigationTask implements Runnable {
                     this.destination.distance(this.player) > this.config.get(StandardKeys.Navigation.ARRIVAL_DISTANCE)
                     && this.running
             ) {
-                final Location current = this.player.getLocation();
-                final double distance = current.distance(this.nextLocation);
+                final double distance = BukkitUtil.distanceIgnoreY(this.player, this.nextLocation);
                 // Recalculate next location if necessary
                 if (
                         this.updateRequired.get()
@@ -112,6 +115,7 @@ public final class NavigationTask implements Runnable {
                         .make());
 
                 final Location origin = this.nextLocation;
+                final World world = origin.getWorld();
                 final int maxY = origin.getBlockY() + this.config.get(StandardKeys.Navigation.PARTICLE_Y_OFFSET);
                 final Particle.DustOptions options = new Particle.DustOptions(
                         this.config.get(StandardKeys.Navigation.PARTICLE_COLOR),
@@ -119,7 +123,9 @@ public final class NavigationTask implements Runnable {
                 );
 
                 for (int y = maxY; y > origin.getBlockY(); y -= this.config.get(StandardKeys.Navigation.PARTICLE_DENSITY)) {
-                    final Location loc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
+                    final Location loc = new Location(world, origin.getX(), y, origin.getZ());
+                    if (!world.getBlockAt(loc).getType().equals(Material.AIR)) continue;
+
                     this.player.spawnParticle(Particle.DUST, loc, this.config.get(StandardKeys.Navigation.PARTICLE_COUNT), options);
                     Thread.sleep(10L);
                 }
