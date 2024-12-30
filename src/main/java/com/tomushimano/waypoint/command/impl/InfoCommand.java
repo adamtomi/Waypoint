@@ -52,7 +52,7 @@ public class InfoCommand implements CommandModule<CommandSender> {
                 ? namedColor.toString()
                 : "";
 
-        context.source().sendMessage(this.messageConfig.get(MessageKeys.Admin.INFO).with(
+        context.source().sendMessage(this.messageConfig.get(MessageKeys.Waypoint.INFO).with(
                         Placeholder.of("name", waypoint.getName()),
                         Placeholder.of("uniqueId", waypoint.getUniqueId()),
                         Placeholder.of("global", waypoint.isGlobal()),

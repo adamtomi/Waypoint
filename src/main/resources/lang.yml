@@ -1,11 +1,4 @@
 admin:
-  info: |-
-    &8+-----------------[ &a&l{name} &8]-----------------+
-    &8- &7UUID: &a{uniqueId}
-    &8- &7Tulajdonos: &f{owner}
-    &8- &7Globális: &f{global}
-    &8- &7Pozíció: &f{coordinates}
-    &8- &7Színkód: &f{color} &o({colorname})
   reload:
     initiated: "&aKonfiguráció újratöltése..."
     success: "&aKonfiguráció sikeresen újratöltve &o{duration}ms &aalatt."
@@ -64,6 +57,13 @@ waypoint:
     success: "&aAz alábbi waypoint el lett távolítva: &7&o\"{name}\"&a."
     failure: "&cHiba történt a waypoint eltávolítása közben."
   distance: "&aA megadott waypoint &l{distance} &ablokk távolságra van tőled."
+  info: |-
+    &8+-----------------[ &a&l{name} &8]-----------------+
+    &8- &7UUID: &a{uniqueId}
+    &8- &7Tulajdonos: &f{owner}
+    &8- &7Globális: &f{global}
+    &8- &7Pozíció: &f{coordinates}
+    &8- &7Színkód: &f{color} &o({colorname})
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
     item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
