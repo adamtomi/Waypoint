@@ -3,12 +3,11 @@ package com.tomushimano.waypoint.command.impl;
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
@@ -27,19 +26,19 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
     private static final Key<Boolean> FORCE_KEY = Key.named(Boolean.class, "force");
     private final CommandHelper helper;
     private final NavigationService navigationService;
-    private final MessageConfig messageConfig;
+    private final Configurable langConfig;
     private final Configurable config;
 
     @Inject
     public NavigationStartCommand(
             final CommandHelper helper,
             final NavigationService navigationService,
-            final MessageConfig messageConfig,
+            final @Lang Configurable langConfig,
             final @Cfg Configurable config
     ) {
         this.helper = helper;
         this.navigationService = navigationService;
-        this.messageConfig = messageConfig;
+        this.langConfig = langConfig;
         this.config = config;
     }
 
@@ -66,13 +65,10 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
         final Optional<Waypoint> current = this.navigationService.currentDestination(sender);
         if (current.isPresent()) {
             if (context.has(FORCE_KEY)) {
-                sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_RUNNING_CANCELLED)
-                        .with(Placeholder.of("name", current.orElseThrow().getName()))
-                        .make());
-
+                Messages.NAVIGATION__START_RUNNING_CANCELLED.from(this.langConfig, current.orElseThrow()).print(sender);
                 this.navigationService.stopNavigation(sender);
             } else {
-                sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_ALREADY_RUNNING).make());
+                Messages.NAVIGATION__START_ALREAEDY_RUNNING.from(this.langConfig).print(sender);
                 return;
             }
         }
@@ -81,17 +77,11 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
         final int minimumDistance = this.config.get(StandardKeys.Navigation.MIN_REQUIRED_DISTANCE);
 
         if (waypoint.distance(sender) < minimumDistance) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.START_TOO_CLOSE)
-                    .with(Placeholder.of("blocks", minimumDistance))
-                    .make());
+            Messages.NAVIGATION__START_TOO_CLOSE.from(this.langConfig, minimumDistance).print(sender);
             return;
         }
 
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.STARTED)
-                .with(Placeholder.of("name", waypoint.getName()))
-                .make());
-        this.navigationService.startNavigation(sender, waypoint, () -> sender.sendMessage(this.messageConfig.get(MessageKeys.Navigation.ARRIVED)
-                .with(Placeholder.of("name", waypoint.getName()))
-                .make()));
+        Messages.NAVIGATION__STARTED.from(this.langConfig, waypoint).print(sender);
+        this.navigationService.startNavigation(sender, waypoint, () -> Messages.NAVIGATION__ARRIVED.from(this.langConfig, waypoint).print(sender));
     }
 }

@@ -2,10 +2,8 @@ package com.tomushimano.waypoint.core.navigation;
 
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.core.Waypoint;
+import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.BukkitUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +21,7 @@ public final class NavigationTask implements Runnable {
     private final UUID uniqueId;
     private final Player player;
     private final Waypoint destination;
-    private final MessageConfig messageConfig;
+    private final Configurable langConfig;
     private final Configurable config;
     private final Runnable callback;
     private Location nextLocation;
@@ -34,14 +32,14 @@ public final class NavigationTask implements Runnable {
             final UUID uniqueId,
             final Player player,
             final Waypoint destination,
-            final MessageConfig messageConfig,
+            final Configurable langConfig,
             final Configurable config,
             final Runnable callback
     ) {
         this.uniqueId = requireNonNull(uniqueId, "uniqueId cannot be null");
         this.player = requireNonNull(player, "player cannot be null");
         this.destination = requireNonNull(destination, "destination cannot be null");
-        this.messageConfig = requireNonNull(messageConfig, "messageConfig cannot be null");
+        this.langConfig = requireNonNull(langConfig, "langConfig cannot be null");
         this.config = requireNonNull(config, "config cannot be null");
         this.callback = requireNonNull(callback, "callback cannot be null");
         update();
@@ -110,9 +108,9 @@ public final class NavigationTask implements Runnable {
                     update();
                 }
 
-                this.player.sendActionBar(this.messageConfig.get(MessageKeys.Navigation.DISTANCE_INDICATOR)
-                        .with(Placeholder.of("blocks", this.destination.distance(this.player)))
-                        .make());
+                // Update action bar message
+                Messages.NAVIGATION__DISTANCE_INDICATOR.from(this.langConfig, this.destination.distance(this.player))
+                        .printActionBar(player);
 
                 final Location origin = this.nextLocation;
                 final World world = origin.getWorld();

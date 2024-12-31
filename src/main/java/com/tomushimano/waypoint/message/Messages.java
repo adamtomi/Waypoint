@@ -105,7 +105,34 @@ public final class Messages {
 
 
     /* -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~ N A V I G A T I O N ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~- */
+    public static final MessageBuilder.Preset1<Waypoint> NAVIGATION__ARRIVED = keyed("navigation.arrived")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
 
+    public static final MessageBuilder.Preset1<Long> NAVIGATION__DISTANCE_INDICATOR = keyed("navigation.distance_indicator")
+            .var1((raw, distance) -> process(raw, template("blocks", distance)));
+
+    public static final MessageBuilder.Preset1<Waypoint> NAVIGATION__INFO = keyed("navigation.info")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
+
+    public static final MessageBuilder.Preset0 NAVIGATION__INFO_NONE = keyed("navigation.info_none").var0();
+
+    public static final MessageBuilder.Preset0 NAVIGATION__START_ALREAEDY_RUNNING = keyed("navigation.start_already_running")
+            .var0();
+
+    public static final MessageBuilder.Preset1<Waypoint> NAVIGATION__START_RUNNING_CANCELLED = keyed("navigation.start_running_cancelled")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
+
+    public static final MessageBuilder.Preset1<Integer> NAVIGATION__START_TOO_CLOSE = keyed("navigation.start_too_close")
+            .var1((raw, min) -> process(raw, template("blocks", min)));
+
+    public static final MessageBuilder.Preset1<Waypoint> NAVIGATION__STARTED = keyed("navigation.started")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
+
+    public static final MessageBuilder.Preset0 NAVIGATION__STOP_NONE_RUNNING = keyed("navigation.stop_none_running")
+            .var0();
+
+    public static final MessageBuilder.Preset1<Waypoint> NAVIGATION__STOPPED = keyed("navigation.stopped")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
 
 
     /* -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~   W A Y P O I N T   ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~- */
