@@ -4,6 +4,7 @@ import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.message.Messages;
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
@@ -32,7 +33,7 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     public WaypointArgumentMapper(
             final @Assisted BiFunction<WaypointService, Player, Set<Waypoint>> valueProvider,
             final WaypointService waypointService,
-            final Configurable config
+            final @Lang Configurable config
     ) {
         super(Waypoint.class, false);
         this.valueProvider = valueProvider;

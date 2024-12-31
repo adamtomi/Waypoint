@@ -128,7 +128,7 @@ public final class CommandExceptionHandler {
                 .from(this.langConfig)
                 .print(sender);
 
-        Messages.COMMAND__SYNTAX_HINT.from(this.commandConfig, formatSyntax(ex.chain())).print(sender);
+        Messages.COMMAND__SYNTAX_HINT.from(this.langConfig, formatSyntax(ex.chain())).print(sender);
     }
 
     public void handleNoSuchCommand(final CommandSender sender, final NoSuchCommandException ex) {

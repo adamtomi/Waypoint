@@ -30,7 +30,7 @@ public interface WaypointComponent {
     interface Builder {
 
         @BindsInstance
-        Builder plugin(JavaPlugin plugin);
+        Builder plugin(final JavaPlugin plugin);
 
         WaypointComponent build();
     }

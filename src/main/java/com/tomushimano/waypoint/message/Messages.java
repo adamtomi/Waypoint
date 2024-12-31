@@ -86,10 +86,10 @@ public final class Messages {
     public static final MessageBuilder.Preset1<String> COMMAND__SYNTAX_HINT = keyed("command.syntax_hint")
             .var1((raw, syntax) -> process(raw, template("syntax", syntax)));
 
-    public static final MessageBuilder.Preset0 COMMAND__SYNTAX_ERROR_TOO_FEW = keyed("command.syntax_too_few")
+    public static final MessageBuilder.Preset0 COMMAND__SYNTAX_ERROR_TOO_FEW = keyed("command.syntax_error_too_few")
             .var0();
 
-    public static final MessageBuilder.Preset0 COMMAND__SYNTAX_ERROR_TOO_MANY = keyed("command.syntax_too_many")
+    public static final MessageBuilder.Preset0 COMMAND__SYNTAX_ERROR_TOO_MANY = keyed("command.syntax_error_too_many")
             .var0();
 
     public static final MessageBuilder.Preset0 COMMAND__UNEXPECTED_ERROR = keyed("command.unexpected_error")
