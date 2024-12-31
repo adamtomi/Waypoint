@@ -7,6 +7,7 @@ import com.tomushimano.waypoint.di.qualifier.Lang;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+@Deprecated
 @Singleton
 public class MessageConfig {
     private final Configurable config;

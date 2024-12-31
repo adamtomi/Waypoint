@@ -1,4 +1,6 @@
 package com.tomushimano.waypoint.message;
 
-public class MessageSource {
+public interface MessageSource {
+
+    MessageBuilder keyed(final String key);
 }

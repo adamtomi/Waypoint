@@ -2,6 +2,7 @@ package com.tomushimano.waypoint.config.message;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated
 public class Placeholder {
     private static final String NULL = "-";
     private static final char TEMPLATE_START = '{';

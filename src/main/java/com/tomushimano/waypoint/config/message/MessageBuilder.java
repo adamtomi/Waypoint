@@ -8,6 +8,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated
 public class MessageBuilder {
     private static final char AMPERSAND = '&';
     private static final char SECTION = '§';

@@ -4,6 +4,7 @@ import com.tomushimano.waypoint.config.ConfigKey;
 import com.tomushimano.waypoint.util.DontInvokeMe;
 import org.bukkit.configuration.ConfigurationSection;
 
+@Deprecated
 public final class MessageKeys {
     
     public static ConfigKey<String> messageKey(final String key) {
