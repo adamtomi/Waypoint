@@ -51,7 +51,7 @@ public class SetCommand implements CommandModule<CommandSender> {
                         this.helper.perm("waypoint.set"), this.helper.isPlayer()
                 )).build())
                 .arguments()
-                .then(factory.required(NAME_KEY).mapWith(this.helper.varchar255()).build())
+                .then(factory.required(NAME_KEY).mapWith(this.helper.name()).build())
                 .flags()
                 .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
                 .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.helper.textColor()).build())

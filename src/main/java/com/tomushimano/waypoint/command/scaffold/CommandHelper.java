@@ -4,8 +4,8 @@ import com.tomushimano.waypoint.command.scaffold.condition.InWorldCondition;
 import com.tomushimano.waypoint.command.scaffold.condition.IsPlayerCondition;
 import com.tomushimano.waypoint.command.scaffold.condition.PermissionCondition;
 import com.tomushimano.waypoint.command.scaffold.mapper.IntArgumentMapper;
+import com.tomushimano.waypoint.command.scaffold.mapper.NameArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper;
-import com.tomushimano.waypoint.command.scaffold.mapper.VarcharArgumentMapper;
 import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
@@ -23,7 +23,7 @@ public final class CommandHelper {
     private final WaypointArgumentMapper stdWaypointMapper;
     private final WaypointArgumentMapper ownedWaypointMapper;
     private final TextColorArgumentMapper textColorMapper;
-    private final VarcharArgumentMapper varcharArgumentMapper;
+    private final NameArgumentMapper nameArgumentMapper;
     /* Conditions */
     private final InWorldCondition.Factory inWorldFactory;
     private final IsPlayerCondition isPlayerCondition;
@@ -34,7 +34,7 @@ public final class CommandHelper {
             final IntArgumentMapper.Factory intArgumentMapperFactory,
             final WaypointArgumentMapper.Factory waypointArgumentMapperFactory,
             final TextColorArgumentMapper textColorMapper,
-            final VarcharArgumentMapper.Factory varcharArgumentMapperFactory,
+            final NameArgumentMapper nameArgumentMapper,
             final InWorldCondition.Factory inWorldFactory,
             final IsPlayerCondition isPlayerCondition,
             final PermissionCondition.Factory permissionConditionFactory
@@ -43,7 +43,7 @@ public final class CommandHelper {
         this.stdWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getAccessibleWaypoints);
         this.ownedWaypointMapper = waypointArgumentMapperFactory.create(WaypointService::getOwnedWaypoints);
         this.textColorMapper = textColorMapper;
-        this.varcharArgumentMapper = varcharArgumentMapperFactory.create(255);
+        this.nameArgumentMapper = nameArgumentMapper;
         this.inWorldFactory = inWorldFactory;
         this.isPlayerCondition = isPlayerCondition;
         this.permissionConditionFactory = permissionConditionFactory;
@@ -65,8 +65,8 @@ public final class CommandHelper {
         return this.textColorMapper;
     }
 
-    public VarcharArgumentMapper varchar255() {
-        return this.varcharArgumentMapper;
+    public NameArgumentMapper name() {
+        return this.nameArgumentMapper;
     }
 
     public IsPlayerCondition isPlayer() {
