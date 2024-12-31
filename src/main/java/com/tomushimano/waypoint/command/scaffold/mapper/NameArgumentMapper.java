@@ -1,9 +1,9 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
 import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
@@ -26,13 +26,10 @@ public class NameArgumentMapper extends AbstractArgumentMapper<CommandSender, St
     private final ArgumentMapper<CommandSender, String> delegateMapper;
 
     @Inject
-    public NameArgumentMapper(final MessageConfig messageConfig) {
+    public NameArgumentMapper(final @Lang Configurable config) {
         super(String.class, false);
-        final Supplier<ArgumentMappingException> exceptionSupplier = () -> new VerboseArgumentMappingException(messageConfig.get(MessageKeys.Command.REGEX_ERROR)
-                .with(Placeholder.of("regex", PATTERN.pattern()))
-                .make());
-
-        this.delegateMapper = delegate().filtering(new LengthFilter(messageConfig)).filtering(regex(PATTERN, exceptionSupplier));
+        final Supplier<ArgumentMappingException> exceptionSupplier = () -> new VerboseArgumentMappingException(Messages.COMMAND__REGEX_ERROR.from(config, PATTERN).comp());
+        this.delegateMapper = delegate().filtering(new LengthFilter(config)).filtering(regex(PATTERN, exceptionSupplier));
     }
 
     private ArgumentMapper<CommandSender, String> delegate() {
@@ -47,19 +44,17 @@ public class NameArgumentMapper extends AbstractArgumentMapper<CommandSender, St
     private static final class LengthFilter implements Filter<CommandSender, String> {
         private static final int MAX_LENGTH = 255; // Limited by VARCHAR(255) in the database
         private static final int MAX_DISPLAYED_LENGTH = 15;
-        private final MessageConfig messageConfig;
+        private final Configurable config;
 
-        private LengthFilter(final MessageConfig messageConfig) {
-            this.messageConfig = messageConfig;
+        private LengthFilter(final Configurable config) {
+            this.config = config;
         }
 
         @Override
         public void test(final CommandContext<CommandSender> commandContext, final String value) throws ArgumentMappingException {
             if (value.length() > MAX_LENGTH) {
                 final String normalized = "%s...".formatted(value.substring(0, MAX_DISPLAYED_LENGTH));
-                throw new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.MAX_LENGTH)
-                        .with(Placeholder.of("max", MAX_LENGTH), Placeholder.of("argument", normalized))
-                        .make());
+                throw new VerboseArgumentMappingException(Messages.COMMAND__MAX_LENGTH.from(this.config, normalized, MAX_LENGTH).comp());
             }
         }
     }

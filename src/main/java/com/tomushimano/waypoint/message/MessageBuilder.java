@@ -13,6 +13,8 @@ public interface MessageBuilder {
 
     <V0, V1> Preset2<V0, V1> var2(final Processor2<V0, V1> processor);
 
+    <V0, V1, V2> Preset3<V0, V1, V2> var3(final Processor3<V0, V1, V2> processor);
+
     static MessageBuilder keyed(final String key) {
         requireNonNull(key, "key cannot be null");
         return new MessageBuilderImpl(messageKey(key));
@@ -30,7 +32,7 @@ public interface MessageBuilder {
 
     interface Preset1<V> {
 
-        Message with(final Configurable config, final V var0);
+        Message from(final Configurable config, final V var0);
     }
 
     interface Processor2<V0, V1> {
@@ -40,6 +42,16 @@ public interface MessageBuilder {
 
     interface Preset2<V0, V1> {
 
-        Message with(final Configurable config, final V0 var0, final V1 var1);
+        Message from(final Configurable config, final V0 var0, final V1 var1);
+    }
+
+    interface Processor3<V0, V1, V2> {
+
+        String apply(final String raw, final V0 var0, final V1 var1, final V2 var2);
+    }
+
+    interface Preset3<V0, V1, V2> {
+
+        Message from(final Configurable config, final V0 var0, final V1 var1, final V2 var2);
     }
 }

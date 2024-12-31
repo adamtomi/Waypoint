@@ -61,7 +61,7 @@ public class RemoveCommand implements CommandModule<CommandSender> {
 
         this.waypointService.removeWaypoint(waypoint)
                 .thenRun(() -> this.navigationService.cancelAll(waypoint))
-                .thenRun(() -> Messages.WAYPOINT__DELETION_SUCCESS.with(this.config, waypoint).print(sender))
+                .thenRun(() -> Messages.WAYPOINT__DELETION_SUCCESS.from(this.config, waypoint).print(sender))
                 .exceptionally(capture(() -> Messages.WAYPOINT__DELETION_FAILURE.from(this.config).print(sender), "Failed to remove waypoint", LOGGER));
     }
 }

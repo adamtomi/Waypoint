@@ -64,7 +64,7 @@ public class SetCommand implements CommandModule<CommandSender> {
 
         // Check if a waypoint with this name exists already
         if (this.waypointService.getByName(sender, name).isPresent()) {
-            Messages.WAYPOINT__CREATION_ALREADY_EXISTS.with(this.config, name).print(sender);
+            Messages.WAYPOINT__CREATION_ALREADY_EXISTS.from(this.config, name).print(sender);
             return;
         }
 
@@ -72,7 +72,7 @@ public class SetCommand implements CommandModule<CommandSender> {
         final TextColor color = context.getOrDefault(COLOR_KEY, NamedTextColor.WHITE);
 
         this.waypointService.createWaypoint(sender, name, color, global)
-                .thenAccept(x -> Messages.WAYPOINT__CREATION_SUCCESS.with(this.config, x).print(sender))
+                .thenAccept(x -> Messages.WAYPOINT__CREATION_SUCCESS.from(this.config, x).print(sender))
                 .exceptionally(capture(() -> Messages.WAYPOINT__CREATION_FAILURE.from(this.config).print(sender), "Failed to create waypoint", LOGGER));
     }
 }

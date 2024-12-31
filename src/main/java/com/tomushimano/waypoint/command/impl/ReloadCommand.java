@@ -52,7 +52,7 @@ public class ReloadCommand implements CommandModule<CommandSender> {
         } else {
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
             long deltaT = System.currentTimeMillis() - start;
-            Messages.ADMIN__RELOAD_SUCCESS.with(this.config, deltaT).print(sender);
+            Messages.ADMIN__RELOAD_SUCCESS.from(this.config, deltaT).print(sender);
         }
     }
 }

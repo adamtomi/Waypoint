@@ -3,8 +3,12 @@ package com.tomushimano.waypoint.message;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.util.DontInvokeMe;
 
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import static com.tomushimano.waypoint.message.MessageBuilder.keyed;
 import static com.tomushimano.waypoint.message.Template.template;
+import static java.lang.String.join;
 
 public final class Messages {
     /* -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~      A D M I N      ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~- */
@@ -39,6 +43,65 @@ public final class Messages {
     public static final MessageBuilder.Preset1<String> COMMAND__INSUFFICIENT_PERMISSIONS = keyed("command.insufficient_permissions")
             .var1((raw, permission) -> process(raw, template("permission", permission)));
 
+    public static final MessageBuilder.Preset3<String, String, String> COMMAND__INVALID_ARGUMENT = keyed("command.invalid_argument")
+            .var3((raw, consumed, argument, remaining) -> process(
+                    raw,
+                    template("consumed", consumed),
+                    template("argument", argument),
+                    template("remaining", remaining)
+            ));
+
+    public static final MessageBuilder.Preset1<String> COMMAND__INVALID_FLAG = keyed("command.invalid_flag")
+            .var1((raw, flag) -> process(raw, template("flag", flag)));
+
+    public static final MessageBuilder.Preset0 COMMAND__MALFORMED_COLOR = keyed("command.malformed_color")
+            .var0();
+
+
+    public static final MessageBuilder.Preset0 COMMAND__MALFORMED_NUMBER = keyed("command.malformed_number")
+            .var0();
+
+    public static final MessageBuilder.Preset2<String, Integer> COMMAND__MAX_LENGTH = keyed("command.max_length")
+            .var2((raw, argument, maxLength) -> process(
+                    raw,
+                    template("argument", argument),
+                    template("max", maxLength)
+            ));
+
+    public static final MessageBuilder.Preset0 COMMAND__NEED_TO_BE_A_PLAYER = keyed("command.need_to_be_a_player")
+            .var0();
+
+    public static final MessageBuilder.Preset1<String> COMMAND__NO_SUCH_COLOR = keyed("command.no_such_color")
+            .var1((raw, name) -> process(raw, template("name", name)));
+
+    public static final MessageBuilder.Preset1<Integer> COMMAND__RANGE_ERROR = keyed("command.range_error")
+            .var1((raw, min) -> process(raw, template("min", min)));
+
+    public static final MessageBuilder.Preset1<Pattern> COMMAND__REGEX_ERROR = keyed("command.regex_error")
+            .var1((raw, pattern) -> process(raw, template("regex", pattern.pattern())));
+
+    public static final MessageBuilder.Preset1<String> COMMAND__SYNTAX_HINT = keyed("command.syntax_hint")
+            .var1((raw, syntax) -> process(raw, template("syntax", syntax)));
+
+    public static final MessageBuilder.Preset0 COMMAND__SYNTAX_ERROR_TOO_FEW = keyed("command.syntax_too_few")
+            .var0();
+
+    public static final MessageBuilder.Preset0 COMMAND__SYNTAX_ERROR_TOO_MANY = keyed("command.syntax_too_many")
+            .var0();
+
+    public static final MessageBuilder.Preset0 COMMAND__UNEXPECTED_ERROR = keyed("command.unexpected_error")
+            .var0();
+
+    public static final MessageBuilder.Preset0 COMMAND__UNKNOWN_SUBCOMMAND = keyed("command.unknown_subcommand")
+            .var0();
+
+    public static final MessageBuilder.Preset3<String, String, Set<String>> COMMNAD__UNKNOWN_SUBCOMMAND_ENTRY = keyed("command.unknown_subcommand_entry")
+            .var3((raw, prefix, name, aliases) -> process(
+                    raw,
+                    template("prefix", prefix),
+                    template("name", name),
+                    template("aliases", join(", ", aliases))
+            ));
 
 
     /* -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~ N A V I G A T I O N ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~- */
