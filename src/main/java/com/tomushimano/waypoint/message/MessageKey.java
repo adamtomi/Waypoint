@@ -28,7 +28,7 @@ final class MessageKey implements ConfigKey<String> {
     public String readFrom(final ConfigurationSection config) {
         final String value = config.getString(this.key);
         if (value == null) {
-            LOGGER.warn("Unrecognized message key: {}", this.key);
+            LOGGER.warn("Message key \"{}\" was not found in the translation file.", this.key);
             return this.key;
         }
 

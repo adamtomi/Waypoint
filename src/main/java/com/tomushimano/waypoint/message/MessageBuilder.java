@@ -20,7 +20,7 @@ public interface MessageBuilder {
 
     interface Preset0 {
 
-        Message with(final Configurable config);
+        Message from(final Configurable config);
     }
 
     interface Processor1<V> {

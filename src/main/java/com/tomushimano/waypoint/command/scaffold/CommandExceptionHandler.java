@@ -6,6 +6,8 @@ import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.CommandChain;
@@ -30,13 +32,15 @@ public final class CommandExceptionHandler {
     /* Creates a comparator that compares command nodes based on their name */
     private static final Comparator<CommandNode> COMMAND_NODE_COMPARATOR =
             Comparator.comparing(CommandNode::name);
+    private final Configurable _messageConfig; // TODO rename
     private final MessageConfig messageConfig;
     private final Configurable commandConfig;
 
     @Inject
-    public CommandExceptionHandler(final MessageConfig messageConfig, final @Cmd Configurable commandConfig) {
+    public CommandExceptionHandler(final MessageConfig messageConfig, final @Cmd Configurable commandConfig, final @Lang Configurable _messageConfig) {
         this.messageConfig = messageConfig;
         this.commandConfig = commandConfig;
+        this._messageConfig = _messageConfig;
     }
 
     private static ConfigKey<String> dynamicKey(final String parent, final CommandArgument.Dynamic<?, ?> argument) {
@@ -53,12 +57,12 @@ public final class CommandExceptionHandler {
 
     private String formatArgument(final String parent, final CommandArgument.Dynamic<?, ?> argument) {
         final boolean optional = argument.isFlag();
-        final String prefix = this.messageConfig.get(optional
-                ? MessageKeys.Command.ARG_OPTIONAL_OPEN
-                : MessageKeys.Command.ARG_REQUIRED_OPEN).makeString();
-        final String suffix = this.messageConfig.get(optional
-                ? MessageKeys.Command.ARG_OPTIONAL_CLOSE
-                : MessageKeys.Command.ARG_REQUIRED_CLOSE).makeString();
+        final String prefix = optional
+                ? Messages.COMMAND__ARG_OPTIONAL_OPEN.from(this._messageConfig).raw()
+                : Messages.COMMAND__ARG_REQUIRED_OPEN.from(this._messageConfig).raw();
+        final String suffix = optional
+                ? Messages.COMMAND__ARG_OPTIONAL_CLOSE.from(this._messageConfig).raw()
+                : Messages.COMMAND__ARG_REQUIRED_CLOSE.from(this._messageConfig).raw();
 
         final StringBuilder builder = new StringBuilder(prefix);
         if (optional) {
@@ -139,7 +143,7 @@ public final class CommandExceptionHandler {
 
     public void handleDuplicateFlag(final CommandSender sender, final DuplicateFlagException ex) {
         printCommandArgPrefix(sender, ex);
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.DUPLICATE_FLAG).make());
+        Messages.COMMAND__DUPLICATE_FLAG.from(this._messageConfig).print(sender);
     }
 
     public void handleUnrecognizedFlag(final CommandSender sender, final UnrecognizedFlagException ex) {

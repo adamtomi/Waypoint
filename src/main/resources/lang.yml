@@ -50,7 +50,7 @@ navigation:
 
 waypoint:
   creation:
-    success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
+    success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{x}&8; &7{y}&8; &7{z}"
     already_exists: "&cMár létrehoztál &7&o\"{name}\" &cnévvel waypointot."
     failure: "&cHiba történt a waypoint létrehozása közben."
   deletion:

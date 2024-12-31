@@ -73,6 +73,6 @@ public class SetCommand implements CommandModule<CommandSender> {
 
         this.waypointService.createWaypoint(sender, name, color, global)
                 .thenAccept(x -> Messages.WAYPOINT__CREATION_SUCCESS.with(this.config, x).print(sender))
-                .exceptionally(capture(() -> Messages.WAYPOINT__CREATION_FAILURE.with(this.config).print(sender), "Failed to create waypoint", LOGGER));
+                .exceptionally(capture(() -> Messages.WAYPOINT__CREATION_FAILURE.from(this.config).print(sender), "Failed to create waypoint", LOGGER));
     }
 }
