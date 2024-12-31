@@ -9,4 +9,8 @@ public interface Message extends Printable {
     Component comp();
 
     net.minecraft.network.chat.Component nms();
+
+    static Message of(final String raw) {
+        return new MessageImpl(raw);
+    }
 }

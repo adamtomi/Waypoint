@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.slf4j.Logger;
 
 import java.util.concurrent.CompletionException;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class ExceptionUtil {
@@ -29,6 +30,7 @@ public final class ExceptionUtil {
         };
     }
 
+    @Deprecated
     public static <T> Function<Throwable, T> capture(
             final CommandSender sender,
             final Component message,
@@ -37,6 +39,18 @@ public final class ExceptionUtil {
     ) {
         return ex -> {
             sender.sendMessage(message);
+            capture(unwrap(ex), detail, logger);
+            return null;
+        };
+    }
+
+    public static <T> Function<Throwable, T> capture(
+            final Runnable action,
+            final String detail,
+            final Logger logger
+    ) {
+        return ex -> {
+            action.run();
             capture(unwrap(ex), detail, logger);
             return null;
         };
