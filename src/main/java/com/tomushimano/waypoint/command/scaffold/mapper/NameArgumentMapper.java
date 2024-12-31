@@ -10,7 +10,6 @@ import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
-import io.leangen.geantyref.TypeToken;
 import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
@@ -23,13 +22,12 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CHARACTER_CLASS;
 
 public class NameArgumentMapper extends AbstractArgumentMapper<CommandSender, String> {
-    private static final TypeToken<String> TYPE = TypeToken.get(String.class);
     private static final Pattern PATTERN = Pattern.compile("\\w+", CASE_INSENSITIVE | UNICODE_CHARACTER_CLASS);
     private final ArgumentMapper<CommandSender, String> delegateMapper;
 
     @Inject
     public NameArgumentMapper(final MessageConfig messageConfig) {
-        super(TYPE, false);
+        super(String.class, false);
         final Supplier<ArgumentMappingException> exceptionSupplier = () -> new VerboseArgumentMappingException(messageConfig.get(MessageKeys.Command.REGEX_ERROR)
                 .with(Placeholder.of("regex", PATTERN.pattern()))
                 .make());
