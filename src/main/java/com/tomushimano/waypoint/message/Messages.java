@@ -1,7 +1,10 @@
 package com.tomushimano.waypoint.message;
 
 import com.tomushimano.waypoint.core.Waypoint;
+import com.tomushimano.waypoint.util.BukkitUtil;
 import com.tomushimano.waypoint.util.DontInvokeMe;
+import com.tomushimano.waypoint.util.Position;
+import org.bukkit.OfflinePlayer;
 
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -145,11 +148,10 @@ public final class Messages {
     public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__CREATION_SUCCESS = keyed("waypoint.creation.success")
             .var1((raw, waypoint) -> process(
                     raw,
-                    template("name", waypoint.getName()),
-                    template("x", waypoint.getPosition().getX()),
-                    template("y", waypoint.getPosition().getY()),
-                    template("z", waypoint.getPosition().getZ()),
-                    template("world", waypoint.getPosition().getWorldName())
+                    concat(
+                            posToTemplates(waypoint.getPosition()),
+                            template("name", waypoint.getName())
+                    )
             ));
 
     public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__DELETION_SUCCESS = keyed("waypoint.deletion.success")
@@ -157,6 +159,70 @@ public final class Messages {
 
     public static final MessageBuilder.Preset0 WAYPOINT__DELETION_FAILURE = keyed("waypoint.deletion.failure")
             .var0();
+
+    public static final MessageBuilder.Preset1<Long> WAYPOINT__DISTANCE = keyed("waypoint.distance")
+            .var1((raw, distance) -> process(raw, template("distance", distance)));
+
+    public static final MessageBuilder.Preset2<Waypoint, OfflinePlayer> WAYPOINT__INFO = keyed("waypoint.info")
+            .var2((raw, waypoint, owner) -> process(
+                    raw,
+                    concat(
+                            posToTemplates(waypoint.getPosition()),
+                            template("name", waypoint.getName()),
+                            template("uniqueId", waypoint.getUniqueId()),
+                            template("owner", owner.getName()),
+                            template("global", waypoint.isGlobal()),
+                            template("color", waypoint.getColor().asHexString()),
+                            template("colorname", BukkitUtil.getColorName(waypoint.getColor()))
+                    )
+            ));
+
+    public static final MessageBuilder.Preset3<Integer, Integer, Integer> WAYPOINT__LIST_HEADER = keyed("waypoint.list.header")
+            .var3((raw, count, page, total) -> process(
+                    raw,
+                    template("count", count),
+                    template("page", page),
+                    template("total", total)
+            ));
+
+    public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__LIST_ITEM = keyed("waypoint.list.item")
+            .var1((raw, waypoint) -> process(
+                    raw,
+                    concat(posToTemplates(waypoint.getPosition()), template("name", waypoint.getName()))
+            ));
+
+    public static final MessageBuilder.Preset0 WAYPOINT__LIST_ITEM_HOVER = keyed("waypoint.list.item_hover")
+            .var0();
+
+    public static final MessageBuilder.Preset0 WAYPOINT__LIST_FOOTER_PREVIOUS = keyed("waypoint.list.footer_previous")
+            .var0();
+
+    public static final MessageBuilder.Preset0 WAYPOINT__LIST_FOOTER_SEPARATOR = keyed("waypoint.list.footer_separator")
+            .var0();
+
+    public static final MessageBuilder.Preset0 WAYPOINT__LIST_FOOTER_NEXT = keyed("waypoint.list.footer_next")
+            .var0();
+
+    public static final MessageBuilder.Preset0 WAYPOINT__LIST_EMPTY = keyed("waypoint.list.empty")
+            .var0();
+
+    public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__HOLOGRAM_COORDINATES = keyed("waypoint.hologram.coordinates")
+            .var1((raw, waypoint) -> process(raw, posToTemplates(waypoint.getPosition())));
+
+    public static final MessageBuilder.Preset1<OfflinePlayer> WAYPOINT__HOLOGRAM_OWNER = keyed("waypoint.hologram.owner")
+            .var1((raw, owner) -> process(raw, template("owner", owner.getName())));
+
+    public static final MessageBuilder.Preset1<String> WAYPOINT__NO_SUCH_WAYPOINT = keyed("waypoint.no_such_waypoint")
+            .var1((raw, name) -> process(raw, template("name", name)));
+
+    public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__UPDATE_SUCCESS = keyed("waypoint.update_success")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
+
+    public static final MessageBuilder.Preset0 WAYPOINT__UPDATE_FAILURE = keyed("waypoint.update_failure")
+            .var0();
+
+    public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__WORLD_ERROR = keyed("waypoint.world_error")
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
 
     private Messages() {
         throw new DontInvokeMe();
@@ -169,5 +235,21 @@ public final class Messages {
         }
 
         return output;
+    }
+
+    private static Template[] posToTemplates(final Position position) {
+        final Template[] templates = new Template[4];
+        templates[0] = template("world", position.getWorldName());
+        templates[1] = template("x", position.getX());
+        templates[2] = template("y", position.getY());
+        templates[3] = template("z", position.getZ());
+        return templates;
+    }
+
+    private static Template[] concat(final Template[] first, final Template... second) {
+        final Template[] result = new Template[first.length + second.length];
+        System.arraycopy(first, 0, result, 0, first.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
     }
 }

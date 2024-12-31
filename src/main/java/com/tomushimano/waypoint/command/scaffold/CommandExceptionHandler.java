@@ -14,13 +14,13 @@ import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import grapefruit.command.tree.node.CommandNode;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static com.tomushimano.waypoint.config.message.MessageKeys.messageKey;
 import static java.util.stream.Collectors.joining;
 
 public final class CommandExceptionHandler {
@@ -34,6 +34,27 @@ public final class CommandExceptionHandler {
     public CommandExceptionHandler(final @Cmd Configurable commandConfig, final @Lang Configurable langConfig) {
         this.commandConfig = commandConfig;
         this.langConfig = langConfig;
+    }
+
+    @Deprecated
+    private static ConfigKey<String> messageKey(final String key) {
+        return new ConfigKey<>() {
+            @Override
+            public String key() {
+                return key;
+            }
+
+            @Override
+            public String readFrom(final ConfigurationSection config) {
+                final String configured = config.getString(key);
+                // Using the key itself as fallback. Not ideal, but at least
+                // we don't get exceptions thrown around because of a missing
+                // message key.
+                if (configured == null) return key;
+
+                return configured;
+            }
+        };
     }
 
     private static ConfigKey<String> dynamicKey(final String parent, final CommandArgument.Dynamic<?, ?> argument) {

@@ -29,4 +29,9 @@ final class MessageBuilderImpl implements MessageBuilder {
     public <V0, V1> Preset2<V0, V1> var2(final Processor2<V0, V1> processor) {
         return (config, var0, var1) -> message(processor.apply(config.get(this.key), var0, var1));
     }
+
+    @Override
+    public <V0, V1, V2> Preset3<V0, V1, V2> var3(final Processor3<V0, V1, V2> processor) {
+        return (config, var0, var1, var2) -> message(processor.apply(config.get(this.key), var0, var1, var2));
+    }
 }

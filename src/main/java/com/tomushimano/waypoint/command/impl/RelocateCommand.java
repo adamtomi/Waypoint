@@ -1,10 +1,11 @@
 package com.tomushimano.waypoint.command.impl;
 
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
-import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
+import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.util.Position;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
@@ -25,11 +26,11 @@ public class RelocateCommand extends UpdateWaypointCommand {
     @Inject
     public RelocateCommand(
             final WaypointService waypointService,
-            final MessageConfig messageConfig,
+            final @Lang Configurable config,
             final CommandHelper helper,
             final NavigationService navigationService
     ) {
-        super(waypointService, messageConfig);
+        super(waypointService, config);
         this.helper = helper;
         this.navigationService = navigationService;
     }

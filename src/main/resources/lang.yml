@@ -61,18 +61,18 @@ waypoint:
     &8- &7UUID: &a{uniqueId}
     &8- &7Tulajdonos: &f{owner}
     &8- &7Globális: &f{global}
-    &8- &7Pozíció: &f{coordinates}
+    &8- &7Pozíció: &f&l{world} &7-> &f{x}&8; &f{y}&8; &f{z}
     &8- &7Színkód: &f{color} &o({colorname})
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
-    item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
+    item: " &7- &a&l{name}&8: &a{world} &8-> &7{x}&8; &7{y}&8; &z{z}"
     item_hover: "&2&l! &aKattints a koordináták kimásolásához!"
     footer_previous: "&8&l<&7Előző                  "
     footer_separator: "&8&l|"
     footer_next: "                  &7Következő&8&l>"
     empty: "&aNincs megjeleníthető waypoint."
   hologram:
-    coordinates: "&f{coordinates}"
+    coordinates: "&f{x}&7; &f{z}&7; &f{z}"
     owner: "&f&lTulajdonos&8: &7&o&n{owner}"
   no_such_waypoint: "&cNem található \"&l{name}&c\" nevű waypoint."
   update:

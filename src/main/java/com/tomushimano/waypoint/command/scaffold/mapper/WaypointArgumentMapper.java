@@ -1,11 +1,10 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
 import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.message.Messages;
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
@@ -27,18 +26,18 @@ import java.util.function.BiFunction;
 public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender, Waypoint> {
     private final BiFunction<WaypointService, Player, Set<Waypoint>> valueProvider;
     private final WaypointService waypointService;
-    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @AssistedInject
     public WaypointArgumentMapper(
             final @Assisted BiFunction<WaypointService, Player, Set<Waypoint>> valueProvider,
             final WaypointService waypointService,
-            final MessageConfig messageConfig
+            final Configurable config
     ) {
         super(Waypoint.class, false);
         this.valueProvider = valueProvider;
         this.waypointService = waypointService;
-        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     @Override
@@ -52,9 +51,7 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
                 .filter(x -> x.getName().equalsIgnoreCase(value))
                 .findFirst();
 
-        return candidate.orElseThrow(() -> new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Waypoint.NO_SUCH_WAYPOINT)
-                .with(Placeholder.of("name", value))
-                .make()));
+        return candidate.orElseThrow(() -> new VerboseArgumentMappingException(Messages.WAYPOINT__NO_SUCH_WAYPOINT.from(this.config, value).comp()));
     }
 
     @Override
