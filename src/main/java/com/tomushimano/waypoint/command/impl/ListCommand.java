@@ -7,6 +7,7 @@ import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.Paginator;
+import com.tomushimano.waypoint.util.Position;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
@@ -18,14 +19,15 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import java.util.Set;
+import java.util.function.Function;
 
-import static com.tomushimano.waypoint.util.BukkitUtil.formatPosition;
 import static grapefruit.command.argument.condition.CommandCondition.and;
 import static net.kyori.adventure.text.event.ClickEvent.copyToClipboard;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 
 public class ListCommand implements CommandModule<CommandSender> {
+    private static final Function<Position, String> POSITION_FORMATTER = pos -> "%.3f %.3f %.3f".formatted(pos.getX(), pos.getY(), pos.getZ());
     private static final Key<Boolean> HIDE_GLOBAL_KEY = Key.named(Boolean.class, "hide-global");
     private static final Key<Integer> PAGE_KEY = Key.named(Integer.class, "page");
     private final CommandHelper helper;
@@ -88,7 +90,7 @@ public class ListCommand implements CommandModule<CommandSender> {
                 .print(sender);
 
         for (final Waypoint waypoint : paginator.page(page)) {
-            final String formattedPosition = formatPosition(waypoint.getPosition());
+            final String formattedPosition = POSITION_FORMATTER.apply(waypoint.getPosition());
             final Component message = Messages.WAYPOINT__LIST_ITEM.from(this.config, waypoint).comp()
                     .hoverEvent(showText(Messages.WAYPOINT__LIST_ITEM_HOVER.from(this.config).comp()))
                     .clickEvent(copyToClipboard(formattedPosition));

@@ -15,10 +15,6 @@ public final class BukkitUtil {
         throw new DontInvokeMe();
     }
 
-    public static String formatPosition(final Position position) {
-        return "%.3f;%.3f;%.3f".formatted(position.getX(), position.getY(), position.getZ());
-    }
-
     public static String formatPlayer(final OfflinePlayer player) {
         return player.getName() +
                 "/" +
