@@ -2,7 +2,7 @@ package com.tomushimano.waypoint.message;
 
 import com.tomushimano.waypoint.config.Configurable;
 
-import static com.tomushimano.waypoint.message.MessageKey.messageKey;
+import static com.tomushimano.waypoint.config.ConfigKey.fallbackToKey;
 import static java.util.Objects.requireNonNull;
 
 public interface MessageBuilder {
@@ -17,7 +17,7 @@ public interface MessageBuilder {
 
     static MessageBuilder keyed(final String key) {
         requireNonNull(key, "key cannot be null");
-        return new MessageBuilderImpl(messageKey(key));
+        return new MessageBuilderImpl(fallbackToKey(key));
     }
 
     interface Preset0 {
