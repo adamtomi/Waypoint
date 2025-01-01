@@ -1,9 +1,9 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
 import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
 import grapefruit.command.completion.Completion;
@@ -24,12 +24,12 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     private static final String HEX_ALPHABET = "0123456789abcdef";
     private static final String[] HEX_CHAR_SET = HEX_ALPHABET.split("");
     private static final char HASH = '#';
-    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @Inject
-    public TextColorArgumentMapper(final MessageConfig messageConfig) {
+    public TextColorArgumentMapper(final @Lang Configurable config) {
         super(TextColor.class, false);
-        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
         if (value.charAt(0) == HASH) {
             final TextColor color = TextColor.fromCSSHexString(value);
             if (color == null) {
-                throw new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.MALFORMED_COLOR).make());
+                throw new VerboseArgumentMappingException(Messages.COMMAND__MALFORMED_COLOR.from(this.config).comp());
             }
 
             return color;
@@ -46,9 +46,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
 
         final NamedTextColor color = NamedTextColor.NAMES.value(value);
         if (color == null) {
-            throw new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.NO_SUCH_COLOR)
-                    .with(Placeholder.of("name", value))
-                    .make());
+            throw new VerboseArgumentMappingException(Messages.COMMAND__NO_SUCH_COLOR.from(this.config, value).comp());
         }
 
         return color;

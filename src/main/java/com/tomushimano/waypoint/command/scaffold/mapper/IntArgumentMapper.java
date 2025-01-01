@@ -1,9 +1,9 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
 import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
@@ -18,19 +18,18 @@ import org.bukkit.command.CommandSender;
 import static grapefruit.command.argument.mapper.builtin.NumericArgumentMapper.intMapper;
 
 public class IntArgumentMapper extends AbstractArgumentMapper<CommandSender, Integer> {
-    private final MessageConfig messageConfig;
+    private final Configurable config;
     private final ArgumentMapper<CommandSender, Integer> delegateMapper;
 
     @AssistedInject
-    public IntArgumentMapper(final @Assisted("min") int min, final @Assisted("max") int max, final MessageConfig messageConfig) {
+    public IntArgumentMapper(final @Assisted("min") int min, final @Assisted("max") int max, final @Lang Configurable config) {
         super(Integer.class, false);
-        this.messageConfig = messageConfig;
-        this.delegateMapper = delegate().filtering(new RangeFilter(messageConfig, min, max));
+        this.config = config;
+        this.delegateMapper = delegate().filtering(new RangeFilter(config, min, max));
     }
 
     private ArgumentMapper<CommandSender, Integer> delegate() {
-        return intMapper(() -> new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.MALFORMED_NUMBER)
-                .make()));
+        return intMapper(() -> new VerboseArgumentMappingException(Messages.COMMAND__MALFORMED_NUMBER.from(this.config).comp()));
     }
 
     @Override
@@ -45,16 +44,16 @@ public class IntArgumentMapper extends AbstractArgumentMapper<CommandSender, Int
     }
 
     private static final class RangeFilter implements ArgumentMapper.Filter<CommandSender, Integer> {
-        private final MessageConfig messageConfig;
+        private final Configurable config;
         private final int min;
         private final int max;
 
-        private RangeFilter(final MessageConfig messageConfig, final int min, final int max) {
+        private RangeFilter(final Configurable config, final int min, final int max) {
             if (min > max) {
                 throw new IllegalArgumentException("Expected min to be smaller than max");
             }
 
-            this.messageConfig = messageConfig;
+            this.config = config;
             this.min = min;
             this.max = max;
         }
@@ -63,9 +62,8 @@ public class IntArgumentMapper extends AbstractArgumentMapper<CommandSender, Int
         public void test(final CommandContext<CommandSender> context, Integer value) throws ArgumentMappingException {
             // return value >= this.min && value <= this.max;
             if (value < this.min || value > this.max) {
-                throw new VerboseArgumentMappingException(this.messageConfig.get(MessageKeys.Command.RANGE_ERROR)
-                        .with(Placeholder.of("min", this.min)) // Only include min value as that's what we really care about here.
-                        .make());
+                // Only include min value as that's what we really care about here.
+                throw new VerboseArgumentMappingException(Messages.COMMAND__RANGE_ERROR.from(this.config, this.min).comp());
             }
         }
     }

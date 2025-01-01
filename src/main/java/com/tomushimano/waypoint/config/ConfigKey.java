@@ -1,48 +1,48 @@
 package com.tomushimano.waypoint.config;
 
+import com.tomushimano.waypoint.config.parser.EnumParser;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public interface ConfigKey<T> {
 
     String key();
 
-    T readFrom(final ConfigurationSection config);
+    T parse(final ConfigurationSection config);
 
-    static <T> ConfigKey<T> simpleKey(final String key, final BiFunction<ConfigurationSection, String, T> parser) {
-        return new SimpleConfigKey<>(key, parser);
+    <O> ConfigKey<O> then(final Function<T, O> mapper);
+
+    static <T> ConfigKey<T> strictKey(final String key, final ConfigurationParser<T> parser) {
+        return new ParserBackedConfigKey<>(key, ConfigurationParser.strictParser(parser));
     }
 
     static ConfigKey<String> stringKey(final String key) {
-        return simpleKey(key, ConfigurationSection::getString);
+        return strictKey(key, ConfigurationSection::getString);
     }
 
-    static ConfigKey<Integer> integerKey(final String key) {
-        return simpleKey(key, ConfigurationSection::getInt);
+    static ConfigKey<Integer> intKey(final String key) {
+        return strictKey(key, ConfigurationSection::getInt);
     }
 
     static ConfigKey<Double> doubleKey(final String key) {
-        return simpleKey(key, ConfigurationSection::getDouble);
+        return strictKey(key, ConfigurationSection::getDouble);
     }
 
     static ConfigKey<Float> floatKey(final String key) {
-        return simpleKey(key, ($config, $key) -> {
-            final double d = $config.getDouble($key);
-            return (float) d;
-        });
+        return doubleKey(key).then(Number::floatValue);
     }
 
     static ConfigKey<Boolean> boolKey(final String key) {
-        return simpleKey(key, ConfigurationSection::getBoolean);
+        return strictKey(key, ConfigurationSection::getBoolean);
     }
 
     static <E extends Enum<E>> ConfigKey<E> enumKey(final String key, final Class<E> type) {
-        return simpleKey(key, (section, x) -> {
-            String value = section.getString(x);
-            return value == null
-                    ? null
-                    : Enum.valueOf(type, value.toUpperCase());
-        });
+        return strictKey(key, EnumParser.of(type));
+    }
+
+    // Config key that defaults to the key name itself if the backing parser returns null
+    static ConfigKey<String> fallbackToKey(final String key) {
+        return new FallbackConfigKey<>(new ParserBackedConfigKey<>(key, ConfigurationSection::getString), key);
     }
 }

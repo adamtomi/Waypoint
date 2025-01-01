@@ -4,9 +4,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.tomushimano.waypoint.config.ConfigKey;
 import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.dispatcher.CommandContext;
@@ -26,10 +26,10 @@ public class ConfirmationHandler implements ExecutionListener.Pre<CommandSender>
             .weakValues()
             .build();
     private final Configurable config;
-    private final MessageConfig messageConfig;
+    private final Configurable messageConfig;
 
     @Inject
-    public ConfirmationHandler(final @Cmd Configurable config, final MessageConfig messageConfig) {
+    public ConfirmationHandler(final @Cmd Configurable config, final @Lang Configurable messageConfig) {
         this.config = config;
         this.messageConfig = messageConfig;
     }
@@ -47,7 +47,7 @@ public class ConfirmationHandler implements ExecutionListener.Pre<CommandSender>
 
         final CommandChain<CommandSender> cachedChain = this.cache.getIfPresent(senderId);
         if (cachedChain == null) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.CONFIRMATION_REQUIRED).make());
+            Messages.COMMAND__CONFIRMATION_REQUIRED.from(this.messageConfig).print(sender);
             this.cache.put(senderId, chain);
             return false;
         }

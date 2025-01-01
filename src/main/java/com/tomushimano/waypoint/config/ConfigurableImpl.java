@@ -23,7 +23,7 @@ final class ConfigurableImpl implements Configurable {
     public <T> T get(final ConfigKey<T> key) {
         if (this.cache.containsKey(key)) return (T) this.cache.get(key);
 
-        final T result = key.readFrom(this.internalConfig);
+        final T result = key.parse(this.internalConfig);
         this.cache.put(key, result);
         return result;
     }

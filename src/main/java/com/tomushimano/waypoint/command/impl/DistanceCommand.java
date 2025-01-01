@@ -1,10 +1,10 @@
 package com.tomushimano.waypoint.command.impl;
 
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
@@ -20,12 +20,12 @@ import static grapefruit.command.argument.condition.CommandCondition.and;
 public class DistanceCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
     private final CommandHelper helper;
-    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @Inject
-    public DistanceCommand(final CommandHelper helper, final MessageConfig messageConfig) {
+    public DistanceCommand(final CommandHelper helper, final @Lang Configurable config) {
         this.helper = helper;
-        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     @Override
@@ -48,8 +48,6 @@ public class DistanceCommand implements CommandModule<CommandSender> {
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
 
         final long distance = waypoint.distance(sender);
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.DISTANCE)
-                .with(Placeholder.of("distance", distance))
-                .make());
+        Messages.WAYPOINT__DISTANCE.from(this.config, distance).print(sender);
     }
 }

@@ -1,11 +1,11 @@
 package com.tomushimano.waypoint.command.impl;
 
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.Paginator;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
@@ -30,17 +30,17 @@ public class ListCommand implements CommandModule<CommandSender> {
     private static final Key<Integer> PAGE_KEY = Key.named(Integer.class, "page");
     private final CommandHelper helper;
     private final WaypointService waypointService;
-    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @Inject
     public ListCommand(
             final CommandHelper helper,
             final WaypointService waypointService,
-            final MessageConfig messageConfig
+            final @Lang Configurable config
     ) {
         this.helper = helper;
         this.waypointService = waypointService;
-        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     @Override
@@ -67,37 +67,30 @@ public class ListCommand implements CommandModule<CommandSender> {
                 : this.waypointService.getAccessibleWaypoints(sender);
 
         if (waypoints.isEmpty()) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.LIST_EMPTY).make());
+            Messages.WAYPOINT__LIST_EMPTY.from(this.config).print(sender);
             return;
         }
 
         final Paginator<Waypoint> paginator = Paginator.create(waypoints.stream().sorted().toList());
 
-        final Component prevButton = this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_PREVIOUS).make()
+        final Component prevButton = Messages.WAYPOINT__LIST_FOOTER_PREVIOUS.from(this.config).comp()
                 .clickEvent(runCommand("/wp list -p %d".formatted(Math.max(0, page - 1))));
-        final Component nextButton = this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_NEXT).make()
+        final Component nextButton = Messages.WAYPOINT__LIST_FOOTER_NEXT.from(this.config).comp()
                 .clickEvent(runCommand("/wp list -p %d".formatted(Math.min(paginator.total(), page + 1))));
 
         final Component footer = Component.text()
                 .append(prevButton)
-                .append(this.messageConfig.get(MessageKeys.Waypoint.LIST_FOOTER_SEPARATOR).make())
+                .append(Messages.WAYPOINT__LIST_FOOTER_SEPARATOR.from(this.config).comp())
                 .append(nextButton)
                 .build();
 
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Waypoint.LIST_HEADER).with(
-                        Placeholder.of("count", waypoints.size()),
-                        Placeholder.of("page", paginator.normalize(page) + 1),
-                        Placeholder.of("totalpages", paginator.total()))
-                .make());
+        Messages.WAYPOINT__LIST_HEADER.from(this.config, waypoints.size(), paginator.normalize(page) + 1, paginator.total())
+                .print(sender);
 
         for (final Waypoint waypoint : paginator.page(page)) {
             final String formattedPosition = formatPosition(waypoint.getPosition());
-            final Component message = this.messageConfig.get(MessageKeys.Waypoint.LIST_ITEM).with(
-                            Placeholder.of("name", waypoint.getName()),
-                            Placeholder.of("world", waypoint.getPosition().getWorldName()),
-                            Placeholder.of("coordinates", formattedPosition))
-                    .make()
-                    .hoverEvent(showText(this.messageConfig.get(MessageKeys.Waypoint.LIST_ITEM_HOVER).make()))
+            final Component message = Messages.WAYPOINT__LIST_ITEM.from(this.config, waypoint).comp()
+                    .hoverEvent(showText(Messages.WAYPOINT__LIST_ITEM_HOVER.from(this.config).comp()))
                     .clickEvent(copyToClipboard(formattedPosition));
             sender.sendMessage(message);
         }

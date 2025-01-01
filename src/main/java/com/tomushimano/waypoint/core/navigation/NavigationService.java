@@ -2,9 +2,9 @@ package com.tomushimano.waypoint.core.navigation;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.config.message.MessageConfig;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
+import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.util.BukkitUtil;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
@@ -32,12 +32,12 @@ public class NavigationService {
     );
     private final Map<UUID, NavigationTask> activeNavigations = new ConcurrentHashMap<>();
     private final Configurable config;
-    private final MessageConfig messageConfig;
+    private final Configurable langConfig;
 
     @Inject
-    public NavigationService(final @Cfg Configurable config, final MessageConfig messageConfig) {
+    public NavigationService(final @Cfg Configurable config, final @Lang Configurable langConfig) {
         this.config = config;
-        this.messageConfig = messageConfig;
+        this.langConfig = langConfig;
     }
 
     private Optional<NavigationTask> navigation(final Player player) {
@@ -59,7 +59,7 @@ public class NavigationService {
                 navigationId,
                 player,
                 destination,
-                this.messageConfig,
+                this.langConfig,
                 this.config,
                 () -> {
                     arrivalHook.run();

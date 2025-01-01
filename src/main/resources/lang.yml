@@ -43,14 +43,13 @@ navigation:
   start_already_running: "&cMár elindítottad a navigálást. Vagy szakítsd meg, vagy futtasd le ezt a parancsot a &7--force &cflaggel."
   start_running_cancelled: "&cAz előző navigáció a(z) \"&7{name}&c\" waypointhoz meg lett szakítva."
   start_too_close: "&cTúl közel vagy ehhez a waypointhoz. Legalább &l{blocks} &cblokkra kell lenned, hogy elindíthasd a navigálást."
-  start_world_error: ""
   started: "&aNavigáció elindítva a következő waypointhoz: \"&7&o{name}&a\""
   stop_none_running: "&cNincs mit leállítani."
   stopped: "&aNavigálás a(z) &l{name} &awaypointhoz le lett állítva."
 
 waypoint:
   creation:
-    success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{coordinates}"
+    success: "&aWaypoint &o\"{name}\" &asikeresen létrehozva a(z) &l{world} &avilágban az alábbi koordinátákon: &7{x}&8; &7{y}&8; &7{z}"
     already_exists: "&cMár létrehoztál &7&o\"{name}\" &cnévvel waypointot."
     failure: "&cHiba történt a waypoint létrehozása közben."
   deletion:
@@ -62,18 +61,18 @@ waypoint:
     &8- &7UUID: &a{uniqueId}
     &8- &7Tulajdonos: &f{owner}
     &8- &7Globális: &f{global}
-    &8- &7Pozíció: &f{coordinates}
+    &8- &7Pozíció: &f&l{world} &8-> &f{x}&8; &f{y}&8; &f{z}
     &8- &7Színkód: &f{color} &o({colorname})
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
-    item: " &7- &a&l{name}&8: &a{world}&7, {coordinates}"
+    item: " &7- &a&l{name}&8: &a{world} &8-> &7{x}&8; &7{y}&8; &z{z}"
     item_hover: "&2&l! &aKattints a koordináták kimásolásához!"
     footer_previous: "&8&l<&7Előző                  "
     footer_separator: "&8&l|"
     footer_next: "                  &7Következő&8&l>"
     empty: "&aNincs megjeleníthető waypoint."
   hologram:
-    coordinates: "&f{coordinates}"
+    coordinates: "&f{x}&7; &f{z}&7; &f{z}"
     owner: "&f&lTulajdonos&8: &7&o&n{owner}"
   no_such_waypoint: "&cNem található \"&l{name}&c\" nevű waypoint."
   update:

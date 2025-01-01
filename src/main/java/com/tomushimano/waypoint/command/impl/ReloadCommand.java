@@ -2,10 +2,10 @@ package com.tomushimano.waypoint.command.impl;
 
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.ConfigHelper;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
@@ -17,19 +17,19 @@ import javax.inject.Inject;
 public class ReloadCommand implements CommandModule<CommandSender> {
     private final CommandHelper commandHelper;
     private final ConfigHelper configHelper;
-    private final MessageConfig messageConfig;
+    private final Configurable config;
     private final WaypointService waypointService;
 
     @Inject
     public ReloadCommand(
             final CommandHelper commandHelper,
             final ConfigHelper configHelper,
-            final MessageConfig messageConfig,
+            final @Lang Configurable config,
             final WaypointService waypointService
     ) {
         this.commandHelper = commandHelper;
         this.configHelper = configHelper;
-        this.messageConfig = messageConfig;
+        this.config = config;
         this.waypointService = waypointService;
     }
 
@@ -46,15 +46,13 @@ public class ReloadCommand implements CommandModule<CommandSender> {
         final long start = System.currentTimeMillis();
         final CommandSender sender = context.source();
 
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_INITIATED).make());
+        Messages.ADMIN__RELOAD_INITIATED.from(this.config).print(sender);
         if (!this.configHelper.reloadAll()) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_FAILURE).make());
+            Messages.ADMIN__RELOAD_FAILURE.from(this.config).print(sender);
         } else {
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
             long deltaT = System.currentTimeMillis() - start;
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Admin.RELOAD_SUCCESS)
-                    .with(Placeholder.of("duration", deltaT))
-                    .make());
+            Messages.ADMIN__RELOAD_SUCCESS.from(this.config, deltaT).print(sender);
         }
     }
 }

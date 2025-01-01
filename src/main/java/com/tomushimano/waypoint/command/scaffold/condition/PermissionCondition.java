@@ -1,8 +1,8 @@
 package com.tomushimano.waypoint.command.scaffold.condition;
 
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
@@ -13,20 +13,18 @@ import org.bukkit.command.CommandSender;
 
 public class PermissionCondition implements CommandCondition<CommandSender> {
     private final String permission;
-    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @AssistedInject
-    public PermissionCondition(final @Assisted String permission, final MessageConfig messageConfig) {
+    public PermissionCondition(final @Assisted String permission, final @Lang Configurable config) {
         this.permission = permission;
-        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     @Override
     public void test(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
         if (!context.source().hasPermission(this.permission)) {
-            throw new VerboseConditionException(this, this.messageConfig.get(MessageKeys.Command.INSUFFICIENT_PERMISSIONS)
-                    .with(Placeholder.of("permission", this.permission))
-                    .make());
+            throw new VerboseConditionException(this, Messages.COMMAND__INSUFFICIENT_PERMISSIONS.from(this.config, permission).comp());
         }
     }
 

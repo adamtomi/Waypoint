@@ -2,10 +2,9 @@ package com.tomushimano.waypoint.command.scaffold;
 
 import com.tomushimano.waypoint.config.ConfigKey;
 import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.CommandChain;
@@ -14,7 +13,6 @@ import grapefruit.command.argument.UnrecognizedFlagException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import grapefruit.command.tree.node.CommandNode;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 
 import javax.inject.Inject;
@@ -22,25 +20,24 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static com.tomushimano.waypoint.config.message.MessageKeys.messageKey;
-import static java.lang.String.join;
+import static com.tomushimano.waypoint.config.ConfigKey.fallbackToKey;
 import static java.util.stream.Collectors.joining;
 
 public final class CommandExceptionHandler {
     /* Creates a comparator that compares command nodes based on their name */
     private static final Comparator<CommandNode> COMMAND_NODE_COMPARATOR =
             Comparator.comparing(CommandNode::name);
-    private final MessageConfig messageConfig;
+    private final Configurable langConfig;
     private final Configurable commandConfig;
 
     @Inject
-    public CommandExceptionHandler(final MessageConfig messageConfig, final @Cmd Configurable commandConfig) {
-        this.messageConfig = messageConfig;
+    public CommandExceptionHandler(final @Cmd Configurable commandConfig, final @Lang Configurable langConfig) {
         this.commandConfig = commandConfig;
+        this.langConfig = langConfig;
     }
 
     private static ConfigKey<String> dynamicKey(final String parent, final CommandArgument.Dynamic<?, ?> argument) {
-        return messageKey("%s.%s".formatted(parent, argument.name()));
+        return fallbackToKey("%s.%s".formatted(parent, argument.name()));
     }
 
     private static String formatFlag(final String name) {
@@ -53,12 +50,12 @@ public final class CommandExceptionHandler {
 
     private String formatArgument(final String parent, final CommandArgument.Dynamic<?, ?> argument) {
         final boolean optional = argument.isFlag();
-        final String prefix = this.messageConfig.get(optional
-                ? MessageKeys.Command.ARG_OPTIONAL_OPEN
-                : MessageKeys.Command.ARG_REQUIRED_OPEN).makeString();
-        final String suffix = this.messageConfig.get(optional
-                ? MessageKeys.Command.ARG_OPTIONAL_CLOSE
-                : MessageKeys.Command.ARG_REQUIRED_CLOSE).makeString();
+        final String prefix = optional
+                ? Messages.COMMAND__ARG_OPTIONAL_OPEN.from(this.langConfig).raw()
+                : Messages.COMMAND__ARG_REQUIRED_OPEN.from(this.langConfig).raw();
+        final String suffix = optional
+                ? Messages.COMMAND__ARG_OPTIONAL_CLOSE.from(this.langConfig).raw()
+                : Messages.COMMAND__ARG_REQUIRED_CLOSE.from(this.langConfig).raw();
 
         final StringBuilder builder = new StringBuilder(prefix);
         if (optional) {
@@ -88,13 +85,7 @@ public final class CommandExceptionHandler {
     }
 
     private void printCommandArgPrefix(final CommandSender sender, final CommandArgumentException ex, final String prefix) {
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_ARGUMENT)
-                .with(
-                        Placeholder.of("argument", ex.argument()),
-                        Placeholder.of("consumed", prefix),
-                        Placeholder.of("remaining", ex.remaining().trim())
-                )
-                .make());
+        Messages.COMMAND__INVALID_ARGUMENT.from(this.langConfig, prefix, ex.argument(), ex.remaining().trim()).print(sender);
     }
 
     private void printCommandArgPrefix(final CommandSender sender, final CommandArgumentException ex) {
@@ -112,41 +103,35 @@ public final class CommandExceptionHandler {
     }
 
     public void handleSyntaxError(final CommandSender sender, final CommandSyntaxException ex) {
-        sender.sendMessage(this.messageConfig.get(ex.reason().equals(CommandSyntaxException.Reason.TOO_FEW_ARGUMENTS)
-                ? MessageKeys.Command.SYNTAX_ERROR_TOO_FEW
-                : MessageKeys.Command.SYNTAX_ERROR_TOO_MANY).make());
+        (ex.reason().equals(CommandSyntaxException.Reason.TOO_FEW_ARGUMENTS) ? Messages.COMMAND__SYNTAX_ERROR_TOO_FEW : Messages.COMMAND__SYNTAX_ERROR_TOO_MANY)
+                .from(this.langConfig)
+                .print(sender);
 
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.SYNTAX_HINT)
-                .with(Placeholder.of("syntax", formatSyntax(ex.chain())))
-                .make());
+        Messages.COMMAND__SYNTAX_HINT.from(this.langConfig, formatSyntax(ex.chain())).print(sender);
     }
 
     public void handleNoSuchCommand(final CommandSender sender, final NoSuchCommandException ex) {
         final String prefix = extractPrefix(ex);
         if (!ex.argument().isEmpty()) printCommandArgPrefix(sender, ex, prefix);
 
-        final List<Component> options = ex.alternatives().stream()
+        final List<CommandNode> options = ex.alternatives().stream()
                 .sorted(COMMAND_NODE_COMPARATOR)
-                .map(x -> this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND_ENTRY).with(
-                        Placeholder.of("prefix", prefix),
-                        Placeholder.of("name", x.name()),
-                        Placeholder.of("aliases", join(", ", x.aliases()))).make())
                 .toList();
 
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNKNOWN_SUBCOMMAND).make());
-        options.forEach(sender::sendMessage);
+        Messages.COMMAND__UNKNOWN_SUBCOMMAND.from(this.langConfig).print(sender);
+        for (final CommandNode node : options) {
+            Messages.COMMNAD__UNKNOWN_SUBCOMMAND_ENTRY.from(this.langConfig, prefix, node.name(), node.aliases()).print(sender);
+        }
     }
 
     public void handleDuplicateFlag(final CommandSender sender, final DuplicateFlagException ex) {
         printCommandArgPrefix(sender, ex);
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.DUPLICATE_FLAG).make());
+        Messages.COMMAND__DUPLICATE_FLAG.from(this.langConfig).print(sender);
     }
 
     public void handleUnrecognizedFlag(final CommandSender sender, final UnrecognizedFlagException ex) {
         printCommandArgPrefix(sender, ex);
-        sender.sendMessage(this.messageConfig.get(MessageKeys.Command.INVALID_FLAG)
-                .with(Placeholder.of("flag", ex.exactFlag()))
-                .make());
+        Messages.COMMAND__INVALID_FLAG.from(this.langConfig, ex.exactFlag()).print(sender);
     }
 
     public void handleCommandArgumentError(final CommandSender sender, final CommandArgumentException ex) {

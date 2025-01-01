@@ -1,9 +1,10 @@
 package com.tomushimano.waypoint.command.impl;
 
 import com.tomushimano.waypoint.command.scaffold.CommandHelper;
-import com.tomushimano.waypoint.config.message.MessageConfig;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.WaypointService;
+import com.tomushimano.waypoint.di.qualifier.Lang;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
@@ -27,10 +28,10 @@ public class EditCommand extends UpdateWaypointCommand {
     @Inject
     public EditCommand(
             final WaypointService waypointService,
-            final MessageConfig messageConfig,
+            final @Lang Configurable config,
             final CommandHelper helper
     ) {
-        super(waypointService, messageConfig);
+        super(waypointService, config);
         this.helper = helper;
     }
 

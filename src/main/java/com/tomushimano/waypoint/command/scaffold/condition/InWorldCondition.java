@@ -1,9 +1,9 @@
 package com.tomushimano.waypoint.command.scaffold.condition;
 
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
-import com.tomushimano.waypoint.config.message.Placeholder;
+import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
@@ -15,12 +15,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class InWorldCondition implements CommandCondition<CommandSender> {
-    private final MessageConfig messageConfig;
+    private final Configurable config;
     private final Key<Waypoint> waypointKey;
 
     @AssistedInject
-    public InWorldCondition(final MessageConfig messageConfig, final @Assisted Key<Waypoint> waypointKey) {
-        this.messageConfig = messageConfig;
+    public InWorldCondition(final @Lang Configurable config, final @Assisted Key<Waypoint> waypointKey) {
+        this.config = config;
         this.waypointKey = waypointKey;
     }
 
@@ -32,9 +32,7 @@ public class InWorldCondition implements CommandCondition<CommandSender> {
         final String expectedWorldName = waypoint.getPosition().getWorldName();
 
         if (!expectedWorldName.equals(player.getWorld().getName())) {
-            throw new VerboseConditionException(this, this.messageConfig.get(MessageKeys.Waypoint.WORLD_ERROR)
-                    .with(Placeholder.of("name", expectedWorldName))
-                    .make());
+            throw new VerboseConditionException(this, Messages.WAYPOINT__WORLD_ERROR.from(this.config, waypoint).comp());
         }
     }
 

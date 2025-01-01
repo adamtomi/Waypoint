@@ -7,8 +7,9 @@ import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
 import com.tomushimano.waypoint.command.scaffold.ConfirmationHandler;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
-import com.tomushimano.waypoint.config.message.MessageConfig;
-import com.tomushimano.waypoint.config.message.MessageKeys;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.di.qualifier.Lang;
+import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
@@ -61,7 +62,7 @@ public final class CommandManager implements CommandExecutor, Listener {
     private final CommandExceptionHandler exceptionHandler;
     private final ConfirmationHandler confirmationHandler;
     private final JavaPlugin plugin;
-    private final MessageConfig messageConfig;
+    private final Configurable config;
 
     @Inject
     public CommandManager(
@@ -70,14 +71,14 @@ public final class CommandManager implements CommandExecutor, Listener {
             final CommandExceptionHandler exceptionHandler,
             final ConfirmationHandler confirmationHandler,
             final JavaPlugin plugin,
-            final MessageConfig messageConfig
+            final @Lang Configurable config
     ) {
         this.dispatcher = dispatcherFactory.create(this);
         this.commands = commands;
         this.exceptionHandler = exceptionHandler;
         this.confirmationHandler = confirmationHandler;
         this.plugin = plugin;
-        this.messageConfig = messageConfig;
+        this.config = config;
     }
 
     public void register() {
@@ -169,7 +170,7 @@ public final class CommandManager implements CommandExecutor, Listener {
         } catch (final CommandArgumentException ex) {
             this.exceptionHandler.handleCommandArgumentError(sender, ex);
         } catch (final Throwable ex) {
-            sender.sendMessage(this.messageConfig.get(MessageKeys.Command.UNEXPECTED_ERROR).make());
+            Messages.COMMAND__UNEXPECTED_ERROR.from(this.config).print(sender);
             // Extract cause. CommandExecutionException wraps other exceptions, so
             // just call getCause() on it to unwrap the exception we're interested in.
             final Throwable cause = ex instanceof CommandExecutionException
