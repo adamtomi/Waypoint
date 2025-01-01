@@ -1,13 +1,13 @@
-package com.tomushimano.waypoint.config.util;
+package com.tomushimano.waypoint.config.parser;
 
 import com.google.common.collect.ImmutableMap;
+import com.tomushimano.waypoint.config.ConfigurationParser;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Map;
-import java.util.function.BiFunction;
 
-public class ColorParser implements BiFunction<ConfigurationSection, String, Color> {
+public class ColorParser implements ConfigurationParser<Color> {
     public static final ColorParser INSTANCE = new ColorParser();
     private static final char HASH = '#';
     private static final Map<String, Color> COLOR_BY_NAME = ImmutableMap.<String, Color>builder()
@@ -33,7 +33,7 @@ public class ColorParser implements BiFunction<ConfigurationSection, String, Col
     private ColorParser() {}
 
     @Override
-    public Color apply(final ConfigurationSection config, final String key) {
+    public Color parse(final ConfigurationSection config, final String key) {
         final String value = config.getString(key);
         if (value == null) return null;
 
