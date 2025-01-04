@@ -11,15 +11,14 @@ import dagger.assisted.AssistedFactory;
 import dagger.assisted.AssistedInject;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
-import grapefruit.command.completion.Completion;
-import grapefruit.command.completion.CompletionSupport;
+import grapefruit.command.completion.CompletionAccumulator;
+import grapefruit.command.completion.CompletionBuilder;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -56,9 +55,9 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     }
 
     @Override
-    public List<Completion> complete(final CommandContext<CommandSender> context, final String input) {
+    public CompletionAccumulator complete(final CommandContext<CommandSender> context, final CompletionBuilder builder) {
         final Set<Waypoint> candidates = this.valueProvider.apply(this.waypointService, (Player) context.source());
-        return CompletionSupport.strings(Waypoint::getName, candidates);
+        return builder.includeStrings(candidates, Waypoint::getName).build();
     }
 
     @AssistedFactory

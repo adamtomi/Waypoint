@@ -1,6 +1,7 @@
 package com.tomushimano.waypoint.di.module;
 
 import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
+import com.tomushimano.waypoint.command.scaffold.MinecraftCompletion;
 import com.tomushimano.waypoint.command.scaffold.bukkit.CommandMapAccess;
 import dagger.Module;
 import dagger.Provides;
@@ -18,6 +19,7 @@ public class CommandProvider {
     public CommandDispatcherFactory provideDispatcherFactory(final CommandMapAccess.Factory mapAccessFactory) {
         return commandManager -> CommandDispatcher.using(DispatcherConfig.<CommandSender>builder()
                 .registrations(mapAccessFactory.create(commandManager))
+                .completionFactory(MinecraftCompletion::noTooltip)
                 .build());
     }
 }
