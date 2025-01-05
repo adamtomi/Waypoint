@@ -118,7 +118,7 @@ public final class CommandManager implements CommandExecutor, Listener {
         for (final String arg : args) lineBuilder.add(arg);
 
         // Dispatch command asynchronously
-        this.executor.execute(() -> runCommand(sender, lineBuilder.toString()));
+        this.executor.execute(() -> dispatch(sender, lineBuilder.toString()));
 
         // Always return true. Not like it really matters
         return true;
@@ -156,7 +156,7 @@ public final class CommandManager implements CommandExecutor, Listener {
     }
 
     // Forward the command to the dispatcher
-    private void runCommand(final CommandSender sender, final String commandLine) {
+    private void dispatch(final CommandSender sender, final String commandLine) {
         try {
             this.dispatcher.dispatch(sender, commandLine);
         } catch (final CommandSyntaxException ex) {

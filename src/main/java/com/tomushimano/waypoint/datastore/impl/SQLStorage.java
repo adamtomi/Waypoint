@@ -29,14 +29,19 @@ import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
 public class SQLStorage implements Storage {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SQLStorage.class);
-    private final FutureFactory futureFactory = new FutureFactory();
     private final ConnectionFactory connectionFactory;
     private final Waypoint.Factory waypointFactory;
+    private final FutureFactory futureFactory;
 
     @Inject
-    public SQLStorage(final ConnectionFactory connectionFactory, final Waypoint.Factory waypointFactory) {
+    public SQLStorage(
+            final ConnectionFactory connectionFactory,
+            final Waypoint.Factory waypointFactory,
+            final FutureFactory futureFactory
+    ) {
         this.connectionFactory = connectionFactory;
         this.waypointFactory = waypointFactory;
+        this.futureFactory = futureFactory;
     }
 
     private List<String> readDeployFile() throws IOException {
@@ -69,6 +74,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public boolean connect() {
+        LOGGER.info("Connecting to database...");
         try (final Connection conn = this.connectionFactory.openConnection();
              final Statement stmt = conn.createStatement()) {
             final List<String> commands = readDeployFile();

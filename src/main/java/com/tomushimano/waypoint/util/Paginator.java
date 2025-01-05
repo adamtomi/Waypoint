@@ -2,7 +2,8 @@ package com.tomushimano.waypoint.util;
 
 import java.util.List;
 
-import static com.tomushimano.waypoint.util.DoubleCheck.requireState;
+import static com.tomushimano.waypoint.util.DoubleCheck.requireNonNegative;
+import static com.tomushimano.waypoint.util.DoubleCheck.requirePositive;
 import static java.util.Objects.requireNonNull;
 
 public class Paginator<T> {
@@ -13,8 +14,8 @@ public class Paginator<T> {
 
     private Paginator(final List<T> items, final int pageSize, final int total) {
         this.items = requireNonNull(items, "items cannot be null");
-        this.pageSize = requireState(pageSize, x -> x > 0, "page size must be greater than zero");
-        this.total = requireState(total, x -> x >= 0, "total cannot be negative");
+        this.pageSize = requirePositive(pageSize, "page size must be greater than zero");
+        this.total = requireNonNegative(total,  "total cannot be negative");
     }
 
     public static <T> Paginator<T> create(final List<T> items) {
