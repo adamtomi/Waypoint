@@ -82,6 +82,6 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
         }
 
         Messages.NAVIGATION__STARTED.from(this.langConfig, waypoint).print(sender);
-        this.navigationService.startNavigation(sender, waypoint, () -> Messages.NAVIGATION__ARRIVED.from(this.langConfig, waypoint).print(sender));
+        this.navigationService.startNavigation(sender, waypoint, x -> Messages.NAVIGATION__ARRIVED.from(this.langConfig, x).print(sender));
     }
 }

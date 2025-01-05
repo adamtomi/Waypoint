@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -23,7 +24,7 @@ public final class NavigationTask implements Runnable {
     private final Waypoint destination;
     private final Configurable langConfig;
     private final Configurable config;
-    private final Runnable callback;
+    private final Consumer<Waypoint> callback;
     private Location nextLocation;
     private boolean running = true;
     private Thread thread;
@@ -34,7 +35,7 @@ public final class NavigationTask implements Runnable {
             final Waypoint destination,
             final Configurable langConfig,
             final Configurable config,
-            final Runnable callback
+            final Consumer<Waypoint> callback
     ) {
         this.uniqueId = requireNonNull(uniqueId, "uniqueId cannot be null");
         this.player = requireNonNull(player, "player cannot be null");
@@ -131,7 +132,7 @@ public final class NavigationTask implements Runnable {
                 Thread.sleep(100L);
             }
 
-            this.callback.run();
+            this.callback.accept(this.destination);
         } catch (final InterruptedException ignored) {}
     }
 }

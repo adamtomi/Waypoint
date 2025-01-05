@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -48,7 +49,7 @@ public class NavigationService {
         return navigation(player).map(NavigationTask::destination);
     }
 
-    public void startNavigation(final Player player, final Waypoint destination, final Runnable arrivalHook) {
+    public void startNavigation(final Player player, final Waypoint destination, final Consumer<Waypoint> arrivalHook) {
         final UUID uniqueId = player.getUniqueId();
         if (this.activeNavigations.containsKey(uniqueId)) {
             throw new IllegalArgumentException("Player already has a particle stream running: '%s'".formatted(uniqueId));
@@ -61,8 +62,8 @@ public class NavigationService {
                 destination,
                 this.langConfig,
                 this.config,
-                () -> {
-                    arrivalHook.run();
+                x -> {
+                    arrivalHook.accept(x);
                     navigationFinished(uniqueId, navigationId);
                 }
         );
