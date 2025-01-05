@@ -123,7 +123,7 @@ public final class NavigationTask implements Runnable {
 
                 for (int y = maxY; y > origin.getBlockY(); y -= this.config.get(StandardKeys.Navigation.PARTICLE_DENSITY)) {
                     final Location loc = new Location(world, origin.getX(), y, origin.getZ());
-                    if (!world.getBlockAt(loc).getType().equals(Material.AIR)) continue;
+                    if (world.getBlockAt(loc).isSolid()) continue;
 
                     this.player.spawnParticle(Particle.DUST, loc, this.config.get(StandardKeys.Navigation.PARTICLE_COUNT), options);
                     Thread.sleep(10L);
