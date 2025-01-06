@@ -65,7 +65,7 @@ waypoint:
     &8- &7Színkód: &f{color} &o({colorname})
   list:
     header: "&aÖsszesen &l{count} &awaypoint érhető el számodra &7(&l{page}&8/&7{totalpages})"
-    item: " &7- &a&l{name}&8: &a{world} &8-> &7{x}&8; &7{y}&8; &z{z}"
+    item: " &7- &a&l{name}&8: &a{world} &8-> &7{x}&8; &7{y}&8; &7z{z}"
     item_hover: "&2&l! &aKattints a koordináták kimásolásához!"
     footer_previous: "&8&l<&7Előző                  "
     footer_separator: "&8&l|"
