@@ -14,7 +14,7 @@ command:
   insufficient_permissions: "&cNincs jogosultságod használni ezt a parancsot. \"&o({permission})&c\""
   invalid_argument: |-
     &cHibás argumentumot adtál meg: "&o{argument}&c"
-    &7/{consumed} &c&l&o{argument} &7{remaining}
+    &7/{consumed} &c&n&o{argument}&7 {remaining}
     &r
   invalid_flag: "&cIsmeretlen parancs flag: \"&o{flag}&c\""
   malformed_color: "&cÉrvénytelen színt adtál meg. Érvényes forma: &l#xxxxxx &7&o(x = 0->9, a->f)"
