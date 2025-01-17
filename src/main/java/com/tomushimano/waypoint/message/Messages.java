@@ -215,10 +215,10 @@ public final class Messages {
     public static final MessageBuilder.Preset1<String> WAYPOINT__NO_SUCH_WAYPOINT = keyed("waypoint.no_such_waypoint")
             .var1((raw, name) -> process(raw, template("name", name)));
 
-    public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__UPDATE_SUCCESS = keyed("waypoint.update_success")
+    public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__UPDATE_SUCCESS = keyed("waypoint.update.success")
             .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
 
-    public static final MessageBuilder.Preset0 WAYPOINT__UPDATE_FAILURE = keyed("waypoint.update_failure")
+    public static final MessageBuilder.Preset0 WAYPOINT__UPDATE_FAILURE = keyed("waypoint.update.failure")
             .var0();
 
     public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__WORLD_ERROR = keyed("waypoint.world_error")
