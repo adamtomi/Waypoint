@@ -35,7 +35,7 @@ final class HologramLineImpl implements HologramLine {
             SynchedEntityData.DataValue.create(EntityDataAccess.CUSTOM_NAME_VISIBLE, true), // Name should be visible
             SynchedEntityData.DataValue.create(EntityDataAccess.NO_GRAVITY, true), // Should have no gravity - we don't want hologram lines to "fall"
             SynchedEntityData.DataValue.create(EntityDataAccess.ARMOR_STAND_CLIENT_FLAGS, ARMOR_STAND_CLIENT_FLAGS), // Apply the above flags
-            SynchedEntityData.DataValue.create(EntityDataAccess.ENTITY_CLIENT_FLAGS, (byte) (1 << Entity.FLAG_INVISIBLE)) // Make th armor stand invisible
+            SynchedEntityData.DataValue.create(EntityDataAccess.ENTITY_CLIENT_FLAGS, (byte) (1 << Entity.FLAG_INVISIBLE)) // Make the armor stand invisible
     );
     // Factory generating the default spawn packet
     private static final TriFunction<Integer, UUID, Position, Packet<?>> SPAWN_PACKET_FACTPORY = (id, uniqueId, position) -> new ClientboundAddEntityPacket(
