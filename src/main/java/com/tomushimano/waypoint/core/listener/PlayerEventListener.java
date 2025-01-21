@@ -38,8 +38,8 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
         final Player player = event.getPlayer();
-        this.waypointService.unloadWaypoints(player);
         this.navigationService.stopNavigation(player);
+        this.waypointService.unloadWaypoints(player);
     }
 
     @EventHandler
