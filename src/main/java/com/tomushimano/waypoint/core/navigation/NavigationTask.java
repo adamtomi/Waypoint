@@ -111,7 +111,7 @@ public final class NavigationTask implements Runnable {
 
                 // Update action bar message
                 Messages.NAVIGATION__DISTANCE_INDICATOR.from(this.langConfig, this.destination.distance(this.player))
-                        .printActionBar(player);
+                        .printActionBar(this.player);
 
                 final Location origin = this.nextLocation;
                 final World world = origin.getWorld();

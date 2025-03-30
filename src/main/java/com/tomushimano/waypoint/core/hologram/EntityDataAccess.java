@@ -30,7 +30,7 @@ public final class EntityDataAccess {
             }
 
             field.setAccessible(true);
-            return (EntityDataAccessor<T>) field.get(null); // Fields are expected to be static, so passing null is fine
+            return (EntityDataAccessor<T>) field.get(null);
         } catch (final ReflectiveOperationException ex) {
             throw new RuntimeException(ex);
         }
