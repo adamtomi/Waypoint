@@ -2,6 +2,7 @@
 database:
   # Available database types at the moment:
   # - sqlite
+  # - mysql
   type: "sqlite"
   # SQLite-related settings
   sqlite:
