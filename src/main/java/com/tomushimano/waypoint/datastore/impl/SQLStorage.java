@@ -6,6 +6,7 @@ import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;
 import com.tomushimano.waypoint.datastore.StorageKind;
+import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.TextColor;
@@ -42,7 +43,7 @@ public class SQLStorage implements Storage {
             final ConnectionFactory connectionFactory,
             final Waypoint.Factory waypointFactory,
             final FutureFactory futureFactory,
-            final Configurable config
+            final @Cfg Configurable config
     ) {
         this.connectionFactory = connectionFactory;
         this.waypointFactory = waypointFactory;
