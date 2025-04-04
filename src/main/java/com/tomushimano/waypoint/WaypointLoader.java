@@ -68,7 +68,7 @@ public final class WaypointLoader {
 
     public void unload() {
         this.navigationService.performShutdown();
-        this.commandManager.shutdown();
+        this.commandManager.unregister();
         this.storageHolder.get().disconnect();
     }
 

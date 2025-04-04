@@ -1,9 +1,6 @@
 package com.tomushimano.waypoint.command;
 
-import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.tomushimano.waypoint.command.scaffold.CommandDispatcherFactory;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
 import com.tomushimano.waypoint.command.scaffold.ConfirmationHandler;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
@@ -13,21 +10,24 @@ import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
+import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandArgumentException;
+import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
+import grapefruit.command.completion.CommandCompletion;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandExecutionException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
+import grapefruit.command.dispatcher.config.DispatcherConfig;
 import grapefruit.command.tree.NoSuchCommandException;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import grapefruit.command.util.key.Key;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -39,24 +39,25 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.UnaryOperator;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
-import static grapefruit.command.util.StringUtil.containsIgnoreCase;
-import static java.lang.String.join;
+import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS;
 
 @Singleton
-public final class CommandManager implements CommandExecutor, Listener {
+public final class CommandManager {
     /* Removes the leading '/' from command strings */
-    private static final UnaryOperator<String> STRIP_LEADING_SLASH = in -> in.startsWith("/") ? in.substring(1) : in;
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
     /* Create a threadpool for command execution */
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
     );
-    /* Completions will be provided by this manager for tracked aliases only. */
-    private final Set<String> trackedAliases = new HashSet<>();
-    private final CommandDispatcher<CommandSender> dispatcher;
+    private final DispatcherConfig<CommandSender> dispatcherConfig = DispatcherConfig.<CommandSender>builder()
+            .eagerFlagCompletions()
+            .register(this::onCommandRegistration)
+            .build();
+    private final CommandDispatcher<CommandSender> dispatcher = CommandDispatcher.using(this.dispatcherConfig);
+    private final Set<Key<String>> knownRootCommands = new HashSet<>();
+    private final Set<WpRootCommand> pendingRegistrations = new HashSet<>();
     private final Set<CommandModule<CommandSender>> commands;
     private final CommandExceptionHandler exceptionHandler;
     private final ConfirmationHandler confirmationHandler;
@@ -65,14 +66,12 @@ public final class CommandManager implements CommandExecutor, Listener {
 
     @Inject
     public CommandManager(
-            final CommandDispatcherFactory dispatcherFactory,
             final Set<CommandModule<CommandSender>> commands,
             final CommandExceptionHandler exceptionHandler,
             final ConfirmationHandler confirmationHandler,
             final JavaPlugin plugin,
             final @Lang Configurable config
     ) {
-        this.dispatcher = dispatcherFactory.create(this);
         this.commands = commands;
         this.exceptionHandler = exceptionHandler;
         this.confirmationHandler = confirmationHandler;
@@ -82,81 +81,49 @@ public final class CommandManager implements CommandExecutor, Listener {
 
     public void register() {
         LOGGER.info("Registering commands...");
-        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         this.dispatcher.subscribe(this.confirmationHandler);
         // Register command handlers
         this.dispatcher.register(this.commands);
+        this.plugin.getLifecycleManager().registerEventHandler(COMMANDS, event -> registerPendingCommands(event.registrar()));
     }
 
-    public void shutdown() {
-        HandlerList.unregisterAll(this);
-        this.trackedAliases.clear();
+    public void unregister() {
         this.dispatcher.unregister(this.commands);
         this.dispatcher.unsubscribe(this.confirmationHandler);
         LOGGER.info("Shutting down async executor");
         ConcurrentUtil.terminate(this.executor, 1L);
     }
 
-    public void track(final Collection<String> aliases) {
-        this.trackedAliases.addAll(aliases);
-    }
-
-    public void untrack(final Collection<String> aliases) {
-        this.trackedAliases.removeAll(aliases);
-    }
-
-    @Override
-    public boolean onCommand(
-            final @NotNull CommandSender sender,
-            final @NotNull Command command,
-            final @NotNull String label,
-            final @NotNull String[] args
-    ) {
-        // Build command line
-        final StringJoiner lineBuilder = new StringJoiner(" ");
-        lineBuilder.add(label);
-        for (final String arg : args) lineBuilder.add(arg);
-
-        // Dispatch command asynchronously
-        this.executor.execute(() -> dispatch(sender, lineBuilder.toString()));
-
-        // Always return true. Not like it really matters
+    private boolean onCommandRegistration(final CommandChain<CommandSender> chain) {
+        register(chain);
         return true;
     }
 
-    @EventHandler
-    public void onTabComplete(final AsyncTabCompleteEvent event) {
-        final String buffer = event.getBuffer();
-        // If this is not a command, we don't want to proceed
-        if ((!event.isCommand() && !buffer.startsWith("/")) || buffer.indexOf(' ') == -1) return;
+    private void register(final CommandChain<CommandSender> chain) {
+        final CommandArgument.Literal<CommandSender> root = chain.route().getFirst();
+        if (this.knownRootCommands.contains(root.key())) return;
 
-        /*
-         * Collect args into a list. The list needs to be mutable, that's
-         * why List#of is not an option here.
-         */
-        final List<String> args = Lists.newArrayList(buffer.split(" ", -1));
+        this.knownRootCommands.add(root.key());
+        final WpRootCommand command = new WpRootCommand(root, this);
+        this.pendingRegistrations.add(command);
+    }
 
-        // Get rid of leading '/' character
-        final String root = STRIP_LEADING_SLASH.apply(args.getFirst());
+    private void registerPendingCommands(final Commands registrar) {
+        for (final WpRootCommand command : this.pendingRegistrations) {
+            final CommandArgument.Literal<CommandSender> literal = command.literal;
+            registrar.register(literal.name(), literal.aliases(), command);
+        }
 
-        // See, if we need to provide completions for this event.
-        // If we don't track this alias currently, we don't proceed.
-        if (!containsIgnoreCase(root, this.trackedAliases)) return;
+        LOGGER.info("Registered {} pending command(s)", this.pendingRegistrations.size());
+        this.pendingRegistrations.clear();
+    }
 
-        // Replace the first argument so that it doesn't contain the leading '/' anymore.
-        if (args.size() > 1) args.set(0, root);
-
-        final List<AsyncTabCompleteEvent.Completion> completions = this.dispatcher.complete(event.getSender(), join(" ", args))
-                .stream()
-                .map(AsyncTabCompleteEvent.Completion.class::cast)
-                .toList();
-
-        event.completions(completions);
-        event.setHandled(true);
+    private void performCommand(final CommandSender sender, final String commandLine) {
+        this.executor.execute(() -> performCommand0(sender, commandLine));
     }
 
     // Forward the command to the dispatcher
-    private void dispatch(final CommandSender sender, final String commandLine) {
+    private void performCommand0(final CommandSender sender, final String commandLine) {
         try {
             this.dispatcher.dispatch(sender, commandLine);
         } catch (final CommandSyntaxException ex) {
@@ -179,6 +146,44 @@ public final class CommandManager implements CommandExecutor, Listener {
                     ? ex.getCause()
                     : ex;
             capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
+        }
+    }
+
+    private List<String> listCompletions(final CommandSender sender, final String commandLine) {
+        return this.dispatcher.complete(sender, commandLine)
+                .stream()
+                .map(CommandCompletion::completion)
+                .toList();
+    }
+
+    @NullMarked
+    private static final class WpRootCommand implements BasicCommand {
+        private final CommandArgument.Literal<CommandSender> literal;
+        private final CommandManager manager;
+
+        WpRootCommand(
+                final CommandArgument.Literal<CommandSender> literal,
+                final CommandManager manager
+        ) {
+            this.literal = literal;
+            this.manager = manager;
+        }
+
+        private String rebuildArgs(final String[] args) {
+            final StringJoiner joiner = new StringJoiner(" ");
+            joiner.add(this.literal.name());
+            for (final String arg : args) joiner.add(arg);
+            return joiner.toString();
+        }
+
+        @Override
+        public void execute(final CommandSourceStack source, final String[] args) {
+            this.manager.performCommand(source.getSender(), rebuildArgs(args));
+        }
+
+        @Override
+        public Collection<String> suggest(final CommandSourceStack source, final String[] args) {
+            return this.manager.listCompletions(source.getSender(), rebuildArgs(args));
         }
     }
 }
