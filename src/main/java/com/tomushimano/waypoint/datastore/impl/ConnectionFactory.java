@@ -4,12 +4,13 @@ import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.datastore.StorageKind;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
+import com.tomushimano.waypoint.di.qualifier.DataDir;
 import com.tomushimano.waypoint.util.Memoized;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -18,12 +19,12 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class ConnectionFactory implements AutoCloseable {
     private final Memoized<HikariDataSource> dataSource = Memoized.of(this::createDataSource);
-    private final JavaPlugin plugin;
+    private final Path dataFolder;
     private final Configurable config;
 
     @Inject
-    public ConnectionFactory(final JavaPlugin plugin, final @Cfg Configurable config) {
-        this.plugin = plugin;
+    public ConnectionFactory(final @DataDir Path dataFolder, final @Cfg Configurable config) {
+        this.dataFolder = dataFolder;
         this.config = config;
     }
 
@@ -37,7 +38,7 @@ public class ConnectionFactory implements AutoCloseable {
 
         if (this.config.get(StandardKeys.Database.TYPE).equals(StorageKind.SQLITE)) {
             config.setDriverClassName("org.sqlite.JDBC");
-            config.setJdbcUrl("jdbc:sqlite:%s".formatted(this.plugin.getDataPath().resolve(this.config.get(StandardKeys.Database.FILE_NAME))));
+            config.setJdbcUrl("jdbc:sqlite:%s".formatted(this.dataFolder.resolve(this.config.get(StandardKeys.Database.FILE_NAME))));
         } else {
             config.setDriverClassName("com.mysql.jdbc.Driver");
             config.setJdbcUrl(createJdbcUrl(

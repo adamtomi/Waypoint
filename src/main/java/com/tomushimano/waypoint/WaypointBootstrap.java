@@ -1,31 +1,25 @@
 package com.tomushimano.waypoint;
 
 import com.tomushimano.waypoint.di.DaggerWaypointComponent;
+import com.tomushimano.waypoint.di.WaypointComponent;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class WaypointBootstrap implements PluginBootstrap {
-    private WaypointLoader loader;
 
     @Override
-    public void bootstrap(final @NotNull BootstrapContext context) {}
+    public void bootstrap(final BootstrapContext context) {}
 
     @Override
-    public @NotNull JavaPlugin createPlugin(final @NotNull PluginProviderContext context) {
-        // Very nice solution, yay, much wow.
-        final JavaPlugin plugin = new WaypointPlugin(
-                () -> this.loader.load(),
-                () -> this.loader.unload()
-        );
+    public JavaPlugin createPlugin(final PluginProviderContext context) {
+        final WaypointComponent component = DaggerWaypointComponent.builder()
+                .dataDir(context.getDataDirectory())
+                .build();
 
-        this.loader = DaggerWaypointComponent.builder()
-                .plugin(plugin)
-                .build()
-                .instance();
-
-        return plugin;
+        return new WaypointPlugin(component);
     }
 }
