@@ -80,8 +80,7 @@ public class SQLStorage implements Storage {
     }
 
     @Override
-    public boolean connect() {
-        LOGGER.info("Connecting to database...");
+    public void connect() throws SQLException {
         try (final Connection conn = this.connectionFactory.openConnection();
              final Statement stmt = conn.createStatement()) {
             final List<String> commands = readDeployFile();
@@ -89,19 +88,16 @@ public class SQLStorage implements Storage {
             stmt.executeBatch();
 
             LOGGER.info("Connection established successfully!");
-            return true;
-        } catch (final IOException | SQLException ex) {
-            capture(ex, "Failed to connect to database", LOGGER);
+        } catch (final IOException ex) {
+            throw new SQLException(ex);
         }
-
-        return false;
     }
 
     @Override
     public void disconnect() {
-        LOGGER.info("Closing connection...");
         this.connectionFactory.close();
         this.futureFactory.close();
+        LOGGER.info("Connection closed successfully!");
     }
 
     private String insertionSQL() {
