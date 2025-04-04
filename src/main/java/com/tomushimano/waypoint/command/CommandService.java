@@ -42,7 +42,6 @@ import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMM
 @Singleton
 @NullMarked
 public final class CommandService {
-    /* Removes the leading '/' from command strings */
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandService.class);
     /* Create a threadpool for command execution */
     private final ExecutorService executor = Executors.newCachedThreadPool(
