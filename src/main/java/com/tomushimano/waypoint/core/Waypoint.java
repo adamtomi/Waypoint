@@ -7,8 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -124,7 +123,7 @@ public class Waypoint implements Comparable<Waypoint> {
     }
 
     @Override
-    public int compareTo(final @NotNull Waypoint waypoint) {
+    public int compareTo(final Waypoint waypoint) {
         return this.name.compareToIgnoreCase(waypoint.name);
     }
 

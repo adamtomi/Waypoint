@@ -12,7 +12,6 @@ import grapefruit.command.util.key.Key;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
@@ -55,8 +54,8 @@ public class EditCommand extends UpdateWaypointCommand {
     public void execute(final CommandContext<CommandSender> context) {
         final Player sender = (Player) context.source();
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
-        final @Nullable String name = context.nullable(NAME_KEY);
-        final @Nullable TextColor color = context.nullable(COLOR_KEY);
+        final String name = context.nullable(NAME_KEY);
+        final TextColor color = context.nullable(COLOR_KEY);
         final boolean toggleGlobality = context.has(TOGGLE_GLOBALITY_KEY);
 
         if (name != null) waypoint.setName(name);
