@@ -25,8 +25,9 @@ import grapefruit.command.util.key.Key;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
@@ -44,6 +45,7 @@ import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS;
 
 @Singleton
+@NullMarked
 public final class CommandService {
     /* Removes the leading '/' from command strings */
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandService.class);
@@ -61,7 +63,6 @@ public final class CommandService {
     private final Set<CommandModule<CommandSender>> commands;
     private final CommandExceptionHandler exceptionHandler;
     private final ConfirmationHandler confirmationHandler;
-    private final JavaPlugin plugin;
     private final Configurable config;
 
     @Inject
@@ -69,22 +70,20 @@ public final class CommandService {
             final Set<CommandModule<CommandSender>> commands,
             final CommandExceptionHandler exceptionHandler,
             final ConfirmationHandler confirmationHandler,
-            final JavaPlugin plugin,
             final @Lang Configurable config
     ) {
         this.commands = commands;
         this.exceptionHandler = exceptionHandler;
         this.confirmationHandler = confirmationHandler;
-        this.plugin = plugin;
         this.config = config;
     }
 
-    public void register() {
+    public void register(final LifecycleEventManager<Plugin> eventManager) {
         LOGGER.info("Registering commands...");
         this.dispatcher.subscribe(this.confirmationHandler);
         // Register command handlers
         this.dispatcher.register(this.commands);
-        this.plugin.getLifecycleManager().registerEventHandler(COMMANDS, event -> registerPendingCommands(event.registrar()));
+        eventManager.registerEventHandler(COMMANDS, event -> registerPendingCommands(event.registrar()));
     }
 
     public void unregister() {

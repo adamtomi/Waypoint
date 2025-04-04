@@ -24,6 +24,7 @@ public final class WaypointBootstrap implements PluginBootstrap {
 
         this.loader = DaggerWaypointComponent.builder()
                 .plugin(plugin)
+                .dataDir(context.getDataDirectory())
                 .build()
                 .instance();
 

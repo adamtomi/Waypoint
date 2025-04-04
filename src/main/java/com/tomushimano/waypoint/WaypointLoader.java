@@ -62,7 +62,7 @@ public final class WaypointLoader {
         // Could not establish a connection to database, return here
         if (!this.storageHolder.get().connect()) fail();
 
-        this.commandService.register();
+        this.commandService.register(this.plugin.getLifecycleManager());
         registerListeners();
     }
 
