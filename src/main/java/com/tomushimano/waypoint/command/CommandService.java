@@ -4,9 +4,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
 import com.tomushimano.waypoint.command.scaffold.ConfirmationHandler;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
-import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.di.qualifier.Lang;
-import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.ConcurrentUtil;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
@@ -17,7 +14,6 @@ import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
 import grapefruit.command.completion.CommandCompletion;
 import grapefruit.command.dispatcher.CommandDispatcher;
-import grapefruit.command.dispatcher.CommandExecutionException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.dispatcher.config.DispatcherConfig;
 import grapefruit.command.tree.NoSuchCommandException;
@@ -41,7 +37,6 @@ import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS;
 
 @Singleton
@@ -63,19 +58,16 @@ public final class CommandService {
     private final Set<CommandModule<CommandSender>> commands;
     private final CommandExceptionHandler exceptionHandler;
     private final ConfirmationHandler confirmationHandler;
-    private final Configurable config;
 
     @Inject
     public CommandService(
             final Set<CommandModule<CommandSender>> commands,
             final CommandExceptionHandler exceptionHandler,
-            final ConfirmationHandler confirmationHandler,
-            final @Lang Configurable config
+            final ConfirmationHandler confirmationHandler
     ) {
         this.commands = commands;
         this.exceptionHandler = exceptionHandler;
         this.confirmationHandler = confirmationHandler;
-        this.config = config;
     }
 
     public void register(final LifecycleEventManager<Plugin> eventManager) {
@@ -138,13 +130,7 @@ public final class CommandService {
         } catch (final CommandArgumentException ex) {
             this.exceptionHandler.handleCommandArgumentError(sender, ex);
         } catch (final Throwable ex) {
-            Messages.COMMAND__UNEXPECTED_ERROR.from(this.config).print(sender);
-            // Extract cause. CommandExecutionException wraps other exceptions, so
-            // just call getCause() on it to unwrap the exception we're interested in.
-            final Throwable cause = ex instanceof CommandExecutionException
-                    ? ex.getCause()
-                    : ex;
-            capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
+            this.exceptionHandler.handleGenericCommandError(sender, commandLine, ex);
         }
     }
 
