@@ -44,9 +44,9 @@ import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS;
 
 @Singleton
-public final class CommandManager {
+public final class CommandService {
     /* Removes the leading '/' from command strings */
-    private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandManager.class);
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandService.class);
     /* Create a threadpool for command execution */
     private final ExecutorService executor = Executors.newCachedThreadPool(
             new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
@@ -65,7 +65,7 @@ public final class CommandManager {
     private final Configurable config;
 
     @Inject
-    public CommandManager(
+    public CommandService(
             final Set<CommandModule<CommandSender>> commands,
             final CommandExceptionHandler exceptionHandler,
             final ConfirmationHandler confirmationHandler,
@@ -159,14 +159,14 @@ public final class CommandManager {
     @NullMarked
     private static final class WpRootCommand implements BasicCommand {
         private final CommandArgument.Literal<CommandSender> literal;
-        private final CommandManager manager;
+        private final CommandService service;
 
         WpRootCommand(
                 final CommandArgument.Literal<CommandSender> literal,
-                final CommandManager manager
+                final CommandService service
         ) {
             this.literal = literal;
-            this.manager = manager;
+            this.service = service;
         }
 
         private String rebuildArgs(final String[] args) {
@@ -178,12 +178,12 @@ public final class CommandManager {
 
         @Override
         public void execute(final CommandSourceStack source, final String[] args) {
-            this.manager.performCommand(source.getSender(), rebuildArgs(args));
+            this.service.performCommand(source.getSender(), rebuildArgs(args));
         }
 
         @Override
         public Collection<String> suggest(final CommandSourceStack source, final String[] args) {
-            return this.manager.listCompletions(source.getSender(), rebuildArgs(args));
+            return this.service.listCompletions(source.getSender(), rebuildArgs(args));
         }
     }
 }
