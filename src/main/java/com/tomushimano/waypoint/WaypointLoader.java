@@ -1,6 +1,6 @@
 package com.tomushimano.waypoint;
 
-import com.tomushimano.waypoint.command.CommandManager;
+import com.tomushimano.waypoint.command.CommandService;
 import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
@@ -22,7 +22,7 @@ import static com.tomushimano.waypoint.util.IOUtil.copyResourceIfNotExists;
 public final class WaypointLoader {
     private static final Logger LOGGER = NamespacedLoggerFactory.create("Main");
     private final JavaPlugin plugin;
-    private final CommandManager commandManager;
+    private final CommandService commandService;
     private final Set<Listener> listeners;
     private final ConfigHelper configHelper;
     private final StorageHolder storageHolder;
@@ -31,14 +31,14 @@ public final class WaypointLoader {
     @Inject
     public WaypointLoader(
             final JavaPlugin plugin,
-            final CommandManager commandManager,
+            final CommandService commandService,
             final Set<Listener> listeners,
             final ConfigHelper configHelper,
             final StorageHolder storageHolder,
             final NavigationService navigationService
     ) {
         this.plugin = plugin;
-        this.commandManager = commandManager;
+        this.commandService = commandService;
         this.listeners = listeners;
         this.configHelper = configHelper;
         this.storageHolder = storageHolder;
@@ -62,13 +62,13 @@ public final class WaypointLoader {
         // Could not establish a connection to database, return here
         if (!this.storageHolder.get().connect()) fail();
 
-        this.commandManager.register();
+        this.commandService.register();
         registerListeners();
     }
 
     public void unload() {
         this.navigationService.performShutdown();
-        this.commandManager.shutdown();
+        this.commandService.unregister();
         this.storageHolder.get().disconnect();
     }
 
