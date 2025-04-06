@@ -77,7 +77,9 @@ public class WaypointService {
                 .thenAccept(x -> {
                     for (Waypoint each : x) {
                         this.waypoints.put(each.getOwnerId(), each);
-                        each.render(player);
+                        if (each.getPosition().getWorldName().equals(player.getWorld().getName())) {
+                            each.render(player);
+                        }
                     }
                 });
     }
