@@ -7,6 +7,7 @@ import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;
 import com.tomushimano.waypoint.datastore.StorageKind;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
+import com.tomushimano.waypoint.util.FutureFactory;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.TextColor;
@@ -28,8 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
 public class SQLStorage implements Storage {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SQLStorage.class);
@@ -96,7 +95,6 @@ public class SQLStorage implements Storage {
     @Override
     public void disconnect() {
         this.connectionFactory.close();
-        this.futureFactory.close();
         LOGGER.info("Connection closed successfully!");
     }
 

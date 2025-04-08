@@ -10,6 +10,7 @@ import com.tomushimano.waypoint.di.module.ConfigProvider;
 import com.tomushimano.waypoint.di.module.ListenerBinder;
 import com.tomushimano.waypoint.di.module.StorageBinder;
 import com.tomushimano.waypoint.di.qualifier.DataDir;
+import com.tomushimano.waypoint.util.FutureFactory;
 import dagger.BindsInstance;
 import dagger.Component;
 import org.bukkit.event.Listener;
@@ -37,6 +38,8 @@ public interface WaypointComponent {
     StorageHolder storageHolder();
 
     NavigationService navigationService();
+
+    FutureFactory futureFactory();
 
     @Component.Builder
     interface Builder {

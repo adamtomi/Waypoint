@@ -61,6 +61,11 @@ public final class WaypointPlugin extends JavaPlugin {
         this.context.navigationService().performShutdown();
         this.context.commandService().unregister();
         this.context.storageHolder().get().disconnect();
+
+        LOGGER.info("Shutting down async executor, waiting for pending tasks (up to 1 second)");
+        this.context.futureFactory().shutdown(1L);
+        LOGGER.info("Done!");
+
         final long delta = System.currentTimeMillis() - start;
         LOGGER.info("Shutdown process completed in {} ms", delta);
     }

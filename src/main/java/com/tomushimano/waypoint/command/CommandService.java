@@ -1,10 +1,9 @@
 package com.tomushimano.waypoint.command;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.command.scaffold.CommandExceptionHandler;
 import com.tomushimano.waypoint.command.scaffold.ConfirmationHandler;
 import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
-import com.tomushimano.waypoint.util.ConcurrentUtil;
+import com.tomushimano.waypoint.util.FutureFactory;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandArgument;
@@ -34,8 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS;
 
@@ -43,10 +40,6 @@ import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMM
 @NullMarked
 public final class CommandService {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandService.class);
-    /* Create a threadpool for command execution */
-    private final ExecutorService executor = Executors.newCachedThreadPool(
-            new ThreadFactoryBuilder().setNameFormat("waypoint-commands #%1$d").build()
-    );
     private final DispatcherConfig<CommandSender> dispatcherConfig = DispatcherConfig.<CommandSender>builder()
             .eagerFlagCompletions()
             .register(this::onCommandRegistration)
@@ -57,16 +50,19 @@ public final class CommandService {
     private final Set<CommandModule<CommandSender>> commands;
     private final CommandExceptionHandler exceptionHandler;
     private final ConfirmationHandler confirmationHandler;
+    private final FutureFactory futureFactory;
 
     @Inject
     public CommandService(
             final Set<CommandModule<CommandSender>> commands,
             final CommandExceptionHandler exceptionHandler,
-            final ConfirmationHandler confirmationHandler
+            final ConfirmationHandler confirmationHandler,
+            final FutureFactory futureFactory
     ) {
         this.commands = commands;
         this.exceptionHandler = exceptionHandler;
         this.confirmationHandler = confirmationHandler;
+        this.futureFactory = futureFactory;
     }
 
     public void register(final LifecycleEventManager<Plugin> eventManager) {
@@ -80,8 +76,7 @@ public final class CommandService {
     public void unregister() {
         this.dispatcher.unregister(this.commands);
         this.dispatcher.unsubscribe(this.confirmationHandler);
-        LOGGER.info("Shutting down async executor");
-        ConcurrentUtil.terminate(this.executor, 1L);
+        LOGGER.info("Commands have been unregistered");
     }
 
     private boolean onCommandRegistration(final CommandChain<CommandSender> chain) {
@@ -109,7 +104,7 @@ public final class CommandService {
     }
 
     private void performCommand(final CommandSender sender, final String commandLine) {
-        this.executor.execute(() -> performCommand0(sender, commandLine));
+        this.futureFactory.futureOf(() -> performCommand0(sender, commandLine));
     }
 
     // Forward the command to the dispatcher
