@@ -6,7 +6,6 @@ import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.message.Messages;
 import com.tomushimano.waypoint.util.BukkitUtil;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

@@ -1,7 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold;
 
 import com.tomushimano.waypoint.util.VerboseException;
-import grapefruit.command.CommandException;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
 import net.kyori.adventure.text.Component;
 
