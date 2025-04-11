@@ -222,7 +222,7 @@ public final class Messages {
             .var0();
 
     public static final MessageBuilder.Preset1<Waypoint> WAYPOINT__WORLD_ERROR = keyed("waypoint.world_error")
-            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getName())));
+            .var1((raw, waypoint) -> process(raw, template("name", waypoint.getPosition().getWorldName())));
 
     private Messages() {
         throw new DontInvokeMe();

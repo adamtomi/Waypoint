@@ -6,15 +6,21 @@ import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.message.Messages;
+import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.CommandModule;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.CommandChainFactory;
 import grapefruit.command.dispatcher.CommandContext;
 import org.bukkit.command.CommandSender;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
+import java.io.IOException;
+
+import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 
 public class ReloadCommand implements CommandModule<CommandSender> {
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(ReloadCommand.class);
     private final CommandHelper commandHelper;
     private final ConfigHelper configHelper;
     private final Configurable config;
@@ -47,12 +53,14 @@ public class ReloadCommand implements CommandModule<CommandSender> {
         final CommandSender sender = context.source();
 
         Messages.ADMIN__RELOAD_INITIATED.from(this.config).print(sender);
-        if (!this.configHelper.reloadAll()) {
+        try {
+            this.configHelper.reloadAll();
             Messages.ADMIN__RELOAD_FAILURE.from(this.config).print(sender);
-        } else {
+        } catch (final IOException ex) {
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
             long deltaT = System.currentTimeMillis() - start;
             Messages.ADMIN__RELOAD_SUCCESS.from(this.config, deltaT).print(sender);
+            capture(ex, "Failed to reload configuration!", LOGGER);
         }
     }
 }

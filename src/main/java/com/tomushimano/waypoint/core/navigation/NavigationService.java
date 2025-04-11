@@ -1,12 +1,11 @@
 package com.tomushimano.waypoint.core.navigation;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.util.BukkitUtil;
-import com.tomushimano.waypoint.util.ConcurrentUtil;
+import com.tomushimano.waypoint.util.FutureFactory;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -20,25 +19,26 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Singleton
 public class NavigationService {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(NavigationService.class);
-    private final ExecutorService executor = Executors.newCachedThreadPool(
-            new ThreadFactoryBuilder().setNameFormat("waypoint-navigation-pool #%1$d").build()
-    );
     private final Map<UUID, NavigationTask> activeNavigations = new ConcurrentHashMap<>();
     private final Configurable config;
     private final Configurable langConfig;
+    private final FutureFactory futureFactory;
 
     @Inject
-    public NavigationService(final @Cfg Configurable config, final @Lang Configurable langConfig) {
+    public NavigationService(
+            final @Cfg Configurable config,
+            final @Lang Configurable langConfig,
+            final FutureFactory futureFactory
+    ) {
         this.config = config;
         this.langConfig = langConfig;
+        this.futureFactory = futureFactory;
     }
 
     private Optional<NavigationTask> navigation(final Player player) {
@@ -69,7 +69,7 @@ public class NavigationService {
         );
 
         this.activeNavigations.put(uniqueId, task);
-        this.executor.execute(task);
+        this.futureFactory.futureOf(task::run);
     }
 
     private void navigationFinished(final UUID uniqueId, final UUID navigationId) {
@@ -104,7 +104,6 @@ public class NavigationService {
 
     public void performShutdown() {
         LOGGER.info("Cancelling running navigations ({})...", this.activeNavigations.size());
-        ConcurrentUtil.terminate(this.executor, 1L);
         this.activeNavigations.clear();
     }
 

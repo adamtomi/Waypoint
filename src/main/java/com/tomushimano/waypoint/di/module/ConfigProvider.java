@@ -3,12 +3,13 @@ package com.tomushimano.waypoint.di.module;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
+import com.tomushimano.waypoint.di.qualifier.DataDir;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 import dagger.Module;
 import dagger.Provides;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Singleton;
+import java.nio.file.Path;
 
 @Module
 public class ConfigProvider {
@@ -16,21 +17,21 @@ public class ConfigProvider {
     @Cmd
     @Provides
     @Singleton
-    public Configurable provideCommandYmlHolder(final JavaPlugin plugin) {
-        return Configurable.fileBacked(plugin.getDataPath().resolve(Configurable.COMMAND_YML));
+    public Configurable provideCommandYmlHolder(final @DataDir Path dataFolder) {
+        return Configurable.fileBacked(dataFolder.resolve(Configurable.COMMAND_YML));
     }
 
     @Cfg
     @Provides
     @Singleton
-    public Configurable provideConfigYmlHolder(final JavaPlugin plugin) {
-        return Configurable.fileBacked(plugin.getDataPath().resolve(Configurable.CONFIG_YML));
+    public Configurable provideConfigYmlHolder(final @DataDir Path dataFolder) {
+        return Configurable.fileBacked(dataFolder.resolve(Configurable.CONFIG_YML));
     }
 
     @Lang
     @Provides
     @Singleton
-    public Configurable provideLangYmlHolder(final JavaPlugin plugin) {
-        return Configurable.fileBacked(plugin.getDataPath().resolve(Configurable.LANG_YML));
+    public Configurable provideLangYmlHolder(final @DataDir Path dataFolder) {
+        return Configurable.fileBacked(dataFolder.resolve(Configurable.LANG_YML));
     }
 }

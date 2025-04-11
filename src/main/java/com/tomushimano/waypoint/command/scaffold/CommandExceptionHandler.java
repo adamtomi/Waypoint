@@ -5,15 +5,18 @@ import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.message.Messages;
+import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import grapefruit.command.argument.CommandArgument;
 import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
+import grapefruit.command.dispatcher.CommandExecutionException;
 import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.tree.NoSuchCommandException;
 import grapefruit.command.tree.node.CommandNode;
 import org.bukkit.command.CommandSender;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import java.util.Comparator;
@@ -21,9 +24,11 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import static com.tomushimano.waypoint.config.ConfigKey.fallbackToKey;
+import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static java.util.stream.Collectors.joining;
 
 public final class CommandExceptionHandler {
+    private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandExceptionHandler.class);
     /* Creates a comparator that compares command nodes based on their name */
     private static final Comparator<CommandNode> COMMAND_NODE_COMPARATOR =
             Comparator.comparing(CommandNode::name);
@@ -139,5 +144,15 @@ public final class CommandExceptionHandler {
         // This cast is safe, because we always make sure to throw VerboseArgumentException instances
         final VerboseArgumentMappingException cause = (VerboseArgumentMappingException) ex.getCause();
         sender.sendMessage(cause.describeFailure());
+    }
+
+    public void handleGenericCommandError(final CommandSender sender, final String commandLine, final Throwable ex) {
+        Messages.COMMAND__UNEXPECTED_ERROR.from(this.langConfig).print(sender);
+        // Extract cause. CommandExecutionException wraps other exceptions, so
+        // just call getCause() on it to unwrap the exception we're interested in.
+        final Throwable cause = ex instanceof CommandExecutionException
+                ? ex.getCause()
+                : ex;
+        capture(cause, "Failed to execute command: '/%s'.".formatted(commandLine), LOGGER);
     }
 }

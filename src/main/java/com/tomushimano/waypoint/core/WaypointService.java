@@ -8,7 +8,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -77,7 +77,9 @@ public class WaypointService {
                 .thenAccept(x -> {
                     for (Waypoint each : x) {
                         this.waypoints.put(each.getOwnerId(), each);
-                        each.render(player);
+                        if (each.getPosition().getWorldName().equals(player.getWorld().getName())) {
+                            each.render(player);
+                        }
                     }
                 });
     }

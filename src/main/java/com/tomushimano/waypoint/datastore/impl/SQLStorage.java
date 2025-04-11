@@ -1,8 +1,13 @@
 package com.tomushimano.waypoint.datastore.impl;
 
 import com.tomushimano.waypoint.WaypointPlugin;
+import com.tomushimano.waypoint.config.Configurable;
+import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.datastore.Storage;
+import com.tomushimano.waypoint.datastore.StorageKind;
+import com.tomushimano.waypoint.di.qualifier.Cfg;
+import com.tomushimano.waypoint.util.FutureFactory;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
 import com.tomushimano.waypoint.util.Position;
 import net.kyori.adventure.text.format.TextColor;
@@ -25,23 +30,24 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
-
 public class SQLStorage implements Storage {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SQLStorage.class);
     private final ConnectionFactory connectionFactory;
     private final Waypoint.Factory waypointFactory;
     private final FutureFactory futureFactory;
+    private final Configurable config;
 
     @Inject
     public SQLStorage(
             final ConnectionFactory connectionFactory,
             final Waypoint.Factory waypointFactory,
-            final FutureFactory futureFactory
+            final FutureFactory futureFactory,
+            final @Cfg Configurable config
     ) {
         this.connectionFactory = connectionFactory;
         this.waypointFactory = waypointFactory;
         this.futureFactory = futureFactory;
+        this.config = config;
     }
 
     private List<String> readDeployFile() throws IOException {
@@ -73,8 +79,7 @@ public class SQLStorage implements Storage {
     }
 
     @Override
-    public boolean connect() {
-        LOGGER.info("Connecting to database...");
+    public void connect() throws SQLException {
         try (final Connection conn = this.connectionFactory.openConnection();
              final Statement stmt = conn.createStatement()) {
             final List<String> commands = readDeployFile();
@@ -82,23 +87,21 @@ public class SQLStorage implements Storage {
             stmt.executeBatch();
 
             LOGGER.info("Connection established successfully!");
-            return true;
-        } catch (final IOException | SQLException ex) {
-            capture(ex, "Failed to connect to database", LOGGER);
+        } catch (final IOException ex) {
+            throw new SQLException(ex);
         }
-
-        return false;
     }
 
     @Override
     public void disconnect() {
-        LOGGER.info("Closing connection...");
         this.connectionFactory.close();
-        this.futureFactory.close();
+        LOGGER.info("Connection closed successfully!");
     }
 
     private String insertionSQL() {
-        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`id`) DO UPDATE SET `name` = ?, `color` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?";
+        final StorageKind type = this.config.get(StandardKeys.Database.TYPE);
+        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) %s SET `name` = ?, `color` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?"
+                .formatted(type.upsert("id"));
     }
 
     private void fillInPrepStmt(
