@@ -162,7 +162,11 @@ public final class CommandService {
 
         @Override
         public Collection<String> suggest(final CommandSourceStack source, final String[] args) {
-            return this.service.listCompletions(source.getSender(), rebuildArgs(args));
+            final String[] adjustedArgs = args.length == 0
+                    ? new String[] {" "}
+                    : args;
+            final String commandLine = rebuildArgs(adjustedArgs);
+            return this.service.listCompletions(source.getSender(), commandLine);
         }
     }
 }
