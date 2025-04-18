@@ -21,7 +21,7 @@ public class EditCommand extends UpdateWaypointCommand {
     private static final Key<Waypoint> WAYPOINT_KEY = Key.named(Waypoint.class, "waypoint");
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
     private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
-    private static final Key<Boolean> TOGGLE_GLOBALITY_KEY = Key.named(Boolean.class, "toggle-globality");
+    private static final Key<Boolean> TOGGLE_VISIBILITY = Key.named(Boolean.class, "toggle-visibility");
     private final CommandHelper helper;
 
     @Inject
@@ -46,7 +46,7 @@ public class EditCommand extends UpdateWaypointCommand {
                 .flags()
                 .then(factory.valueFlag(NAME_KEY).mapWith(this.helper.name()).assumeShorthand().build())
                 .then(factory.valueFlag(COLOR_KEY).mapWith(this.helper.textColor()).assumeShorthand().build())
-                .then(factory.presenceFlag(TOGGLE_GLOBALITY_KEY).assumeShorthand().build())
+                .then(factory.presenceFlag(TOGGLE_VISIBILITY).assumeShorthand().build())
                 .build();
     }
 
@@ -56,11 +56,11 @@ public class EditCommand extends UpdateWaypointCommand {
         final Waypoint waypoint = context.require(WAYPOINT_KEY);
         final String name = context.nullable(NAME_KEY);
         final TextColor color = context.nullable(COLOR_KEY);
-        final boolean toggleGlobality = context.has(TOGGLE_GLOBALITY_KEY);
+        final boolean toggleGlobality = context.has(TOGGLE_VISIBILITY);
 
         if (name != null) waypoint.setName(name);
         if (color != null) waypoint.setColor(color);
-        if (toggleGlobality) waypoint.setGlobal(!waypoint.isGlobal());
+        if (toggleGlobality) waypoint.setPublic(!waypoint.isPublic());
         updateAndReport(sender, waypoint);
     }
 }
