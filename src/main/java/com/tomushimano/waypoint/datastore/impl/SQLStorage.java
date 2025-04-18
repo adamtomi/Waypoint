@@ -100,7 +100,7 @@ public class SQLStorage implements Storage {
 
     private String insertionSQL() {
         final StorageKind type = this.config.get(StandardKeys.Database.TYPE);
-        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) %s SET `name` = ?, `color` = ?, `global` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?"
+        return "INSERT INTO `waypoints` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) %s SET `name` = ?, `color` = ?, `public` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?"
                 .formatted(type.upsert("id"));
     }
 
@@ -119,7 +119,7 @@ public class SQLStorage implements Storage {
 
         prepStmt.setString(startIdx++, waypoint.getName());
         prepStmt.setInt(startIdx++, waypoint.getColor().value());
-        prepStmt.setBoolean(startIdx++, waypoint.isGlobal());
+        prepStmt.setBoolean(startIdx++, waypoint.isPublic());
 
         // Fill in location data
         Position pos = waypoint.getPosition();
@@ -158,7 +158,7 @@ public class SQLStorage implements Storage {
     public CompletableFuture<Set<Waypoint>> loadAccessible(final UUID playerId) {
         return this.futureFactory.futureOf(() -> {
             try (final Connection conn = this.connectionFactory.openConnection();
-                 final PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM `waypoints` WHERE `ownerId` = ? OR `global` = true")) {
+                 final PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM `waypoints` WHERE `ownerId` = ? OR `public` = true")) {
                 prepStmt.setString(1, playerId.toString());
 
                 final ResultSet results = prepStmt.executeQuery();
@@ -168,7 +168,7 @@ public class SQLStorage implements Storage {
                     final UUID ownerId = UUID.fromString(results.getString("ownerId"));
                     final String name = results.getString("name");
                     final TextColor color = TextColor.color(results.getInt("color"));
-                    final boolean global = results.getBoolean("global");
+                    final boolean isPublic = results.getBoolean("public");
                     final String world = results.getString("world");
                     final double x = results.getDouble("x");
                     final double y = results.getDouble("y");
@@ -179,7 +179,7 @@ public class SQLStorage implements Storage {
                             ownerId,
                             name,
                             color,
-                            global,
+                            isPublic,
                             new Position(world, x, y, z)
                     ));
                 }

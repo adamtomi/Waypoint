@@ -171,7 +171,7 @@ public final class Messages {
                             template("name", waypoint.getName()),
                             template("uniqueId", waypoint.getUniqueId()),
                             template("owner", owner.getName()),
-                            template("global", waypoint.isGlobal()),
+                            template("public", waypoint.isPublic()),
                             template("color", waypoint.getColor().asHexString()),
                             template("colorname", BukkitUtil.getColorName(waypoint.getColor()))
                     )

@@ -37,7 +37,7 @@ public class WaypointService {
     public Set<Waypoint> getAccessibleWaypoints(final Player player) {
         return this.waypoints.entries()
                 .stream()
-                .filter(x -> x.getKey().equals(player.getUniqueId()) || x.getValue().isGlobal())
+                .filter(x -> x.getKey().equals(player.getUniqueId()) || x.getValue().isPublic())
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toUnmodifiableSet());
     }
@@ -50,11 +50,11 @@ public class WaypointService {
             final Player player,
             final String name,
             final @Nullable TextColor color,
-            final boolean global
+            final boolean isPublic
     ) {
         final UUID uniqueId = UUID.randomUUID();
         final UUID ownerId = player.getUniqueId();
-        final Waypoint waypoint = this.waypointFactory.create(uniqueId, ownerId, name, color, global, Position.from(player.getLocation()));
+        final Waypoint waypoint = this.waypointFactory.create(uniqueId, ownerId, name, color, isPublic, Position.from(player.getLocation()));
         this.waypoints.put(ownerId, waypoint);
         renderForTargets(waypoint);
 
@@ -88,7 +88,7 @@ public class WaypointService {
         final Set<Waypoint> markedForRemoval = new HashSet<>();
         final boolean offline = Bukkit.getOnlinePlayers().size() == 1; // 1, because our player is still online
         for (final Waypoint waypoint : this.waypoints.get(player.getUniqueId())) {
-            if (!waypoint.isGlobal() || offline) {
+            if (!waypoint.isPublic() || offline) {
                 hideFromTargets(waypoint);
                 markedForRemoval.add(waypoint);
             }
@@ -124,7 +124,7 @@ public class WaypointService {
         return Set.copyOf(this.waypoints.values());
     }
 
-    /* Render the waypoint for its owner, or everyone if the waypoint is global */
+    /* Render the waypoint for its owner, or everyone if the waypoint is public */
     public void renderForTargets(final Waypoint waypoint) {
         runWaypointAction(waypoint, waypoint::render);
     }
@@ -133,18 +133,18 @@ public class WaypointService {
         runWaypointAction(waypoint, waypoint::rerender);
     }
 
-    /* Hide the waypoint from its owner, or everyone if the waypoint is global */
+    /* Hide the waypoint from its owner, or everyone if the waypoint is public */
     public void hideFromTargets(final Waypoint waypoint) {
         runWaypointAction(waypoint, waypoint::hide);
     }
 
     private void runWaypointAction(final Waypoint waypoint, final Consumer<Player> action) {
-        if (waypoint.isGlobal()) {
+        if (waypoint.isPublic()) {
             Bukkit.getOnlinePlayers().forEach(action);
         } else {
             final Player owner = Bukkit.getPlayer(waypoint.getOwnerId());
             if (owner == null) {
-                throw new IllegalStateException("Attempted to render a non-global waypoint, but its owner is offline.");
+                throw new IllegalStateException("Attempted to render a private waypoint, but its owner is offline.");
             }
 
             action.accept(owner);

@@ -60,7 +60,7 @@ waypoint:
     &8+-----------------[ &a&l{name} &8]-----------------+
     &8- &7UUID: &a{uniqueId}
     &8- &7Tulajdonos: &f{owner}
-    &8- &7Globális: &f{global}
+    &8- &7Publikus: &f{public}
     &8- &7Pozíció: &f&l{world} &8-> &f{x}&8; &f{y}&8; &f{z}
     &8- &7Színkód: &f{color} &o({colorname})
   list:
