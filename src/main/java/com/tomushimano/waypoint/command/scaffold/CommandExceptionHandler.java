@@ -66,7 +66,7 @@ public final class CommandExceptionHandler {
         if (optional) {
             // Append formatted flag name
             builder.append(formatFlag(argument.name()));
-            if (!argument.asFlag().isPresence()) {
+            if (!argument.asFlag().isBool()) {
                 builder.append(" ").append(translateArgument(parent, argument));
             }
         } else {

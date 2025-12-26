@@ -52,7 +52,7 @@ public class SetCommand implements CommandModule<CommandSender> {
                 .arguments()
                 .then(factory.required(NAME_KEY).mapWith(this.helper.name()).build())
                 .flags()
-                .then(factory.presenceFlag(PUBLIC_KEY).assumeShorthand().build())
+                .then(factory.boolFlag(PUBLIC_KEY).assumeShorthand().build())
                 .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.helper.textColor()).build())
                 .build();
     }

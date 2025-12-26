@@ -53,7 +53,7 @@ public class ListCommand implements CommandModule<CommandSender> {
                         this.helper.perm("waypoint.list"), this.helper.isPlayer()
                 )).build())
                 .flags()
-                .then(factory.presenceFlag(HIDE_PUBLIC_KEY).assumeShorthand().build())
+                .then(factory.boolFlag(HIDE_PUBLIC_KEY).assumeShorthand().build())
                 .then(factory.valueFlag(PAGE_KEY).assumeShorthand().mapWith(this.helper.positiveInt()).build())
                 .build();
     }
