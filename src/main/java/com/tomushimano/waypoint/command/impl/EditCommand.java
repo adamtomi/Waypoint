@@ -46,7 +46,7 @@ public class EditCommand extends UpdateWaypointCommand {
                 .flags()
                 .then(factory.valueFlag(NAME_KEY).mapWith(this.helper.name()).assumeShorthand().build())
                 .then(factory.valueFlag(COLOR_KEY).mapWith(this.helper.textColor()).assumeShorthand().build())
-                .then(factory.presenceFlag(TOGGLE_VISIBILITY).assumeShorthand().build())
+                .then(factory.boolFlag(TOGGLE_VISIBILITY).assumeShorthand().build())
                 .build();
     }
 

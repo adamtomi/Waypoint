@@ -55,7 +55,7 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
                 .arguments()
                 .then(factory.required(DESTINATION_KEY).mapWith(this.helper.stdWaypoint()).build())
                 .flags()
-                .then(factory.presenceFlag(FORCE_KEY).assumeShorthand().build())
+                .then(factory.boolFlag(FORCE_KEY).assumeShorthand().build())
                 .build();
     }
 

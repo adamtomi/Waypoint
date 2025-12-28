@@ -55,11 +55,11 @@ public class ReloadCommand implements CommandModule<CommandSender> {
         Messages.ADMIN__RELOAD_INITIATED.from(this.config).print(sender);
         try {
             this.configHelper.reloadAll();
-            Messages.ADMIN__RELOAD_FAILURE.from(this.config).print(sender);
-        } catch (final IOException ex) {
             this.waypointService.getLoadedWaypoints().forEach(this.waypointService::rerenderForTargets);
             long deltaT = System.currentTimeMillis() - start;
             Messages.ADMIN__RELOAD_SUCCESS.from(this.config, deltaT).print(sender);
+        } catch (final IOException ex) {
+            Messages.ADMIN__RELOAD_FAILURE.from(this.config).print(sender);
             capture(ex, "Failed to reload configuration!", LOGGER);
         }
     }
