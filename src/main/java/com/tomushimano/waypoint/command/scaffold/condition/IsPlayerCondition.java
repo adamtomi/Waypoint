@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 
-public class IsPlayerCondition implements CommandCondition<CommandSender> {
+public class IsPlayerCondition implements CommandCondition.Early<CommandSender> {
     private final Configurable config;
 
     @Inject
@@ -20,7 +20,7 @@ public class IsPlayerCondition implements CommandCondition<CommandSender> {
     }
 
     @Override
-    public void test(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
+    public void testEarly(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
         if (!(context.source() instanceof Player)) {
             throw new VerboseConditionException(this, Messages.COMMAND__NEED_TO_BE_A_PLAYER.from(this.config).comp());
         }

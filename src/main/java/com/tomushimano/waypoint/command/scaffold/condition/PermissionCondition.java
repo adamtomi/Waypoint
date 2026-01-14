@@ -11,7 +11,7 @@ import grapefruit.command.argument.condition.UnfulfilledConditionException;
 import grapefruit.command.dispatcher.CommandContext;
 import org.bukkit.command.CommandSender;
 
-public class PermissionCondition implements CommandCondition<CommandSender> {
+public class PermissionCondition implements CommandCondition.Early<CommandSender> {
     private final String permission;
     private final Configurable config;
 
@@ -22,7 +22,7 @@ public class PermissionCondition implements CommandCondition<CommandSender> {
     }
 
     @Override
-    public void test(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
+    public void testEarly(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
         if (!context.source().hasPermission(this.permission)) {
             throw new VerboseConditionException(this, Messages.COMMAND__INSUFFICIENT_PERMISSIONS.from(this.config, permission).comp());
         }

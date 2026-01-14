@@ -14,7 +14,7 @@ import grapefruit.command.util.key.Key;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class InWorldCondition implements CommandCondition<CommandSender> {
+public class InWorldCondition implements CommandCondition.Late<CommandSender> {
     private final Configurable config;
     private final Key<Waypoint> waypointKey;
 
@@ -25,7 +25,7 @@ public class InWorldCondition implements CommandCondition<CommandSender> {
     }
 
     @Override
-    public void test(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
+    public void testLate(final CommandContext<CommandSender> context) throws UnfulfilledConditionException {
         final Waypoint waypoint = context.require(this.waypointKey);
         // Assume sender to be a player
         final Player player = (Player) context.source();
