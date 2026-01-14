@@ -5,6 +5,7 @@ import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
 import com.tomushimano.waypoint.datastore.StorageHolder;
 import com.tomushimano.waypoint.di.module.CommandBinder;
+import com.tomushimano.waypoint.di.module.CommandProvider;
 import com.tomushimano.waypoint.di.module.ConfigBinder;
 import com.tomushimano.waypoint.di.module.ConfigProvider;
 import com.tomushimano.waypoint.di.module.ListenerBinder;
@@ -22,6 +23,7 @@ import java.util.Set;
 @Singleton
 @Component(modules = {
         CommandBinder.class,
+        CommandProvider.class,
         ConfigBinder.class,
         ConfigProvider.class,
         ListenerBinder.class,

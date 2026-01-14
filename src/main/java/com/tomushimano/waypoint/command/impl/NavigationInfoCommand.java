@@ -1,6 +1,5 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
@@ -17,20 +16,16 @@ import org.bukkit.entity.Player;
 import javax.inject.Inject;
 import java.util.Optional;
 
+import static com.tomushimano.waypoint.command.scaffold.condition.IsPlayerCondition.isPlayer;
+import static com.tomushimano.waypoint.command.scaffold.condition.PermissionCondition.perm;
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
 public class NavigationInfoCommand implements CommandModule<CommandSender> {
-    private final CommandHelper helper;
     private final NavigationService navigationService;
     private final Configurable config;
 
     @Inject
-    public NavigationInfoCommand(
-            final CommandHelper helper,
-            final NavigationService navigationService,
-            final @Lang Configurable config
-    ) {
-        this.helper = helper;
+    public NavigationInfoCommand(final NavigationService navigationService, final @Lang Configurable config) {
         this.navigationService = navigationService;
         this.config = config;
     }
@@ -39,9 +34,7 @@ public class NavigationInfoCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("navigation").aliases("nav").expect(and(
-                        this.helper.perm("waypoint.navigation"), this.helper.isPlayer()
-                )).build())
+                .then(factory.literal("navigation").aliases("nav").expect(and(perm("waypoint.navigation"), isPlayer())).build())
                 .then(factory.literal("info").aliases("i").build())
                 .build();
     }

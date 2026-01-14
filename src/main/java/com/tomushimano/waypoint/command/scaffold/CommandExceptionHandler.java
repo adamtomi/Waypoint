@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold;
 
+import com.tomushimano.waypoint.command.scaffold.condition.VerboseConditionException;
 import com.tomushimano.waypoint.config.ConfigKey;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.di.qualifier.Cmd;
@@ -143,7 +144,11 @@ public final class CommandExceptionHandler {
         printCommandArgPrefix(sender, ex);
         // This cast is safe, because we always make sure to throw VerboseArgumentException instances
         final VerboseArgumentMappingException cause = (VerboseArgumentMappingException) ex.getCause();
-        sender.sendMessage(cause.describeFailure());
+        sender.sendMessage(cause.describeFailure(this.langConfig));
+    }
+
+    public void handleConditionException(final CommandSender sender, final VerboseConditionException ex) {
+        sender.sendMessage(ex.describeFailure(this.langConfig));
     }
 
     public void handleGenericCommandError(final CommandSender sender, final String commandLine, final Throwable ex) {
