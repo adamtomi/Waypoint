@@ -21,7 +21,7 @@ public class Waypoint implements Comparable<Waypoint> {
     private final UUID ownerId;
     private String name;
     private TextColor color;
-    private boolean global;
+    private boolean isPublic;
     private Position position;
     private Hologram hologram;
 
@@ -30,14 +30,14 @@ public class Waypoint implements Comparable<Waypoint> {
             final UUID ownerId,
             final String name,
             final TextColor color,
-            final boolean global,
+            final boolean isPublic,
             final Position pos
     ) {
         this.uuid = requireNonNull(uuid, "uuid cannot be null");
         this.ownerId = requireNonNull(ownerId, "ownerId cannot be null");
         this.name = requireNonNull(name, "name cannot be null");
         this.color = color;
-        this.global = global;
+        this.isPublic = isPublic;
         this.position = requireNonNull(pos, "pos cannot be null");
     }
 
@@ -65,12 +65,12 @@ public class Waypoint implements Comparable<Waypoint> {
         this.color = color;
     }
 
-    public boolean isGlobal() {
-        return this.global;
+    public boolean isPublic() {
+        return this.isPublic;
     }
 
-    public void setGlobal(final boolean global) {
-        this.global = global;
+    public void setPublic(final boolean aPublic) {
+        this.isPublic = aPublic;
     }
 
     public Position getPosition() {
@@ -104,8 +104,8 @@ public class Waypoint implements Comparable<Waypoint> {
 
     @Override
     public String toString() {
-        return "Waypoint{uuid=%s, ownerId=%s, name=%s, global=%s, position=%s}".formatted(
-                this.uuid, this.ownerId, this.name, this.global, this.position
+        return "Waypoint{uuid=%s, ownerId=%s, name=%s, public=%s, position=%s}".formatted(
+                this.uuid, this.ownerId, this.name, this.isPublic, this.position
         );
     }
 
@@ -141,11 +141,11 @@ public class Waypoint implements Comparable<Waypoint> {
                 final UUID ownerId,
                 final String name,
                 final @Nullable TextColor color,
-                final boolean global,
+                final boolean isPublic,
                 final Position pos
         ) {
             final TextColor actualColor = color == null ? NamedTextColor.WHITE : color;
-            final Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, global, pos);
+            final Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, isPublic, pos);
             waypoint.setHologram(this.hologramFactory.createHologram(waypoint));
             return waypoint;
         }

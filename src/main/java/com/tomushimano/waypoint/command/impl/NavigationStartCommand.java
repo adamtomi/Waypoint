@@ -1,10 +1,11 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.CommandHelper;
+import com.tomushimano.waypoint.command.scaffold.mapper.WaypointArgumentMapper;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.config.StandardKeys;
 import com.tomushimano.waypoint.core.Waypoint;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
+import com.tomushimano.waypoint.di.qualifier.Accessible;
 import com.tomushimano.waypoint.di.qualifier.Cfg;
 import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.message.Messages;
@@ -19,25 +20,28 @@ import org.bukkit.entity.Player;
 import javax.inject.Inject;
 import java.util.Optional;
 
+import static com.tomushimano.waypoint.command.scaffold.condition.InWorldCondition.inWorld;
+import static com.tomushimano.waypoint.command.scaffold.condition.IsPlayerCondition.isPlayer;
+import static com.tomushimano.waypoint.command.scaffold.condition.PermissionCondition.perm;
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
 public class NavigationStartCommand implements CommandModule<CommandSender> {
     private static final Key<Waypoint> DESTINATION_KEY = Key.named(Waypoint.class, "destination");
     private static final Key<Boolean> FORCE_KEY = Key.named(Boolean.class, "force");
-    private final CommandHelper helper;
     private final NavigationService navigationService;
+    private final WaypointArgumentMapper waypointMapper;
     private final Configurable langConfig;
     private final Configurable config;
 
     @Inject
     public NavigationStartCommand(
-            final CommandHelper helper,
             final NavigationService navigationService,
+            final @Accessible WaypointArgumentMapper waypointMapper,
             final @Lang Configurable langConfig,
             final @Cfg Configurable config
     ) {
-        this.helper = helper;
         this.navigationService = navigationService;
+        this.waypointMapper = waypointMapper;
         this.langConfig = langConfig;
         this.config = config;
     }
@@ -46,16 +50,12 @@ public class NavigationStartCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("navigation").aliases("nav").expect(and(
-                        this.helper.perm("waypoint.navigation"),
-                        this.helper.isPlayer(),
-                        this.helper.inWorld(DESTINATION_KEY)
-                )).build())
+                .then(factory.literal("navigation").aliases("nav").expect(and(perm("waypoint.navigation"), isPlayer(), inWorld(DESTINATION_KEY))).build())
                 .then(factory.literal("start").aliases("begin").build())
                 .arguments()
-                .then(factory.required(DESTINATION_KEY).mapWith(this.helper.stdWaypoint()).build())
+                .then(factory.required(DESTINATION_KEY).mapWith(this.waypointMapper).build())
                 .flags()
-                .then(factory.presenceFlag(FORCE_KEY).assumeShorthand().build())
+                .then(factory.boolFlag(FORCE_KEY).assumeShorthand().build())
                 .build();
     }
 

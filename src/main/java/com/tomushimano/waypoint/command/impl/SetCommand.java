@@ -1,6 +1,5 @@
 package com.tomushimano.waypoint.command.impl;
 
-import com.tomushimano.waypoint.command.scaffold.CommandHelper;
 import com.tomushimano.waypoint.config.Configurable;
 import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.di.qualifier.Lang;
@@ -19,25 +18,23 @@ import org.slf4j.Logger;
 
 import javax.inject.Inject;
 
+import static com.tomushimano.waypoint.command.scaffold.condition.IsPlayerCondition.isPlayer;
+import static com.tomushimano.waypoint.command.scaffold.condition.PermissionCondition.perm;
+import static com.tomushimano.waypoint.command.scaffold.mapper.NameArgumentMapper.name;
+import static com.tomushimano.waypoint.command.scaffold.mapper.TextColorArgumentMapper.textColor;
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static grapefruit.command.argument.condition.CommandCondition.and;
 
 public class SetCommand implements CommandModule<CommandSender> {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(SetCommand.class);
     private static final Key<String> NAME_KEY = Key.named(String.class, "name");
-    private static final Key<Boolean> GLOBAL_KEY = Key.named(Boolean.class, "global");
+    private static final Key<Boolean> PUBLIC_KEY = Key.named(Boolean.class, "public");
     private static final Key<TextColor> COLOR_KEY = Key.named(TextColor.class, "color");
-    private final CommandHelper helper;
     private final WaypointService waypointService;
     private final Configurable config;
 
     @Inject
-    public SetCommand(
-            final CommandHelper helper,
-            final WaypointService waypointService,
-            final @Lang Configurable config
-    ) {
-        this.helper = helper;
+    public SetCommand(final WaypointService waypointService, final @Lang Configurable config) {
         this.waypointService = waypointService;
         this.config = config;
     }
@@ -46,14 +43,12 @@ public class SetCommand implements CommandModule<CommandSender> {
     public CommandChain<CommandSender> chain(final CommandChainFactory<CommandSender> factory) {
         return factory.newChain()
                 .then(factory.literal("waypoint").aliases("wp").build())
-                .then(factory.literal("set").expect(and(
-                        this.helper.perm("waypoint.set"), this.helper.isPlayer()
-                )).build())
+                .then(factory.literal("set").expect(and(perm("waypoint.set"), isPlayer())).build())
                 .arguments()
-                .then(factory.required(NAME_KEY).mapWith(this.helper.name()).build())
+                .then(factory.required(NAME_KEY).mapWith(name()).build())
                 .flags()
-                .then(factory.presenceFlag(GLOBAL_KEY).assumeShorthand().build())
-                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(this.helper.textColor()).build())
+                .then(factory.boolFlag(PUBLIC_KEY).assumeShorthand().build())
+                .then(factory.valueFlag(COLOR_KEY).assumeShorthand().mapWith(textColor()).build())
                 .build();
     }
 
@@ -68,10 +63,10 @@ public class SetCommand implements CommandModule<CommandSender> {
             return;
         }
 
-        final boolean global = context.has(GLOBAL_KEY);
+        final boolean isPublic = context.has(PUBLIC_KEY);
         final TextColor color = context.getOrDefault(COLOR_KEY, NamedTextColor.WHITE);
 
-        this.waypointService.createWaypoint(sender, name, color, global)
+        this.waypointService.createWaypoint(sender, name, color, isPublic)
                 .thenAccept(x -> Messages.WAYPOINT__CREATION_SUCCESS.from(this.config, x).print(sender))
                 .exceptionally(capture(() -> Messages.WAYPOINT__CREATION_FAILURE.from(this.config).print(sender), "Failed to create waypoint", LOGGER));
     }

@@ -118,7 +118,7 @@ public final class CommandService {
         } catch (final NoSuchCommandException ex) {
             this.exceptionHandler.handleNoSuchCommand(sender, ex);
         } catch (final VerboseConditionException ex) {
-          sender.sendMessage(ex.describeFailure());
+          this.exceptionHandler.handleConditionException(sender, ex);
         } catch (final UnrecognizedFlagException ex) {
             this.exceptionHandler.handleUnrecognizedFlag(sender, ex);
         } catch (final CommandArgumentException ex) {

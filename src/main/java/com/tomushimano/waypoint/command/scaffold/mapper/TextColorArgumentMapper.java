@@ -1,8 +1,6 @@
 package com.tomushimano.waypoint.command.scaffold.mapper;
 
 import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException;
-import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.di.qualifier.Lang;
 import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
@@ -15,18 +13,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 
-import javax.inject.Inject;
-
 public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSender, TextColor> {
+    private static final TextColorArgumentMapper INSTANCE = new TextColorArgumentMapper();
     private static final String HEX_ALPHABET = "0123456789abcdef";
     private static final String[] HEX_CHAR_SET = HEX_ALPHABET.split("");
     private static final char HASH = '#';
-    private final Configurable config;
 
-    @Inject
-    public TextColorArgumentMapper(final @Lang Configurable config) {
+    private TextColorArgumentMapper() {
         super(TextColor.class, false);
-        this.config = config;
+    }
+
+    public static TextColorArgumentMapper textColor() {
+        return INSTANCE;
     }
 
     @Override
@@ -35,7 +33,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
         if (value.charAt(0) == HASH) {
             final TextColor color = TextColor.fromCSSHexString(value);
             if (color == null) {
-                throw new VerboseArgumentMappingException(Messages.COMMAND__MALFORMED_COLOR.from(this.config).comp());
+                throw new VerboseArgumentMappingException(config -> Messages.COMMAND__MALFORMED_COLOR.from(config).comp());
             }
 
             return color;
@@ -43,7 +41,7 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
 
         final NamedTextColor color = NamedTextColor.NAMES.value(value);
         if (color == null) {
-            throw new VerboseArgumentMappingException(Messages.COMMAND__NO_SUCH_COLOR.from(this.config, value).comp());
+            throw new VerboseArgumentMappingException(config -> Messages.COMMAND__NO_SUCH_COLOR.from(config, value).comp());
         }
 
         return color;
