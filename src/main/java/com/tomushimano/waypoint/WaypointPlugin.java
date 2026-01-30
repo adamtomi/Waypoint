@@ -1,12 +1,18 @@
 package com.tomushimano.waypoint;
 
+import com.tomushimano.waypoint.command.CommandService;
+import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.config.Configurable;
-import com.tomushimano.waypoint.di.WaypointComponent;
+import com.tomushimano.waypoint.core.navigation.NavigationService;
+import com.tomushimano.waypoint.datastore.StorageHolder;
+import com.tomushimano.waypoint.util.FutureFactory;
 import com.tomushimano.waypoint.util.NamespacedLoggerFactory;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -14,14 +20,31 @@ import java.util.Set;
 
 import static com.tomushimano.waypoint.util.ExceptionUtil.capture;
 import static com.tomushimano.waypoint.util.IOUtil.copyResourceIfNotExists;
-import static java.util.Objects.requireNonNull;
 
 public final class WaypointPlugin extends JavaPlugin {
     private static final Logger LOGGER = NamespacedLoggerFactory.create("Main");
-    private final WaypointComponent context;
+    private final ConfigHelper configHelper;
+    private final StorageHolder storageHolder;
+    private final CommandService commandService;
+    private final NavigationService navigationService;
+    private final FutureFactory futureFactory;
+    private final Set<Listener> listeners;
 
-    WaypointPlugin(final WaypointComponent context) {
-        this.context = requireNonNull(context, "context cannot be null");
+    @Inject
+    public WaypointPlugin(
+            final ConfigHelper configHelper,
+            final StorageHolder storageHolder,
+            final CommandService commandService,
+            final NavigationService navigationService,
+            final FutureFactory futureFactory,
+            final Set<Listener> listeners
+    ) {
+        this.configHelper = configHelper;
+        this.storageHolder = storageHolder;
+        this.commandService = commandService;
+        this.navigationService = navigationService;
+        this.futureFactory = futureFactory;
+        this.listeners = listeners;
     }
 
     @Override
@@ -36,19 +59,19 @@ public final class WaypointPlugin extends JavaPlugin {
 
         try {
             LOGGER.info("Loading configuration...");
-            this.context.configHelper().reloadAll();
+            this.configHelper.reloadAll();
         } catch (final IOException ex) {
             abort("Failed to load configuration", ex);
         }
 
         try {
             LOGGER.info("Setting up database connection...");
-            this.context.storageHolder().get().connect();
+            this.storageHolder.get().connect();
         } catch (final SQLException ex) {
             abort("Failed to setup database connection", ex);
         }
 
-        this.context.commandService().register(getLifecycleManager());
+        this.commandService.register(getLifecycleManager());
         registerListeners();
 
         final long delta = System.currentTimeMillis() - start;
@@ -58,12 +81,12 @@ public final class WaypointPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         final long start = System.currentTimeMillis();
-        this.context.navigationService().performShutdown();
-        this.context.commandService().unregister();
-        this.context.storageHolder().get().disconnect();
+        this.navigationService.performShutdown();
+        this.commandService.unregister();
+        this.storageHolder.get().disconnect();
 
         LOGGER.info("Shutting down async executor, waiting for pending tasks (up to 1 second)");
-        this.context.futureFactory().shutdown(1L);
+        this.futureFactory.shutdown(1L);
         LOGGER.info("Done!");
 
         final long delta = System.currentTimeMillis() - start;
@@ -73,7 +96,7 @@ public final class WaypointPlugin extends JavaPlugin {
     private void registerListeners() {
         LOGGER.info("Registering listeners...");
         final PluginManager pluginManager = getServer().getPluginManager();
-        this.context.listeners().forEach(x -> pluginManager.registerEvents(x, this));
+        this.listeners.forEach(x -> pluginManager.registerEvents(x, this));
     }
 
     private void copyResources() throws IOException {

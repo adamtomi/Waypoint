@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.di;
 
+import com.tomushimano.waypoint.WaypointPlugin;
 import com.tomushimano.waypoint.command.CommandService;
 import com.tomushimano.waypoint.config.ConfigHelper;
 import com.tomushimano.waypoint.core.navigation.NavigationService;
@@ -31,17 +32,7 @@ import java.util.Set;
 })
 public interface WaypointComponent {
 
-    CommandService commandService();
-
-    Set<Listener> listeners();
-
-    ConfigHelper configHelper();
-
-    StorageHolder storageHolder();
-
-    NavigationService navigationService();
-
-    FutureFactory futureFactory();
+    WaypointPlugin plugin();
 
     @Component.Builder
     interface Builder {

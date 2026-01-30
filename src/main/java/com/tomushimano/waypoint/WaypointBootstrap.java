@@ -20,6 +20,6 @@ public final class WaypointBootstrap implements PluginBootstrap {
                 .dataDir(context.getDataDirectory())
                 .build();
 
-        return new WaypointPlugin(component);
+        return component.plugin();
     }
 }
