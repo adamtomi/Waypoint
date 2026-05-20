@@ -24,6 +24,7 @@ public class Waypoint implements Comparable<Waypoint> {
     private boolean isPublic;
     private Position position;
     private Hologram hologram;
+    private LightSource lightSource;
 
     private Waypoint(
             final UUID uuid,
@@ -39,6 +40,7 @@ public class Waypoint implements Comparable<Waypoint> {
         this.color = color;
         this.isPublic = isPublic;
         this.position = requireNonNull(pos, "pos cannot be null");
+        this.lightSource = LightSource.at(this.position);
     }
 
     public UUID getUniqueId() {
@@ -79,14 +81,17 @@ public class Waypoint implements Comparable<Waypoint> {
 
     public void setPosition(final Position position) {
         this.position = requireNonNull(position, "position cannot be null");
+        this.lightSource = LightSource.at(this.position);
     }
 
     public void render(final Player player) {
         this.hologram.show(player);
+        this.lightSource.show(player);
     }
 
     public void hide(final Player player) {
         this.hologram.hide(player);
+        this.lightSource.hide(player);
     }
 
     public void rerender(final Player player) {
