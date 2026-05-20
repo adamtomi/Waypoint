@@ -7,7 +7,6 @@ import com.tomushimano.waypoint.command.impl.ListCommand;
 import com.tomushimano.waypoint.command.impl.NavigationInfoCommand;
 import com.tomushimano.waypoint.command.impl.NavigationStartCommand;
 import com.tomushimano.waypoint.command.impl.NavigationStopCommand;
-import com.tomushimano.waypoint.command.impl.PlaceLightCommand;
 import com.tomushimano.waypoint.command.impl.ReloadCommand;
 import com.tomushimano.waypoint.command.impl.RelocateCommand;
 import com.tomushimano.waypoint.command.impl.RemoveCommand;
@@ -64,9 +63,4 @@ public interface CommandBinder {
     @Binds
     @IntoSet
     CommandModule<CommandSender> bindSetCommand(final SetCommand command);
-
-    // TODO Remove
-    @Binds
-    @IntoSet
-    CommandModule<CommandSender> bindPlaceLightCommand(final PlaceLightCommand command);
 }
