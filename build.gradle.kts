@@ -25,9 +25,8 @@ dependencies {
     annotationProcessor("com.google.dagger:dagger-compiler:2.52")
 
     // Libs
-    implementation(fileTree("./libs") {
-        include("*.jar")
-    })
+    implementation("com.tomushimano.grapefruit:grapefruit:3.3.0")
+
     implementation("com.zaxxer:HikariCP:5.1.0") {
         exclude("org.slf4j")
     }
