@@ -42,8 +42,10 @@ tasks.processResources {
     }
 }
 
+
 tasks.named<ShadowJar>("shadowJar") {
     minimize()
+    /*
     val relocations = mapOf(
         "grapefruit.command" to "com.tomushimano.waypoint.reloc.command",
         "dagger" to "com.tomushimano.waypoint.reloc.dagger",
@@ -54,6 +56,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocations.forEach {
         relocate(it.key, it.value)
     }
+    */
 
     archiveFileName.set("${project.name}-${project.version}.jar")
 }
