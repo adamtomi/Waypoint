@@ -2,6 +2,7 @@ package com.tomushimano.waypoint.di.module;
 
 import com.tomushimano.waypoint.command.impl.DistanceCommand;
 import com.tomushimano.waypoint.command.impl.EditCommand;
+import com.tomushimano.waypoint.command.impl.HologramTest;
 import com.tomushimano.waypoint.command.impl.InfoCommand;
 import com.tomushimano.waypoint.command.impl.ListCommand;
 import com.tomushimano.waypoint.command.impl.NavigationInfoCommand;
@@ -63,4 +64,9 @@ public interface CommandBinder {
     @Binds
     @IntoSet
     CommandModule<CommandSender> bindSetCommand(final SetCommand command);
+
+    // TODO remove
+    @Binds
+    @IntoSet
+    CommandModule<CommandSender> bindHoloTestCommand(final HologramTest command);
 }
