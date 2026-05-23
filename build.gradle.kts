@@ -48,7 +48,8 @@ tasks.named<ShadowJar>("shadowJar") {
         "grapefruit.command" to "com.tomushimano.waypoint.reloc.command",
         "dagger" to "com.tomushimano.waypoint.reloc.dagger",
         "jakarta" to "com.tomushimano.waypoint.reloc.jakarta",
-        "com.zaxxer.hikari" to "com.tomushimano.waypoint.reloc.hikari"
+        "com.zaxxer.hikari" to "com.tomushimano.waypoint.reloc.hikari",
+        "io.leangen.geantyref" to "com.tomushimano.waypoint.reloc.typetoken"
     )
 
     relocations.forEach {
