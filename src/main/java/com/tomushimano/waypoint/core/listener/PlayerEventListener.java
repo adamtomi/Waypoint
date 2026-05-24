@@ -52,7 +52,12 @@ public class PlayerEventListener implements Listener {
     public void onWorldChange(final PlayerChangedWorldEvent event) {
         final Player player = event.getPlayer();
         final World world = event.getFrom();
-        this.waypointService.handleWorldChange(player, world);
         this.navigationService.stopNavigation(player);
+
+        // Delay by 1 second so that chunk loads on world change don't overwrite our light sources.
+        BukkitUtil.runTaskLater(
+                () -> this.waypointService.handleWorldChange(player, world),
+                20L
+        );
     }
 }

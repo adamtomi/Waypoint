@@ -131,7 +131,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public CompletableFuture<?> save(final Waypoint waypoint) {
-        return this.futureFactory.futureOf(() -> {
+        return this.futureFactory.run(() -> {
             try (final Connection conn = this.connectionFactory.openConnection();
                  final PreparedStatement prepStmt = conn.prepareStatement(insertionSQL())) {
                 fillInPrepStmt(prepStmt, waypoint, 1, true);
@@ -144,7 +144,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public CompletableFuture<?> remove(final Waypoint waypoint) {
-        return this.futureFactory.futureOf(() -> {
+        return this.futureFactory.run(() -> {
             try (final Connection conn = this.connectionFactory.openConnection();
                  final PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM `waypoints` WHERE `id` = ?")) {
                 prepStmt.setString(1, waypoint.getUniqueId().toString());
@@ -156,7 +156,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public CompletableFuture<Set<Waypoint>> loadAccessible(final UUID playerId) {
-        return this.futureFactory.futureOf(() -> {
+        return this.futureFactory.supply(() -> {
             try (final Connection conn = this.connectionFactory.openConnection();
                  final PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM `waypoints` WHERE `ownerId` = ? OR `public` = true")) {
                 prepStmt.setString(1, playerId.toString());

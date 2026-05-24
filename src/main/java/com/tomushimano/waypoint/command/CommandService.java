@@ -104,7 +104,7 @@ public final class CommandService {
     }
 
     private void performCommand(final CommandSender sender, final String commandLine) {
-        this.futureFactory.futureOf(() -> performCommand0(sender, commandLine));
+        this.futureFactory.run(() -> performCommand0(sender, commandLine));
     }
 
     // Forward the command to the dispatcher
