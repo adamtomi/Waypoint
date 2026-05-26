@@ -1,5 +1,6 @@
 package com.tomushimano.waypoint.core.hologram;
 
+import com.tomushimano.waypoint.core.WaypointElement;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Holograms are composed of multiple {@link HologramLine lines}.
  */
-public interface Hologram {
+public interface Hologram extends WaypointElement {
 
     /**
      * Returns the {@link HologramLine lines} associated with this
@@ -22,6 +23,7 @@ public interface Hologram {
      *
      * @param player The player
      */
+    @Override
     default void show(final Player player) {
         lines().forEach(line -> line.spawnPacket().send(player));
     }
@@ -31,6 +33,7 @@ public interface Hologram {
      *
      * @param player The player
      */
+    @Override
     default void hide(final Player player) {
         lines().forEach(line -> line.despawnPacket().send(player));
     }
