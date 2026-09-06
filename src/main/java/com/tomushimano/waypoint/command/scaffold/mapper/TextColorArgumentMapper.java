@@ -4,14 +4,16 @@ import com.tomushimano.waypoint.command.scaffold.VerboseArgumentMappingException
 import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
-import grapefruit.command.completion.CompletionAccumulator;
-import grapefruit.command.completion.CompletionBuilder;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
+import grapefruit.command.suggestion.SuggestionContext;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSender, TextColor> {
     private static final TextColorArgumentMapper INSTANCE = new TextColorArgumentMapper();
@@ -48,28 +50,25 @@ public class TextColorArgumentMapper extends AbstractArgumentMapper<CommandSende
     }
 
     @Override
-    public CompletionAccumulator complete(final CommandContext<CommandSender> context, final CompletionBuilder builder) {
-        final String input = builder.input();
+    public Stream<String> suggestStrings(final SuggestionContext<CommandSender> context, final String input) {
         if (!input.isEmpty() && input.charAt(0) == HASH) {
             if (input.length() > 7) {
                 // The input is formatted as #xxxxxx, thus it's complete
-                return builder.build();
+                return Stream.empty();
             } else if (input.length() == 7) {
-                return builder.includeString(input).build();
+                return Stream.of(input);
             }
 
             for (int i = 1; i < input.length(); i++) {
                 final char c = input.charAt(i);
                 if (HEX_ALPHABET.indexOf(c) == -1) {
-                    return builder.build();
+                    return Stream.empty();
                 }
             }
 
-            return builder.includeStrings(HEX_CHAR_SET, x -> input + x).build();
+            return Arrays.stream(HEX_CHAR_SET).map(x -> input + x);
         }
 
-        return builder.includeStrings(NamedTextColor.NAMES.keys())
-                .includeString(String.valueOf(HASH))
-                .build();
+        return Stream.concat(NamedTextColor.NAMES.keys().stream(), Stream.of(String.valueOf(HASH)));
     }
 }

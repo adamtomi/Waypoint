@@ -11,10 +11,10 @@ import grapefruit.command.argument.CommandArgumentException;
 import grapefruit.command.argument.CommandChain;
 import grapefruit.command.argument.DuplicateFlagException;
 import grapefruit.command.argument.UnrecognizedFlagException;
-import grapefruit.command.completion.CommandCompletion;
 import grapefruit.command.dispatcher.CommandDispatcher;
 import grapefruit.command.dispatcher.CommandSyntaxException;
 import grapefruit.command.dispatcher.config.DispatcherConfig;
+import grapefruit.command.suggestion.Suggestion;
 import grapefruit.command.tree.NoSuchCommandException;
 import grapefruit.command.util.key.Key;
 import io.papermc.paper.command.brigadier.BasicCommand;
@@ -41,7 +41,7 @@ import static io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMM
 public final class CommandService {
     private static final Logger LOGGER = NamespacedLoggerFactory.create(CommandService.class);
     private final DispatcherConfig<CommandSender> dispatcherConfig = DispatcherConfig.<CommandSender>builder()
-            .eagerFlagCompletions()
+            .eagerFlagSuggestions()
             .register(this::onCommandRegistration)
             .build();
     private final CommandDispatcher<CommandSender> dispatcher = CommandDispatcher.using(this.dispatcherConfig);
@@ -129,9 +129,8 @@ public final class CommandService {
     }
 
     private List<String> listCompletions(final CommandSender sender, final String commandLine) {
-        return this.dispatcher.complete(sender, commandLine)
-                .stream()
-                .map(CommandCompletion::completion)
+        return this.dispatcher.suggest(sender, commandLine)
+                .map(Suggestion::stringValue)
                 .toList();
     }
 

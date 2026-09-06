@@ -6,17 +6,17 @@ import com.tomushimano.waypoint.core.WaypointService;
 import com.tomushimano.waypoint.message.Messages;
 import grapefruit.command.argument.mapper.AbstractArgumentMapper;
 import grapefruit.command.argument.mapper.ArgumentMappingException;
-import grapefruit.command.completion.CompletionAccumulator;
-import grapefruit.command.completion.CompletionBuilder;
 import grapefruit.command.dispatcher.CommandContext;
 import grapefruit.command.dispatcher.input.CommandInputTokenizer;
 import grapefruit.command.dispatcher.input.MissingInputException;
+import grapefruit.command.suggestion.SuggestionContext;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender, Waypoint> {
     private final BiFunction<WaypointService, Player, Set<Waypoint>> valueProvider;
@@ -46,8 +46,9 @@ public class WaypointArgumentMapper extends AbstractArgumentMapper<CommandSender
     }
 
     @Override
-    public CompletionAccumulator complete(final CommandContext<CommandSender> context, final CompletionBuilder builder) {
-        final Set<Waypoint> candidates = this.valueProvider.apply(this.waypointService, (Player) context.source());
-        return builder.includeStrings(candidates, Waypoint::getName).build();
+    public Stream<String> suggestStrings(final SuggestionContext<CommandSender> context, final String input) {
+        return this.valueProvider.apply(this.waypointService, (Player) context.commandContext().source())
+                .stream()
+                .map(Waypoint::getName);
     }
 }

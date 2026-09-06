@@ -25,7 +25,7 @@ dependencies {
     annotationProcessor("com.google.dagger:dagger-compiler:2.52")
 
     // Libs
-    implementation("com.tomushimano.grapefruit:grapefruit:3.3.0")
+    implementation("com.tomushimano.grapefruit:grapefruit:3.4.0-BETA")
 
     implementation("com.zaxxer:HikariCP:5.1.0") {
         exclude("org.slf4j")
@@ -33,7 +33,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(24))
 }
 
 tasks.processResources {
