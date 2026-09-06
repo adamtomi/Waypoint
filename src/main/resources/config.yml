@@ -41,6 +41,12 @@ hologram:
   # The offset from the actual waypoint location.
   top_offset: 2.0
 
+light_source:
+  # Offset from the actual waypoint location
+  offset_y: 2.0
+  # Light level
+  level: 10
+
 navigation:
   # Particle stream (navigation indicator) settings.
   particle:

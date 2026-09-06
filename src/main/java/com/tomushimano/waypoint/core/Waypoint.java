@@ -24,6 +24,7 @@ public class Waypoint implements Comparable<Waypoint> {
     private boolean isPublic;
     private Position position;
     private Hologram hologram;
+    private LightSource lightSource;
 
     private Waypoint(
             final UUID uuid,
@@ -83,10 +84,12 @@ public class Waypoint implements Comparable<Waypoint> {
 
     public void render(final Player player) {
         this.hologram.show(player);
+        this.lightSource.show(player);
     }
 
     public void hide(final Player player) {
         this.hologram.hide(player);
+        this.lightSource.hide(player);
     }
 
     public void rerender(final Player player) {
@@ -96,6 +99,10 @@ public class Waypoint implements Comparable<Waypoint> {
 
     public void setHologram(final Hologram hologram) {
         this.hologram = requireNonNull(hologram, "hologram cannot be null");
+    }
+
+    public void setLightSource(final LightSource lightSource) {
+        this.lightSource = requireNonNull(lightSource, "lightSource cannot be null");
     }
 
     public long distance(final Entity entity) {
@@ -130,10 +137,12 @@ public class Waypoint implements Comparable<Waypoint> {
     @Singleton
     public static final class Factory {
         private final HologramFactory hologramFactory;
+        private final LightSourceFactory lightSourceFactory;
 
         @Inject
-        public Factory(final HologramFactory hologramFactory) {
+        public Factory(final HologramFactory hologramFactory, final LightSourceFactory lightSourceFactory) {
             this.hologramFactory = hologramFactory;
+            this.lightSourceFactory = lightSourceFactory;
         }
 
         public Waypoint create(
@@ -147,6 +156,7 @@ public class Waypoint implements Comparable<Waypoint> {
             final TextColor actualColor = color == null ? NamedTextColor.WHITE : color;
             final Waypoint waypoint = new Waypoint(uuid, ownerId, name, actualColor, isPublic, pos);
             waypoint.setHologram(this.hologramFactory.createHologram(waypoint));
+            waypoint.setLightSource(this.lightSourceFactory.create(waypoint));
             return waypoint;
         }
     }

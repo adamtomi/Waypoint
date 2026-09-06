@@ -42,6 +42,15 @@ public final class StandardKeys {
         }
     }
 
+    public static final class LightSource {
+        public static final ConfigKey<Double> OFFSET_Y = ConfigKey.doubleKey("light_source.offset_y");
+        public static final ConfigKey<Integer> LEVEL = ConfigKey.intKey("light_source.level");
+
+        private LightSource() {
+            throw new DontInvokeMe();
+        }
+    }
+
     public static final class Navigation {
         public static final ConfigKey<Integer> ARRIVAL_DISTANCE = ConfigKey.intKey("navigation.arrival_distance");
         public static final ConfigKey<Integer> MIN_REQUIRED_DISTANCE = ConfigKey.intKey("navigation.min_required_distance");

@@ -1,16 +1,21 @@
 package com.tomushimano.waypoint.util;
 
+import com.tomushimano.waypoint.WaypointPlugin;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.NumberConversions;
 import org.jspecify.annotations.Nullable;
 
 public final class BukkitUtil {
+    private static final JavaPlugin PLUGIN_INSTANCE = JavaPlugin.getPlugin(WaypointPlugin.class);
+
     private BukkitUtil() {
         throw new DontInvokeMe();
     }
@@ -38,5 +43,9 @@ public final class BukkitUtil {
         return color instanceof NamedTextColor named
                 ? named.toString()
                 : null;
+    }
+
+    public static void runTaskLater(final Runnable task, final long ticks) {
+        Bukkit.getScheduler().runTaskLater(PLUGIN_INSTANCE, task, ticks);
     }
 }

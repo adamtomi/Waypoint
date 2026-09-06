@@ -69,7 +69,7 @@ public class NavigationService {
         );
 
         this.activeNavigations.put(uniqueId, task);
-        this.futureFactory.futureOf(task::run);
+        this.futureFactory.run(task::run);
     }
 
     private void navigationFinished(final UUID uniqueId, final UUID navigationId) {

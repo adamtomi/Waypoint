@@ -19,7 +19,7 @@ public final class FutureFactory {
     @Inject
     public FutureFactory() {}
 
-    public <T> CompletableFuture<T> futureOf(final Callable<T> callable) {
+    public <T> CompletableFuture<T> supply(final Callable<T> callable) {
         final CompletableFuture<T> future = new CompletableFuture<>();
         this.executor.execute(() -> {
             try {
@@ -32,7 +32,7 @@ public final class FutureFactory {
         return future;
     }
 
-    public CompletableFuture<?> futureOf(final VoidCallable callable) {
+    public CompletableFuture<?> run(final VoidCallable callable) {
         final CompletableFuture<?> future = new CompletableFuture<>();
         this.executor.execute(() -> {
             try {

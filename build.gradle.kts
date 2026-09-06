@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.gradleup.shadow") version "9.3.0"
     id("io.papermc.paperweight.userdev") version "1.7.2"
 }
 
@@ -25,16 +25,15 @@ dependencies {
     annotationProcessor("com.google.dagger:dagger-compiler:2.52")
 
     // Libs
-    implementation(fileTree("./libs") {
-        include("*.jar")
-    })
+    implementation("com.tomushimano.grapefruit:grapefruit:3.4.0-BETA")
+
     implementation("com.zaxxer:HikariCP:5.1.0") {
         exclude("org.slf4j")
     }
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(24))
 }
 
 tasks.processResources {
@@ -49,7 +48,8 @@ tasks.named<ShadowJar>("shadowJar") {
         "grapefruit.command" to "com.tomushimano.waypoint.reloc.command",
         "dagger" to "com.tomushimano.waypoint.reloc.dagger",
         "jakarta" to "com.tomushimano.waypoint.reloc.jakarta",
-        "com.zaxxer.hikari" to "com.tomushimano.waypoint.reloc.hikari"
+        "com.zaxxer.hikari" to "com.tomushimano.waypoint.reloc.hikari",
+        "io.leangen.geantyref" to "com.tomushimano.waypoint.reloc.typetoken"
     )
 
     relocations.forEach {
